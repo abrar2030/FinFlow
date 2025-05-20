@@ -1,6 +1,6 @@
 # FinFlow
 
-[![CI/CD Status](https://img.shields.io/github/workflow/status/abrar2030/FinFlow/ci-cd?style=flat-square)](https://github.com/abrar2030/FinFlow/actions)
+[![CI/CD Status](https://img.shields.io/github/actions/workflow/status/abrar2030/FinFlow/ci-cd.yml?branch=main&label=CI/CD&logo=github)](https://github.com/abrar2030/FinFlow/actions)
 [![Test Coverage](https://img.shields.io/codecov/c/github/abrar2030/FinFlow?style=flat-square)](https://codecov.io/gh/abrar2030/FinFlow)
 [![License](https://img.shields.io/github/license/abrar2030/FinFlow?style=flat-square)](LICENSE)
 
