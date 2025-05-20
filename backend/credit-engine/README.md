@@ -1,105 +1,63 @@
-# FinFlow Credit Engine
+# Credit Engine Service
 
-This service provides AI-driven credit scoring and loan offers as part of the FinFlow platform.
+## Overview
+The Credit Engine Service provides credit scoring, risk assessment, and loan offer generation capabilities for the FinFlow platform. It uses machine learning models to analyze financial data and determine creditworthiness.
 
 ## Features
+- Credit score calculation
+- Risk assessment
+- Loan offer generation
+- Financial data analysis
+- Machine learning model training and inference
 
-- Credit scoring based on financial metrics
-- Loan offers generation based on credit scores
-- GDPR compliance endpoints for data export and deletion
-- Comprehensive audit logging
-- OpenAPI documentation
-- Kubernetes deployment configuration
+## API Endpoints
+- `POST /api/credit/score` - Calculate credit score
+- `GET /api/credit/score/:id` - Get credit score by ID
+- `POST /api/credit/offers` - Generate loan offers
+- `GET /api/credit/offers` - Get all loan offers
+- `GET /api/credit/offers/:id` - Get loan offer details by ID
 
-## Setup
+## Environment Variables
+- `CREDIT_ENGINE_PORT` - Port for the Credit Engine service (default: 3005)
+- `POSTGRES_HOST` - PostgreSQL host
+- `POSTGRES_PORT` - PostgreSQL port
+- `POSTGRES_USER` - PostgreSQL username
+- `POSTGRES_PASSWORD` - PostgreSQL password
+- `POSTGRES_DB` - PostgreSQL database name
+- `MODEL_PATH` - Path to trained machine learning model
 
-### Prerequisites
+## Getting Started
+1. Install dependencies:
+   ```
+   pip install -r requirements.txt
+   ```
 
-- Python 3.11+
-- Kafka cluster for event streaming
-- Access to the Authentication service for JWT validation
+2. Set up environment variables (see `.env.example`)
 
-### Installation
+3. Start the service:
+   ```
+   python src/main.py
+   ```
 
-1. Create a virtual environment:
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+## Model Training
+Train the credit scoring model with:
 ```
-
-2. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-3. Train the credit scoring model:
-```bash
 python src/train_credit_model.py
 ```
 
-### Configuration
-
-Set the following environment variables:
-
-- `PORT`: Service port (default: 8000)
-- `JWT_SECRET`: Secret key for JWT validation
-- `KAFKA_BROKERS`: Comma-separated list of Kafka brokers
-
-### Running the Service
-
-```bash
-uvicorn src.main:app --host 0.0.0.0 --port 8000
+## Testing
+Run tests with:
 ```
-
-## API Documentation
-
-The API is documented using OpenAPI 3.0. When the service is running, you can access the Swagger UI at:
-
-```
-http://localhost:8000/docs
+pytest
 ```
 
 ## Docker
-
 Build the Docker image:
-
-```bash
-docker build -t finflow/credit-engine:latest .
+```
+docker build -t finflow-credit-engine .
 ```
 
 Run the container:
-
-```bash
-docker run -p 8000:8000 -e JWT_SECRET=your_secret -e KAFKA_BROKERS=kafka:9092 finflow/credit-engine:latest
 ```
-
-## Kubernetes Deployment
-
-Apply the Kubernetes configuration:
-
-```bash
-kubectl apply -f kubernetes.yaml
+docker run -p 3005:3005 --env-file .env finflow-credit-engine
 ```
-
-## Testing
-
-Run the tests:
-
-```bash
-pytest tests/
-```
-
-## GDPR Compliance
-
-This service implements GDPR compliance endpoints:
-
-- `GET /user/data`: Export all user data
-- `DELETE /user/data`: Delete all user data (right to be forgotten)
-
-## Integration with Other Services
-
-The Credit Engine integrates with:
-
-- Authentication Service: For JWT validation
-- Kafka: For event streaming (consuming user events, publishing credit score events)
-- Analytics Service: For data analysis and reporting
