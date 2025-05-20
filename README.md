@@ -2,7 +2,6 @@
 
 [![CI/CD Status](https://img.shields.io/github/workflow/status/abrar2030/FinFlow/ci-cd?style=flat-square)](https://github.com/abrar2030/FinFlow/actions)
 [![Test Coverage](https://img.shields.io/codecov/c/github/abrar2030/FinFlow?style=flat-square)](https://codecov.io/gh/abrar2030/FinFlow)
-[![Security Rating](https://img.shields.io/sonar/security_rating/abrar2030_FinFlow?server=https%3A%2F%2Fsonarcloud.io&style=flat-square)](https://sonarcloud.io/dashboard?id=abrar2030_FinFlow)
 [![License](https://img.shields.io/github/license/abrar2030/FinFlow?style=flat-square)](LICENSE)
 
 ## 💸 Financial Operations & Workflow Platform
