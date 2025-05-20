@@ -1,0 +1,41 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'auth-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['auth-service:3001']
+
+  - job_name: 'payments-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['payments-service:3002']
+
+  - job_name: 'accounting-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['accounting-service:3003']
+
+  - job_name: 'analytics-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['analytics-service:3004']
+
+  - job_name: 'credit-engine'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['credit-engine:8000']
+
+  - job_name: 'kafka'
+    static_configs:
+      - targets: ['kafka:9092']
+
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']

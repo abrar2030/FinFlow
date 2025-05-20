@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: credit-engine
+  labels:
+    app: credit-engine
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: credit-engine
+  template:
+    metadata:
+      labels:
+        app: credit-engine
+    spec:
+      containers:
+      - name: credit-engine
+        image: finflow/credit-engine:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: PORT
+          value: "8000"
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: finflow-secrets
+              key: jwt-secret
+        - name: KAFKA_BROKERS
+          value: "kafka-service:9092"
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+          requests:
+            cpu: "200m"
+            memory: "256Mi"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: credit-engine-service
+spec:
+  selector:
+    app: credit-engine
+  ports:
+  - port: 80
+    targetPort: 8000
+  type: ClusterIP
