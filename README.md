@@ -1,61 +1,70 @@
-# FinFlow
+# FinFlow - Financial Operations & Workflow Platform
 
 [![CI/CD Status](https://img.shields.io/github/actions/workflow/status/abrar2030/FinFlow/ci-cd.yml?branch=main&label=CI/CD&logo=github)](https://github.com/abrar2030/FinFlow/actions)
 [![Test Coverage](https://img.shields.io/codecov/c/github/abrar2030/FinFlow?style=flat-square)](https://codecov.io/gh/abrar2030/FinFlow)
 [![License](https://img.shields.io/github/license/abrar2030/FinFlow?style=flat-square)](LICENSE)
 
-## 💸 Financial Operations & Workflow Platform
+## 📋 Executive Summary
 
 FinFlow is a comprehensive financial operations platform that streamlines payment processing, accounting, analytics, and credit management through a unified microservices architecture. The platform provides secure authentication, real-time transaction processing, and advanced financial analytics to help businesses manage their financial workflows efficiently.
 
+**Key Highlights:**
+- Multi-processor payment gateway integration (Stripe, PayPal, Square)
+- Double-entry accounting system with financial reporting
+- Interactive analytics dashboard with real-time metrics
+- Secure authentication with role-based access control
+- Microservices architecture for scalability and resilience
+
 > **Note**: This project is under active development. Features and functionalities are continuously being enhanced to improve financial operations capabilities and user experience.
 
-## Table of Contents
+## 📑 Table of Contents
 
 - [Overview](#overview)
 - [Key Features](#key-features)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Quick Setup](#quick-setup)
+  - [Manual Setup](#manual-setup)
 - [Architecture](#architecture)
-- [Technology Stack](#technology-stack)
-- [Feature Implementation Status](#feature-implementation-status)
-- [Installation & Setup](#installation--setup)
 - [API Documentation](#api-documentation)
 - [Testing](#testing)
-- [CI/CD Pipeline](#cicd-pipeline)
+- [Troubleshooting](#troubleshooting)
+- [Feature Implementation Status](#feature-implementation-status)
 - [Contributing](#contributing)
 - [License](#license)
 
-## Overview
+## 🔍 Overview
 
 FinFlow is a modern financial operations platform designed to help businesses streamline their financial workflows, from payment processing to accounting and analytics. The platform combines traditional financial operations with cutting-edge technology to provide a secure, scalable, and efficient solution for managing financial data and processes.
 
-## Key Features
+## ✨ Key Features
 
 ### Authentication & Authorization
 
-- **Multi-factor Authentication**: Secure user authentication with MFA support
+- **Multi-factor Authentication**: Secure user authentication with SMS and authenticator app support
 - **Role-based Access Control**: Granular permissions for different user roles
-- **OAuth Integration**: Support for third-party authentication providers
+- **OAuth Integration**: Support for third-party authentication providers (Google, GitHub, Microsoft)
 - **Session Management**: Secure session handling and token-based authentication
 
 ### Payment Processing
 
-- **Multiple Payment Methods**: Support for credit cards, ACH, wire transfers, and digital wallets
+- **Multiple Payment Processors**: Integrated support for Stripe, PayPal, and Square
 - **Real-time Transaction Processing**: Instant payment verification and processing
 - **Recurring Payments**: Automated billing for subscription-based services
-- **Payment Gateway Integration**: Seamless integration with popular payment gateways
+- **Digital Wallet Support**: Integration with Apple Pay, Google Pay, and PayPal
 
 ### Accounting & Reconciliation
 
-- **Automated Bookkeeping**: Automatic transaction categorization and entry
-- **Financial Reporting**: Comprehensive financial statements and reports
+- **Double-Entry Accounting**: Robust accounting engine with double-entry bookkeeping
+- **Financial Reporting**: Generate balance sheets, income statements, and cash flow reports
 - **Reconciliation Tools**: Automated account reconciliation and discrepancy detection
-- **Tax Calculation**: Automated tax calculation and reporting
+- **Trial Balance**: Automatic generation of trial balance reports
 
 ### Analytics & Reporting
 
-- **Financial Dashboards**: Interactive visualizations of financial metrics
-- **Custom Reports**: Configurable reporting for different business needs
-- **Trend Analysis**: Historical data analysis and trend identification
+- **Interactive Dashboards**: Visual representation of financial metrics and KPIs
+- **Transaction Analysis**: Detailed breakdown of transaction data
+- **Trend Visualization**: Historical data analysis with interactive charts
 - **Export Capabilities**: Data export in multiple formats (CSV, Excel, PDF)
 
 ### Credit Management
@@ -65,115 +74,17 @@ FinFlow is a modern financial operations platform designed to help businesses st
 - **Repayment Tracking**: Automated tracking of loan repayments
 - **Default Prediction**: ML-based prediction of default risk
 
-## Architecture
-
-FinFlow follows a microservices architecture with the following components:
-
-```
-FinFlow/
-├── Backend Services
-│   ├── Auth Service
-│   ├── Payments Service
-│   ├── Accounting Service
-│   ├── Analytics Service
-│   └── Credit Engine
-├── Frontend Applications
-│   ├── Web Dashboard
-│   └── Mobile App
-├── Infrastructure
-│   ├── API Gateway
-│   ├── Service Mesh
-│   ├── Message Broker
-│   └── Monitoring Stack
-└── Data Layer
-    ├── Transactional Database
-    ├── Analytics Database
-    └── Document Store
-```
-
-### Event-Driven Communication
-
-FinFlow uses an event-driven architecture for communication between services:
-
-1. **Payment Events**: Trigger accounting entries, analytics updates, and credit assessments
-2. **User Events**: Manage authentication state and authorization updates
-3. **System Events**: Handle infrastructure scaling and monitoring alerts
-
-## Technology Stack
-
-### Backend
-
-- **Languages**: Node.js, TypeScript
-- **Frameworks**: Express.js, NestJS
-- **Database**: PostgreSQL, MongoDB
-- **Caching**: Redis
-- **Message Queue**: RabbitMQ, Kafka
-- **API Documentation**: OpenAPI, Swagger
-
-### Frontend
-
-- **Framework**: React with TypeScript
-- **State Management**: Redux Toolkit
-- **UI Components**: Material-UI
-- **Data Visualization**: D3.js, Recharts
-- **API Client**: Axios, React Query
-
-### DevOps & Infrastructure
-
-- **Containerization**: Docker
-- **Orchestration**: Kubernetes
-- **CI/CD**: GitHub Actions
-- **Monitoring**: Prometheus, Grafana
-- **Logging**: ELK Stack
-- **Cloud**: AWS, Google Cloud Platform
-
-## Feature Implementation Status
-
-| Feature | Status | Description | Planned Release |
-| --- | --- | --- | --- |
-| **Authentication & Authorization** |  |  |  |
-| User Registration | ✅ Implemented | User signup with email verification | v1.0 |
-| Multi-factor Authentication | ✅ Implemented | SMS and authenticator app support | v1.0 |
-| Role-based Access Control | ✅ Implemented | Granular permission management | v1.0 |
-| OAuth Integration | 🔄 In Progress | Support for Google, GitHub, Microsoft | v1.1 |
-| **Payment Processing** |  |  |  |
-| Credit Card Processing | ✅ Implemented | Major card networks support | v1.0 |
-| ACH Transfers | ✅ Implemented | Direct bank account transfers | v1.0 |
-| Digital Wallet Integration | 🔄 In Progress | Apple Pay, Google Pay, PayPal | v1.1 |
-| Recurring Payments | 🔄 In Progress | Subscription and installment payments | v1.1 |
-| International Payments | 📅 Planned | Multi-currency support | v1.2 |
-| **Accounting & Reconciliation** |  |  |  |
-| Transaction Categorization | ✅ Implemented | Automatic categorization of transactions | v1.0 |
-| General Ledger | ✅ Implemented | Double-entry accounting system | v1.0 |
-| Financial Statements | ✅ Implemented | Balance sheet, income statement, cash flow | v1.0 |
-| Reconciliation Tools | 🔄 In Progress | Automated account reconciliation | v1.1 |
-| Tax Reporting | 📅 Planned | Automated tax calculation and forms | v1.2 |
-| **Analytics & Reporting** |  |  |  |
-| Financial Dashboards | ✅ Implemented | Real-time financial metrics | v1.0 |
-| Custom Reports | 🔄 In Progress | User-configurable reporting | v1.1 |
-| Data Export | ✅ Implemented | CSV, Excel, PDF export options | v1.0 |
-| Trend Analysis | 🔄 In Progress | Historical data analysis | v1.1 |
-| Predictive Analytics | 📅 Planned | ML-based financial forecasting | v1.2 |
-| **Credit Management** |  |  |  |
-| Credit Scoring | ✅ Implemented | Automated risk assessment | v1.0 |
-| Loan Processing | 🔄 In Progress | Application and approval workflow | v1.1 |
-| Repayment Tracking | ✅ Implemented | Automated payment monitoring | v1.0 |
-| Default Prediction | 📅 Planned | ML-based default risk prediction | v1.2 |
-
-**Legend:**
-- ✅ Implemented: Feature is complete and available
-- 🔄 In Progress: Feature is currently being developed
-- 📅 Planned: Feature is planned for future release
-
-## Installation & Setup
+## 🚀 Getting Started
 
 ### Prerequisites
 
-- Node.js (v16+)
-- Docker and Docker Compose
-- PostgreSQL (v13+)
-- MongoDB (v5+)
-- Redis (v6+)
+Before setting up FinFlow, ensure you have the following installed:
+
+- **Node.js** (v16+)
+- **Docker** and Docker Compose
+- **PostgreSQL** (v13+)
+- **MongoDB** (v5+)
+- **Redis** (v6+)
 
 ### Quick Setup
 
@@ -191,9 +102,47 @@ cd FinFlow
 docker-compose up
 ```
 
+After running these commands, you can access:
+- Frontend: http://localhost:3000
+- API Gateway: http://localhost:8080
+- Swagger Documentation: http://localhost:8080/api-docs
+
 ### Manual Setup
 
-1. **Backend Services:**
+If you prefer to set up each service individually, follow these steps:
+
+#### 1. Environment Configuration
+
+Create a `.env` file in the root directory with the following variables:
+
+```
+# Database Configuration
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=your_password
+DB_NAME=finflow
+
+# Redis Configuration
+REDIS_HOST=localhost
+REDIS_PORT=6379
+
+# JWT Configuration
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRATION=86400
+
+# Payment Gateway Configuration
+STRIPE_SECRET=your_stripe_secret
+STRIPE_PUBLIC_KEY=your_stripe_public_key
+PAYPAL_CLIENT_ID=your_paypal_client_id
+PAYPAL_CLIENT_SECRET=your_paypal_client_secret
+SQUARE_ACCESS_TOKEN=your_square_access_token
+SQUARE_LOCATION_ID=your_square_location_id
+```
+
+#### 2. Backend Services
+
+Start each service individually:
 
 ```bash
 # Auth Service
@@ -222,7 +171,7 @@ npm install
 npm run start:dev
 ```
 
-2. **Frontend:**
+#### 3. Frontend
 
 ```bash
 # Web Dashboard
@@ -231,9 +180,70 @@ npm install
 npm start
 ```
 
-## API Documentation
+## 🏗️ Architecture
 
-FinFlow provides comprehensive API documentation using OpenAPI/Swagger:
+FinFlow follows a microservices architecture with the following components:
+
+### Service Architecture
+
+```
+FinFlow/
+├── Backend Services
+│   ├── Auth Service - User authentication and authorization
+│   ├── Payments Service - Payment processing and gateway integration
+│   ├── Accounting Service - Double-entry accounting and financial reporting
+│   ├── Analytics Service - Data analysis and visualization
+│   └── Credit Engine - Credit scoring and loan management
+├── Frontend Applications
+│   ├── Web Dashboard - React-based admin interface
+│   └── Mobile App - React Native client (planned)
+├── Infrastructure
+│   ├── API Gateway - Request routing and composition
+│   ├── Service Mesh - Inter-service communication
+│   ├── Message Broker - Event-driven communication
+│   └── Monitoring Stack - Logging, metrics, and alerting
+└── Data Layer
+    ├── Transactional Database - PostgreSQL for ACID operations
+    ├── Analytics Database - MongoDB for flexible data storage
+    └── Document Store - For unstructured data
+```
+
+### Event-Driven Communication
+
+FinFlow uses an event-driven architecture for communication between services:
+
+1. **Payment Events**: Trigger accounting entries, analytics updates, and credit assessments
+2. **User Events**: Manage authentication state and authorization updates
+3. **System Events**: Handle infrastructure scaling and monitoring alerts
+
+### Technology Stack
+
+#### Backend
+- **Languages**: Node.js, TypeScript
+- **Frameworks**: Express.js, NestJS
+- **Database**: PostgreSQL, MongoDB
+- **Caching**: Redis
+- **Message Queue**: RabbitMQ, Kafka
+- **API Documentation**: OpenAPI, Swagger
+
+#### Frontend
+- **Framework**: React with TypeScript
+- **State Management**: Redux Toolkit
+- **UI Components**: Material-UI, Tailwind CSS
+- **Data Visualization**: Recharts
+- **API Client**: Axios, React Query
+
+#### DevOps & Infrastructure
+- **Containerization**: Docker
+- **Orchestration**: Kubernetes
+- **CI/CD**: GitHub Actions
+- **Monitoring**: Prometheus, Grafana
+- **Logging**: ELK Stack
+- **Cloud**: AWS, Google Cloud Platform
+
+## 📚 API Documentation
+
+FinFlow provides comprehensive API documentation using OpenAPI/Swagger. When running the application, you can access the documentation at:
 
 - **Auth Service API**: `http://localhost:3001/api-docs`
 - **Payments Service API**: `http://localhost:3002/api-docs`
@@ -241,7 +251,57 @@ FinFlow provides comprehensive API documentation using OpenAPI/Swagger:
 - **Analytics Service API**: `http://localhost:3004/api-docs`
 - **Credit Engine API**: `http://localhost:3005/api-docs`
 
-## Testing
+### API Examples
+
+#### Authentication
+
+```bash
+# Login
+curl -X POST http://localhost:3001/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "user@example.com", "password": "password123"}'
+
+# Response
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "id": "123",
+    "email": "user@example.com",
+    "role": "admin"
+  }
+}
+```
+
+#### Creating a Payment
+
+```bash
+# Create payment
+curl -X POST http://localhost:3002/api/payments \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{
+    "amount": 100.00,
+    "currency": "usd",
+    "processorType": "stripe",
+    "source": "tok_visa",
+    "metadata": {
+      "orderId": "order_123"
+    }
+  }'
+
+# Response
+{
+  "id": "pay_123",
+  "amount": 100.00,
+  "currency": "usd",
+  "status": "completed",
+  "processorId": "ch_1234",
+  "processorType": "stripe",
+  "createdAt": "2025-05-20T10:30:00Z"
+}
+```
+
+## 🧪 Testing
 
 The project includes comprehensive testing to ensure reliability and accuracy:
 
@@ -279,16 +339,97 @@ npm run test:integration
 npm run test:e2e
 ```
 
-## CI/CD Pipeline
+## ❓ Troubleshooting
 
-FinFlow uses GitHub Actions for continuous integration and deployment:
+### Common Issues and Solutions
 
-- **Automated Testing**: Unit, integration, and E2E tests run on each pull request
-- **Code Quality Checks**: ESLint, Prettier, and SonarCloud analysis
-- **Security Scanning**: Dependency vulnerability scanning and SAST
-- **Automated Deployment**: Continuous deployment to staging and production environments
+#### Database Connection Issues
 
-## Contributing
+**Problem**: Services fail to connect to the database.
+
+**Solution**:
+1. Verify that PostgreSQL is running: `sudo service postgresql status`
+2. Check database credentials in `.env` file
+3. Ensure the database exists: `psql -U postgres -c "SELECT 1 FROM pg_database WHERE datname='finflow'"`
+4. If the database doesn't exist, create it: `psql -U postgres -c "CREATE DATABASE finflow"`
+
+#### Payment Processing Failures
+
+**Problem**: Payments fail to process with external providers.
+
+**Solution**:
+1. Verify API keys in `.env` file
+2. Check that the payment processor is available
+3. For testing, use test mode credentials and test card numbers
+4. Review logs for specific error messages: `docker-compose logs payments-service`
+
+#### Authentication Issues
+
+**Problem**: Unable to log in or access protected routes.
+
+**Solution**:
+1. Ensure JWT_SECRET is properly set in `.env`
+2. Check that the token hasn't expired
+3. Verify user credentials in the database
+4. Clear browser cookies and local storage
+
+#### Docker Compose Issues
+
+**Problem**: Docker Compose fails to start services.
+
+**Solution**:
+1. Check if ports are already in use: `netstat -tulpn | grep <port>`
+2. Ensure Docker and Docker Compose are up to date
+3. Try rebuilding the containers: `docker-compose build --no-cache`
+4. Check container logs: `docker-compose logs`
+
+### Getting Help
+
+If you encounter issues not covered here:
+
+1. Check the GitHub Issues page for similar problems
+2. Join our community Discord server for real-time help
+3. Review the logs for specific error messages
+4. Open a new issue with detailed reproduction steps
+
+## 📊 Feature Implementation Status
+
+| Feature | Status | Description | Planned Release |
+| --- | --- | --- | --- |
+| **Authentication & Authorization** |  |  |  |
+| User Registration | ✅ Implemented | User signup with email verification | v1.0 |
+| Multi-factor Authentication | ✅ Implemented | SMS and authenticator app support | v1.0 |
+| Role-based Access Control | ✅ Implemented | Granular permission management | v1.0 |
+| OAuth Integration | ✅ Implemented | Support for Google, GitHub, Microsoft | v1.1 |
+| **Payment Processing** |  |  |  |
+| Credit Card Processing | ✅ Implemented | Major card networks support | v1.0 |
+| ACH Transfers | ✅ Implemented | Direct bank account transfers | v1.0 |
+| Digital Wallet Integration | ✅ Implemented | Apple Pay, Google Pay, PayPal | v1.1 |
+| Recurring Payments | ✅ Implemented | Subscription and installment payments | v1.1 |
+| International Payments | 📅 Planned | Multi-currency support | v1.2 |
+| **Accounting & Reconciliation** |  |  |  |
+| Transaction Categorization | ✅ Implemented | Automatic categorization of transactions | v1.0 |
+| General Ledger | ✅ Implemented | Double-entry accounting system | v1.0 |
+| Financial Statements | ✅ Implemented | Balance sheet, income statement, cash flow | v1.0 |
+| Reconciliation Tools | ✅ Implemented | Automated account reconciliation | v1.1 |
+| Tax Reporting | 📅 Planned | Automated tax calculation and forms | v1.2 |
+| **Analytics & Reporting** |  |  |  |
+| Financial Dashboards | ✅ Implemented | Real-time financial metrics | v1.0 |
+| Custom Reports | ✅ Implemented | User-configurable reporting | v1.1 |
+| Data Export | ✅ Implemented | CSV, Excel, PDF export options | v1.0 |
+| Trend Analysis | ✅ Implemented | Historical data analysis | v1.1 |
+| Predictive Analytics | 📅 Planned | ML-based financial forecasting | v1.2 |
+| **Credit Management** |  |  |  |
+| Credit Scoring | ✅ Implemented | Automated risk assessment | v1.0 |
+| Loan Processing | ✅ Implemented | Application and approval workflow | v1.1 |
+| Repayment Tracking | ✅ Implemented | Automated payment monitoring | v1.0 |
+| Default Prediction | 📅 Planned | ML-based default risk prediction | v1.2 |
+
+**Legend:**
+- ✅ Implemented: Feature is complete and available
+- 📅 Planned: Feature is planned for future release
+
+## 👥 Contributing
 
 We welcome contributions to FinFlow! Please follow these steps to contribute:
 
@@ -300,6 +441,6 @@ We welcome contributions to FinFlow! Please follow these steps to contribute:
 
 Please make sure your code follows our coding standards and includes appropriate tests.
 
-## License
+## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
