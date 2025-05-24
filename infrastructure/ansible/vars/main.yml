@@ -1,0 +1,40 @@
+---
+# Variables for FinFlow infrastructure
+
+# Common packages to install on all servers
+common_packages:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - gnupg
+  - lsb-release
+  - python3-pip
+  - python3-setuptools
+  - software-properties-common
+  - vim
+  - git
+  - jq
+  - unzip
+  - htop
+  - net-tools
+
+# Docker configuration
+docker_version: "24.0.5"
+docker_users:
+  - ubuntu
+  - ansible
+
+# Kubernetes configuration
+kubernetes_version: "1.28.0"
+kubernetes_cni: "calico"
+kubernetes_pod_network_cidr: "192.168.0.0/16"
+
+# Monitoring configuration
+prometheus_version: "2.43.0"
+grafana_version: "9.5.1"
+node_exporter_version: "1.5.0"
+
+# Registry configuration
+registry_url: "registry.example.com"
+registry_username: "{{ vault_registry_username }}"
+registry_password: "{{ vault_registry_password }}"

@@ -1,0 +1,146 @@
+---
+# Kubernetes role for setting up Kubernetes cluster
+
+- name: Add Kubernetes GPG key
+  apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Add Kubernetes repository
+  apt_repository:
+    repo: "deb https://apt.kubernetes.io/ kubernetes-xenial main"
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Install Kubernetes packages
+  package:
+    name:
+      - kubelet={{ kubernetes_version }}-00
+      - kubeadm={{ kubernetes_version }}-00
+      - kubectl={{ kubernetes_version }}-00
+    state: present
+    update_cache: yes
+
+- name: Hold Kubernetes packages
+  dpkg_selections:
+    name: "{{ item }}"
+    selection: hold
+  loop:
+    - kubelet
+    - kubeadm
+    - kubectl
+  when: ansible_os_family == "Debian"
+
+- name: Ensure kubelet service is enabled
+  systemd:
+    name: kubelet
+    enabled: yes
+
+- name: Initialize Kubernetes cluster
+  command: >
+    kubeadm init
+    --pod-network-cidr={{ kubernetes_pod_network_cidr }}
+    --apiserver-advertise-address={{ ansible_default_ipv4.address }}
+  register: kubeadm_init
+  when: inventory_hostname == groups['k8s_nodes'][0]
+  args:
+    creates: /etc/kubernetes/admin.conf
+
+- name: Create .kube directory for root
+  file:
+    path: /root/.kube
+    state: directory
+    mode: '0700'
+  when: inventory_hostname == groups['k8s_nodes'][0]
+
+- name: Copy admin.conf to root's .kube directory
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /root/.kube/config
+    remote_src: yes
+    mode: '0600'
+  when: inventory_hostname == groups['k8s_nodes'][0]
+
+- name: Get join command
+  command: kubeadm token create --print-join-command
+  register: join_command
+  when: inventory_hostname == groups['k8s_nodes'][0]
+
+- name: Set join command fact
+  set_fact:
+    join_command: "{{ hostvars[groups['k8s_nodes'][0]]['join_command'].stdout }}"
+  when: inventory_hostname != groups['k8s_nodes'][0]
+
+- name: Join worker nodes to cluster
+  command: "{{ join_command }}"
+  args:
+    creates: /etc/kubernetes/kubelet.conf
+  when: inventory_hostname != groups['k8s_nodes'][0]
+
+- name: Install CNI plugin (Calico)
+  command: >
+    kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+  when: 
+    - inventory_hostname == groups['k8s_nodes'][0]
+    - kubernetes_cni == "calico"
+
+- name: Create namespaces
+  k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: "{{ item }}"
+  loop:
+    - finflow-prod
+    - finflow-staging
+    - monitoring
+  when: inventory_hostname == groups['k8s_nodes'][0]
+
+- name: Create storage class
+  k8s:
+    state: present
+    definition:
+      apiVersion: storage.k8s.io/v1
+      kind: StorageClass
+      metadata:
+        name: standard
+      provisioner: kubernetes.io/no-provisioner
+      volumeBindingMode: WaitForFirstConsumer
+  when: inventory_hostname == groups['k8s_nodes'][0]
+
+- name: Install Helm
+  block:
+    - name: Download Helm
+      get_url:
+        url: https://get.helm.sh/helm-v3.12.0-linux-amd64.tar.gz
+        dest: /tmp/helm.tar.gz
+        mode: '0644'
+    
+    - name: Extract Helm
+      unarchive:
+        src: /tmp/helm.tar.gz
+        dest: /tmp
+        remote_src: yes
+    
+    - name: Move Helm binary
+      copy:
+        src: /tmp/linux-amd64/helm
+        dest: /usr/local/bin/helm
+        mode: '0755'
+        remote_src: yes
+  when: inventory_hostname == groups['k8s_nodes'][0]
+
+- name: Add Helm repositories
+  command: helm repo add {{ item.name }} {{ item.url }}
+  loop:
+    - { name: "stable", url: "https://charts.helm.sh/stable" }
+    - { name: "bitnami", url: "https://charts.bitnami.com/bitnami" }
+    - { name: "prometheus-community", url: "https://prometheus-community.github.io/helm-charts" }
+  when: inventory_hostname == groups['k8s_nodes'][0]
+
+- name: Update Helm repositories
+  command: helm repo update
+  when: inventory_hostname == groups['k8s_nodes'][0]

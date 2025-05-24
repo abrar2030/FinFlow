@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: accounting-db
+  namespace: finflow-prod
+  labels:
+    app: accounting-db
+    component: database
+spec:
+  clusterIP: None
+  ports:
+  - port: 5432
+    targetPort: 5432
+    protocol: TCP
+    name: postgres
+  selector:
+    app: accounting-db

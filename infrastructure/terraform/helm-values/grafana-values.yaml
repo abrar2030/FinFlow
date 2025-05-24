@@ -1,0 +1,126 @@
+# Grafana values for Helm chart
+# This file configures the Grafana deployment
+
+# Global settings
+global:
+  adminUser: admin
+  adminPassword: "${grafana_admin_password}"
+
+# Deployment configuration
+replicas: 1
+deploymentStrategy:
+  type: RollingUpdate
+
+# Image configuration
+image:
+  repository: grafana/grafana
+  tag: 9.5.1
+  pullPolicy: IfNotPresent
+
+# Resources configuration
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+# Persistence configuration
+persistence:
+  enabled: true
+  storageClassName: standard
+  size: 10Gi
+
+# Service configuration
+service:
+  type: ClusterIP
+  port: 80
+
+# Ingress configuration
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  hosts:
+    - host: grafana.finflow.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: grafana-tls
+      hosts:
+        - grafana.finflow.example.com
+
+# Dashboard providers
+dashboardProviders:
+  dashboardproviders.yaml:
+    apiVersion: 1
+    providers:
+    - name: 'finflow'
+      orgId: 1
+      folder: 'FinFlow'
+      type: file
+      disableDeletion: false
+      editable: true
+      options:
+        path: /var/lib/grafana/dashboards/finflow
+    - name: 'kubernetes'
+      orgId: 1
+      folder: 'Kubernetes'
+      type: file
+      disableDeletion: false
+      editable: true
+      options:
+        path: /var/lib/grafana/dashboards/kubernetes
+    - name: 'infrastructure'
+      orgId: 1
+      folder: 'Infrastructure'
+      type: file
+      disableDeletion: false
+      editable: true
+      options:
+        path: /var/lib/grafana/dashboards/infrastructure
+
+# Datasources configuration
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+    - name: Prometheus
+      type: prometheus
+      url: http://prometheus-server.monitoring.svc.cluster.local
+      access: proxy
+      isDefault: true
+    - name: Elasticsearch
+      type: elasticsearch
+      url: http://elasticsearch-client.monitoring.svc.cluster.local:9200
+      access: proxy
+      database: "[finflow-]YYYY.MM.DD"
+      jsonData:
+        esVersion: 7
+        timeField: "@timestamp"
+        logMessageField: message
+        logLevelField: level
+
+# Plugins to install
+plugins:
+  - grafana-piechart-panel
+  - grafana-worldmap-panel
+  - grafana-clock-panel
+  - grafana-kubernetes-app
+  - grafana-elasticsearch-datasource
+
+# SMTP configuration for alerts
+smtp:
+  enabled: true
+  host: "${smtp_host}"
+  user: "${smtp_user}"
+  password: "${smtp_password}"
+  fromAddress: "grafana@finflow.example.com"
+  fromName: "FinFlow Monitoring"
+
+# Alerting configuration
+alerting:
+  enabled: true

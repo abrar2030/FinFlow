@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: finflow-services
+  namespace: monitoring
+  labels:
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/part-of: finflow
+  namespaceSelector:
+    matchNames:
+      - finflow-prod
+  endpoints:
+  - port: metrics
+    interval: 15s
+    path: /metrics

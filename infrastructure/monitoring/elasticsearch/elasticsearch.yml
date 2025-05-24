@@ -1,0 +1,55 @@
+cluster:
+  name: "finflow-elasticsearch"
+  
+node:
+  master: true
+  data: true
+  ingest: true
+
+path:
+  data: /usr/share/elasticsearch/data
+  logs: /usr/share/elasticsearch/logs
+
+network:
+  host: 0.0.0.0
+
+discovery:
+  seed_hosts:
+    - elasticsearch-master
+  zen:
+    minimum_master_nodes: 1
+
+xpack:
+  security:
+    enabled: false
+  monitoring:
+    collection:
+      enabled: true
+
+indices:
+  memory:
+    index_buffer_size: 30%
+
+bootstrap:
+  memory_lock: true
+
+http:
+  compression: true
+
+action:
+  destructive_requires_name: true
+
+# Index lifecycle management settings
+xpack.ilm.enabled: true
+xpack.ilm.history_index_enabled: true
+xpack.ilm.poll_interval: 1m
+
+# Index templates for FinFlow logs
+index.lifecycle.rollover_alias: "finflow-logs"
+index.lifecycle.name: "finflow-logs-policy"
+
+# Index settings
+index:
+  number_of_shards: 3
+  number_of_replicas: 1
+  refresh_interval: "5s"

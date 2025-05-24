@@ -1,0 +1,27 @@
+---
+# Main Ansible playbook for FinFlow infrastructure
+- name: Setup FinFlow Infrastructure
+  hosts: all
+  become: true
+  vars_files:
+    - vars/main.yml
+  
+  pre_tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+      when: ansible_os_family == "Debian"
+    
+    - name: Install common dependencies
+      package:
+        name: "{{ common_packages }}"
+        state: present
+  
+  roles:
+    - role: common
+    - role: docker
+    - role: kubernetes
+      when: "'k8s_nodes' in group_names"
+    - role: monitoring
+      when: "'monitoring_nodes' in group_names"

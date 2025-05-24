@@ -1,0 +1,74 @@
+#!/bin/bash
+# Deployment script for FinFlow infrastructure
+# This script deploys all FinFlow components to Kubernetes
+
+set -e
+
+# Set variables
+NAMESPACE="finflow-prod"
+REGISTRY="${REGISTRY:-registry.example.com}"
+TAG="${TAG:-latest}"
+COMPONENTS=("frontend" "api-gateway" "auth-service" "payments-service" "accounting-service" "analytics-service" "credit-engine")
+
+# Check if kubectl is available
+if ! command -v kubectl &> /dev/null; then
+    echo "Error: kubectl is not installed or not in PATH"
+    exit 1
+fi
+
+# Check if namespace exists
+if ! kubectl get namespace $NAMESPACE &> /dev/null; then
+    echo "Creating namespace $NAMESPACE"
+    kubectl create namespace $NAMESPACE
+fi
+
+# Apply database resources first
+echo "Deploying database resources..."
+kubectl apply -f /opt/finflow/deployments/manifests/databases/ -n $NAMESPACE
+
+# Wait for databases to be ready
+echo "Waiting for databases to be ready..."
+for DB in auth-db payments-db accounting-db analytics-db; do
+    kubectl rollout status statefulset/$DB -n $NAMESPACE --timeout=300s
+done
+
+# Apply Kafka resources
+echo "Deploying Kafka resources..."
+kubectl apply -f /opt/finflow/deployments/manifests/databases/kafka-statefulset.yaml -n $NAMESPACE
+kubectl apply -f /opt/finflow/deployments/manifests/databases/kafka-service.yaml -n $NAMESPACE
+
+# Wait for Kafka to be ready
+echo "Waiting for Kafka to be ready..."
+kubectl rollout status statefulset/kafka -n $NAMESPACE --timeout=300s
+
+# Deploy all components
+for COMPONENT in "${COMPONENTS[@]}"; do
+    echo "Deploying $COMPONENT..."
+    
+    # Replace registry and tag placeholders in the manifest
+    sed -e "s|\${REGISTRY}|$REGISTRY|g" -e "s|\${TAG}|$TAG|g" \
+        /opt/finflow/deployments/manifests/$COMPONENT/deployment.yaml > /tmp/$COMPONENT-deployment.yaml
+    
+    # Apply resources
+    kubectl apply -f /tmp/$COMPONENT-deployment.yaml -n $NAMESPACE
+    kubectl apply -f /opt/finflow/deployments/manifests/$COMPONENT/service.yaml -n $NAMESPACE
+    
+    # Apply ingress if it exists
+    if [ -f "/opt/finflow/deployments/manifests/$COMPONENT/ingress.yaml" ]; then
+        kubectl apply -f /opt/finflow/deployments/manifests/$COMPONENT/ingress.yaml -n $NAMESPACE
+    fi
+    
+    # Wait for deployment to be ready
+    echo "Waiting for $COMPONENT to be ready..."
+    kubectl rollout status deployment/$COMPONENT -n $NAMESPACE --timeout=300s
+done
+
+# Verify all deployments
+echo "Verifying all deployments..."
+kubectl get deployments -n $NAMESPACE
+
+# Run health checks
+echo "Running health checks..."
+/opt/finflow/deployments/scripts/health-check.sh
+
+echo "Deployment completed successfully!"

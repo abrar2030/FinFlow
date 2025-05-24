@@ -1,0 +1,49 @@
+#!/bin/bash
+# Backup script for FinFlow infrastructure
+# This script creates backups of all databases and configuration files
+
+# Set variables
+BACKUP_DIR="/opt/finflow/data/backups"
+DATE=$(date +%Y%m%d-%H%M%S)
+BACKUP_FILE="finflow-backup-$DATE.tar.gz"
+LOG_FILE="/opt/finflow/logs/backup-$DATE.log"
+
+# Create backup directory if it doesn't exist
+mkdir -p $BACKUP_DIR
+
+# Log start
+echo "Starting backup at $(date)" | tee -a $LOG_FILE
+
+# Backup PostgreSQL databases
+echo "Backing up PostgreSQL databases..." | tee -a $LOG_FILE
+for DB in auth payments accounting analytics; do
+  pg_dump -h $DB-db -U postgres -d $DB > $BACKUP_DIR/$DB-$DATE.sql
+  if [ $? -eq 0 ]; then
+    echo "Successfully backed up $DB database" | tee -a $LOG_FILE
+  else
+    echo "Failed to backup $DB database" | tee -a $LOG_FILE
+  fi
+done
+
+# Backup configuration files
+echo "Backing up configuration files..." | tee -a $LOG_FILE
+mkdir -p $BACKUP_DIR/config-$DATE
+cp -r /etc/kubernetes $BACKUP_DIR/config-$DATE/
+cp -r /opt/finflow/config $BACKUP_DIR/config-$DATE/
+
+# Create compressed archive
+echo "Creating compressed archive..." | tee -a $LOG_FILE
+tar -czf $BACKUP_DIR/$BACKUP_FILE -C $BACKUP_DIR $DB-$DATE.sql config-$DATE
+
+# Cleanup old backups (keep last 7 days)
+echo "Cleaning up old backups..." | tee -a $LOG_FILE
+find $BACKUP_DIR -name "finflow-backup-*.tar.gz" -type f -mtime +7 -delete
+
+# Log completion
+echo "Backup completed at $(date)" | tee -a $LOG_FILE
+
+# Optional: Copy to remote storage
+if [ ! -z "$REMOTE_BACKUP_ENABLED" ] && [ "$REMOTE_BACKUP_ENABLED" = "true" ]; then
+  echo "Copying backup to remote storage..." | tee -a $LOG_FILE
+  aws s3 cp $BACKUP_DIR/$BACKUP_FILE s3://$S3_BUCKET/backups/
+fi

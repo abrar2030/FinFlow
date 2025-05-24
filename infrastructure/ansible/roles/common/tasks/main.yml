@@ -1,0 +1,94 @@
+---
+# Common role for all servers
+- name: Ensure required directories exist
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - /opt/finflow
+    - /opt/finflow/scripts
+    - /opt/finflow/logs
+    - /opt/finflow/data
+
+- name: Set up hostname
+  hostname:
+    name: "{{ inventory_hostname }}"
+
+- name: Configure timezone
+  timezone:
+    name: UTC
+
+- name: Set up /etc/hosts
+  lineinfile:
+    path: /etc/hosts
+    line: "{{ hostvars[item]['ansible_host'] }} {{ item }}"
+    state: present
+  loop: "{{ groups['all'] }}"
+  when: hostvars[item]['ansible_host'] is defined
+
+- name: Set up sysctl parameters
+  sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present
+    reload: yes
+  loop:
+    - { key: "net.ipv4.ip_forward", value: "1" }
+    - { key: "net.bridge.bridge-nf-call-iptables", value: "1" }
+    - { key: "net.bridge.bridge-nf-call-ip6tables", value: "1" }
+    - { key: "vm.max_map_count", value: "262144" }
+    - { key: "fs.file-max", value: "65536" }
+
+- name: Set up security limits
+  pam_limits:
+    domain: '*'
+    limit_type: "{{ item.type }}"
+    limit_item: "{{ item.item }}"
+    value: "{{ item.value }}"
+  loop:
+    - { type: 'soft', item: 'nofile', value: '65536' }
+    - { type: 'hard', item: 'nofile', value: '65536' }
+    - { type: 'soft', item: 'nproc', value: '4096' }
+    - { type: 'hard', item: 'nproc', value: '4096' }
+
+- name: Install common Python packages
+  pip:
+    name:
+      - docker
+      - kubernetes
+      - openshift
+      - netaddr
+      - jmespath
+    state: present
+
+- name: Create finflow service user
+  user:
+    name: finflow
+    shell: /bin/bash
+    system: yes
+    create_home: yes
+    home: /home/finflow
+
+- name: Set up SSH key for finflow user
+  authorized_key:
+    user: finflow
+    state: present
+    key: "{{ ssh_public_key }}"
+  when: ssh_public_key is defined
+
+- name: Create backup script
+  template:
+    src: backup.sh.j2
+    dest: /opt/finflow/scripts/backup.sh
+    owner: finflow
+    group: finflow
+    mode: '0755'
+
+- name: Set up backup cron job
+  cron:
+    name: "FinFlow Backup"
+    user: finflow
+    hour: "2"
+    minute: "0"
+    job: "/opt/finflow/scripts/backup.sh > /opt/finflow/logs/backup.log 2>&1"

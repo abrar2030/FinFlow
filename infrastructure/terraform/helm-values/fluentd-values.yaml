@@ -1,0 +1,161 @@
+# Fluentd values for Helm chart
+# This file configures the Fluentd deployment for log aggregation
+
+# Global settings
+global:
+  logLevel: info
+
+# Fluentd configuration
+fluentd:
+  enabled: true
+  image:
+    repository: fluent/fluentd-kubernetes-daemonset
+    tag: v1.14-debian-elasticsearch7-1
+  resources:
+    limits:
+      cpu: 200m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+  persistence:
+    enabled: true
+    storageClass: standard
+    size: 20Gi
+  
+  # Fluentd configuration
+  configMaps:
+    fluentd-conf: |
+      <source>
+        @type tail
+        path /var/log/containers/*.log
+        pos_file /var/log/fluentd-containers.log.pos
+        tag kubernetes.*
+        read_from_head true
+        <parse>
+          @type json
+          time_format %Y-%m-%dT%H:%M:%S.%NZ
+        </parse>
+      </source>
+
+      <source>
+        @type tail
+        path /var/log/docker.log
+        pos_file /var/log/fluentd-docker.log.pos
+        tag docker
+        <parse>
+          @type regexp
+          expression /^time="(?<time>[^)]*)" level=(?<severity>[^ ]*) msg="(?<message>[^"]*)"( err="(?<error>[^"]*)")?( statusCode=(?<status_code>[^ ]*))?/
+          time_format %Y-%m-%dT%H:%M:%S.%NZ
+        </parse>
+      </source>
+
+      <source>
+        @type tail
+        path /var/log/syslog
+        pos_file /var/log/fluentd-syslog.log.pos
+        tag system
+        <parse>
+          @type syslog
+        </parse>
+      </source>
+
+      # Filters
+      <filter kubernetes.**>
+        @type kubernetes_metadata
+        kubernetes_url https://kubernetes.default.svc
+        bearer_token_file /var/run/secrets/kubernetes.io/serviceaccount/token
+        ca_file /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        skip_labels false
+        skip_container_metadata false
+        skip_namespace_metadata false
+        skip_master_url false
+      </filter>
+
+      <filter kubernetes.**>
+        @type record_transformer
+        <record>
+          hostname ${hostname}
+          environment ${ENV:-production}
+        </record>
+      </filter>
+
+      # Output configurations
+      <match **>
+        @type elasticsearch
+        host elasticsearch
+        port 9200
+        logstash_format true
+        logstash_prefix finflow
+        <buffer>
+          @type file
+          path /var/log/fluentd/buffer
+          flush_mode interval
+          flush_interval 5s
+          chunk_limit_size 2M
+          queue_limit_length 32
+          retry_max_interval 30
+          retry_forever true
+        </buffer>
+      </match>
+
+      # Backup output to local files
+      <match **>
+        @type file
+        path /var/log/fluentd/backup/%Y/%m/%d/${tag}
+        append true
+        <buffer tag,time>
+          @type file
+          path /var/log/fluentd/buffer/backup
+          timekey 1d
+          timekey_use_utc true
+          timekey_wait 10m
+        </buffer>
+        <format>
+          @type json
+        </format>
+      </match>
+
+# Elasticsearch configuration
+elasticsearch:
+  enabled: true
+  replicas: 3
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+  persistence:
+    enabled: true
+    storageClass: standard
+    size: 100Gi
+  esJavaOpts: "-Xmx1g -Xms1g"
+  
+# Kibana configuration
+kibana:
+  enabled: true
+  resources:
+    limits:
+      cpu: 200m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+  service:
+    type: ClusterIP
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+    hosts:
+      - host: kibana.finflow.example.com
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - secretName: kibana-tls
+        hosts:
+          - kibana.finflow.example.com
