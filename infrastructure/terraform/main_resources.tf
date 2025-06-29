@@ -1,24 +1,26 @@
 module "vpc" {
   source = "./modules/vpc"
 
-  vpc_name            = "${var.cluster_name}-vpc"
-  vpc_cidr            = var.vpc_cidr
-  availability_zones  = var.availability_zones
-  environment         = var.environment
-  
-  # Additional VPC settings
-  enable_nat_gateway  = true
-  single_nat_gateway  = false
-  enable_vpn_gateway  = false
-  
-  # DNS settings
-  enable_dns_hostnames = true
-  enable_dns_support   = true
+  vpc_cidr              = var.vpc_cidr
+  public_subnet_cidrs   = var.public_subnet_cidrs
+  private_subnet_cidrs  = var.private_subnet_cidrs
+  database_subnet_cidrs = var.database_subnet_cidrs
+  availability_zones    = var.availability_zones
+  environment           = var.environment
   
   # Tags
   tags = merge(var.tags, {
     "kubernetes.io/cluster/${var.cluster_name}" = "shared"
   })
+}
+
+module "iam" {
+  source  = "./modules/iam"
+  environment = var.environment
+  tags = var.tags
+  aws_region = var.aws_region
+  secrets_manager_prefix = var.secrets_manager_prefix
+  cluster_oidc_issuer_url = module.eks.cluster_oidc_issuer_url
 }
 
 module "eks" {
@@ -27,16 +29,11 @@ module "eks" {
   cluster_name    = var.cluster_name
   cluster_version = var.cluster_version
   vpc_id          = module.vpc.vpc_id
-  subnet_ids      = module.vpc.private_subnets
+  private_subnet_ids = module.vpc.private_subnet_ids
   node_groups     = var.node_groups
   environment     = var.environment
-  
-  # IAM settings
-  create_cluster_role = true
-  
-  # Networking
-  cluster_endpoint_private_access = true
-  cluster_endpoint_public_access  = true
+  eks_cluster_role_arn = module.iam.eks_cluster_role_arn
+  eks_node_group_role_arn = module.iam.eks_node_group_role_arn
   
   # Tags
   tags = var.tags
@@ -51,6 +48,8 @@ module "rds" {
   db_instance_class     = var.db_instance_class
   db_allocated_storage  = var.db_allocated_storage
   db_engine_version     = var.db_engine_version
+  kms_key_id            = aws_kms_key.finflow_key.id
+  rds_security_group_id = module.vpc.rds_security_group_id
   
   # Database instances
   databases = {
@@ -71,10 +70,6 @@ module "rds" {
       port = 5432
     }
   }
-  
-  # Security
-  create_security_group = true
-  allowed_cidr_blocks   = [var.vpc_cidr]
   
   # Tags
   tags = var.tags
@@ -144,9 +139,19 @@ module "bastion" {
   subnet_id         = module.vpc.public_subnets[0]
   environment       = var.environment
   ssh_key_name      = "finflow-${var.environment}"
-  allowed_cidr      = ["0.0.0.0/0"]  # Should be restricted in production
+  allowed_cidr      = ["0.0.0.0/0"]  # Restrict to known IPs in production
+  bastion_security_group_id = module.vpc.bastion_security_group_id
   
   # Tags
+  tags = var.tags
+}
+
+# CloudWatch Logging Module
+module "cloudwatch_logging" {
+  source  = "./modules/cloudwatch_logging"
+  environment = var.environment
+  s3_bucket_name = "finflow-cloudtrail-logs-${var.environment}"
+  cloudwatch_logs_role_arn = module.iam.cloudwatch_logs_role_arn
   tags = var.tags
 }
 
@@ -222,3 +227,5 @@ output "kubeconfig_command" {
   description = "Command to configure kubectl"
   value       = "aws eks update-kubeconfig --region ${var.aws_region} --name ${module.eks.cluster_name}"
 }
+
+

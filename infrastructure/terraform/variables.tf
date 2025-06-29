@@ -18,6 +18,24 @@ variable "vpc_cidr" {
   default     = "10.0.0.0/16"
 }
 
+variable "public_subnet_cidrs" {
+  description = "List of CIDR blocks for public subnets"
+  type        = list(string)
+  default     = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+}
+
+variable "private_subnet_cidrs" {
+  description = "List of CIDR blocks for private subnets"
+  type        = list(string)
+  default     = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
+}
+
+variable "database_subnet_cidrs" {
+  description = "List of CIDR blocks for database subnets"
+  type        = list(string)
+  default     = ["10.0.201.0/24", "10.0.202.0/24", "10.0.203.0/24"]
+}
+
 variable "availability_zones" {
   description = "List of availability zones to use"
   type        = list(string)
@@ -111,3 +129,23 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "kms_key_alias" {
+  description = "KMS Key Alias for encryption"
+  type        = string
+  default     = "alias/finflow-kms-key"
+}
+
+variable "secrets_manager_prefix" {
+  description = "Prefix for secrets in AWS Secrets Manager"
+  type        = string
+  default     = "finflow/"
+}
+
+variable "cloudtrail_s3_bucket_name" {
+  description = "Name of the S3 bucket for CloudTrail logs"
+  type        = string
+  default     = "finflow-cloudtrail-logs"
+}
+
+

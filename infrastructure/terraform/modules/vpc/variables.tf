@@ -1,11 +1,21 @@
-variable "vpc_name" {
-  description = "Name of the VPC"
-  type        = string
-}
-
 variable "vpc_cidr" {
   description = "CIDR block for the VPC"
   type        = string
+}
+
+variable "public_subnet_cidrs" {
+  description = "List of CIDR blocks for public subnets"
+  type        = list(string)
+}
+
+variable "private_subnet_cidrs" {
+  description = "List of CIDR blocks for private subnets"
+  type        = list(string)
+}
+
+variable "database_subnet_cidrs" {
+  description = "List of CIDR blocks for database subnets"
+  type        = list(string)
 }
 
 variable "availability_zones" {
@@ -18,34 +28,10 @@ variable "environment" {
   type        = string
 }
 
-variable "enable_nat_gateway" {
-  description = "Whether to enable NAT Gateway"
-  type        = bool
-  default     = true
-}
-
-variable "single_nat_gateway" {
-  description = "Whether to use a single NAT Gateway for all private subnets"
-  type        = bool
-  default     = false
-}
-
 variable "enable_vpn_gateway" {
   description = "Whether to enable VPN Gateway"
   type        = bool
   default     = false
-}
-
-variable "enable_dns_hostnames" {
-  description = "Whether to enable DNS hostnames in the VPC"
-  type        = bool
-  default     = true
-}
-
-variable "enable_dns_support" {
-  description = "Whether to enable DNS support in the VPC"
-  type        = bool
-  default     = true
 }
 
 variable "tags" {
@@ -53,3 +39,5 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+

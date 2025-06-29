@@ -13,8 +13,8 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "subnet_ids" {
-  description = "List of subnet IDs where the EKS cluster will be deployed"
+variable "private_subnet_ids" {
+  description = "List of private subnet IDs where the EKS cluster will be deployed"
   type        = list(string)
 }
 
@@ -28,22 +28,14 @@ variable "environment" {
   type        = string
 }
 
-variable "create_cluster_role" {
-  description = "Whether to create IAM role for the cluster"
-  type        = bool
-  default     = true
+variable "eks_cluster_role_arn" {
+  description = "ARN of the EKS cluster IAM role"
+  type        = string
 }
 
-variable "cluster_endpoint_private_access" {
-  description = "Whether the Amazon EKS private API server endpoint is enabled"
-  type        = bool
-  default     = true
-}
-
-variable "cluster_endpoint_public_access" {
-  description = "Whether the Amazon EKS public API server endpoint is enabled"
-  type        = bool
-  default     = true
+variable "eks_node_group_role_arn" {
+  description = "ARN of the EKS node group IAM role"
+  type        = string
 }
 
 variable "tags" {
@@ -51,3 +43,5 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+

@@ -8,40 +8,6 @@ locals {
   )
 }
 
-# Security group for RDS instances
-resource "aws_security_group" "rds" {
-  count = var.create_security_group ? 1 : 0
-  
-  name        = "finflow-${var.environment}-rds-sg"
-  description = "Security group for FinFlow RDS instances"
-  vpc_id      = var.vpc_id
-  
-  # PostgreSQL access
-  ingress {
-    from_port   = 5432
-    to_port     = 5432
-    protocol    = "tcp"
-    cidr_blocks = var.allowed_cidr_blocks
-    description = "PostgreSQL access"
-  }
-  
-  # Outbound internet access
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-    description = "Allow all outbound traffic"
-  }
-  
-  tags = merge(
-    {
-      Name = "finflow-${var.environment}-rds-sg"
-    },
-    local.common_tags
-  )
-}
-
 # DB subnet group
 resource "aws_db_subnet_group" "main" {
   name        = "finflow-${var.environment}-subnet-group"
@@ -101,13 +67,14 @@ resource "aws_db_instance" "main" {
   allocated_storage    = var.db_allocated_storage
   storage_type         = "gp2"
   storage_encrypted    = true
+  kms_key_id           = var.kms_key_id # Use the centralized KMS key
   
   db_name              = each.value.name
   username             = "postgres"
   password             = random_password.db_password[each.key].result
   port                 = each.value.port
   
-  vpc_security_group_ids = var.create_security_group ? [aws_security_group.rds[0].id] : []
+  vpc_security_group_ids = [var.rds_security_group_id]
   db_subnet_group_name   = aws_db_subnet_group.main.name
   parameter_group_name   = aws_db_parameter_group.postgres.name
   
@@ -120,7 +87,9 @@ resource "aws_db_instance" "main" {
   final_snapshot_identifier = "finflow-${var.environment}-${each.value.name}-final"
   deletion_protection    = true
   
-  enabled_cloudwatch_logs_exports = ["postgresql", "upgrade"]
+  enabled_cloudwatch_logs_exports = ["postgresql", "upgrade", "audit"] # Enable audit logs
+  performance_insights_enabled    = true # Enable performance insights for enhanced monitoring
+  performance_insights_retention_period = 7 # Retain performance insights for 7 days
   
   tags = merge(
     {
@@ -145,6 +114,7 @@ resource "aws_secretsmanager_secret" "db_credentials" {
   
   name        = "finflow/${var.environment}/db/${each.value.name}"
   description = "Credentials for FinFlow ${each.value.name} database"
+  kms_key_id  = var.kms_key_id # Use the centralized KMS key for secrets
   
   tags = local.common_tags
 }
@@ -163,3 +133,5 @@ resource "aws_secretsmanager_secret_version" "db_credentials" {
     url      = "postgresql://postgres:${random_password.db_password[each.key].result}@${aws_db_instance.main[each.key].address}:${aws_db_instance.main[each.key].port}/${each.value.name}"
   })
 }
+
+

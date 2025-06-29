@@ -28,14 +28,9 @@ output "oidc_provider_arn" {
   value       = aws_iam_openid_connect_provider.eks.arn
 }
 
-output "cluster_iam_role_name" {
-  description = "IAM role name of the EKS cluster"
-  value       = var.create_cluster_role ? aws_iam_role.cluster[0].name : "external-role"
-}
-
-output "cluster_iam_role_arn" {
-  description = "IAM role ARN of the EKS cluster"
-  value       = var.create_cluster_role ? aws_iam_role.cluster[0].arn : "external-role-arn"
+output "cluster_oidc_issuer_url" {
+  description = "The URL of the EKS cluster OIDC issuer"
+  value       = aws_eks_cluster.main.identity[0].oidc[0].issuer
 }
 
 output "node_groups" {
@@ -57,3 +52,5 @@ output "load_balancer_zone_id" {
 data "aws_region" "current" {}
 
 data "aws_elb_hosted_zone_id" "main" {}
+
+

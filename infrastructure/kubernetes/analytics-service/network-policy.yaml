@@ -1,0 +1,45 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: analytics-service-network-policy
+  namespace: finflow-prod
+spec:
+  podSelector:
+    matchLabels:
+      app: analytics-service
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: api-gateway # Allow traffic from API Gateway
+      ports:
+        - protocol: TCP
+          port: 3004 # Analytics service port
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: analytics-db # Allow traffic to analytics database
+      ports:
+        - protocol: TCP
+          port: 5432 # PostgreSQL default port
+    - to:
+        - podSelector:
+            matchLabels:
+              app: kafka # Allow traffic to Kafka
+      ports:
+        - protocol: TCP
+          port: 9092 # Kafka default port
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0 # Allow outbound traffic to external services (e.g., AWS services, external APIs)
+      ports:
+        - protocol: TCP
+          port: 443 # HTTPS
+        - protocol: TCP
+          port: 80 # HTTP
+
+

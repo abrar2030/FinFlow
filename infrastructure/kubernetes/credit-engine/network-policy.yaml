@@ -1,0 +1,38 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: credit-engine-network-policy
+  namespace: finflow-prod
+spec:
+  podSelector:
+    matchLabels:
+      app: credit-engine
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: api-gateway # Allow traffic from API Gateway
+      ports:
+        - protocol: TCP
+          port: 8000 # Credit engine port
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: kafka # Allow traffic to Kafka
+      ports:
+        - protocol: TCP
+          port: 9092 # Kafka default port
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0 # Allow outbound traffic to external services (e.g., AWS services, external APIs)
+      ports:
+        - protocol: TCP
+          port: 443 # HTTPS
+        - protocol: TCP
+          port: 80 # HTTP
+
+

@@ -39,16 +39,14 @@ variable "databases" {
   }))
 }
 
-variable "create_security_group" {
-  description = "Whether to create a security group for RDS"
-  type        = bool
-  default     = true
+variable "kms_key_id" {
+  description = "KMS Key ID for RDS encryption"
+  type        = string
 }
 
-variable "allowed_cidr_blocks" {
-  description = "List of CIDR blocks allowed to access the RDS instances"
-  type        = list(string)
-  default     = []
+variable "rds_security_group_id" {
+  description = "Security Group ID for RDS instances"
+  type        = string
 }
 
 variable "tags" {
@@ -56,3 +54,5 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+

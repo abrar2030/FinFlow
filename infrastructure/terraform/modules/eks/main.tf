@@ -1,12 +1,6 @@
 locals {
   cluster_name = var.cluster_name
   
-  # EKS cluster IAM role
-  cluster_iam_role_name = "${var.cluster_name}-cluster-role"
-  
-  # Node groups IAM role
-  node_groups_iam_role_name = "${var.cluster_name}-node-role"
-  
   # Common tags
   common_tags = merge(
     {
@@ -18,98 +12,27 @@ locals {
   )
 }
 
-# EKS Cluster IAM Role
-resource "aws_iam_role" "cluster" {
-  count = var.create_cluster_role ? 1 : 0
-  
-  name = local.cluster_iam_role_name
-  
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          Service = "eks.amazonaws.com"
-        }
-      }
-    ]
-  })
-  
-  tags = local.common_tags
-}
-
-# Attach required policies to cluster role
-resource "aws_iam_role_policy_attachment" "cluster_AmazonEKSClusterPolicy" {
-  count = var.create_cluster_role ? 1 : 0
-  
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
-  role       = aws_iam_role.cluster[0].name
-}
-
-resource "aws_iam_role_policy_attachment" "cluster_AmazonEKSVPCResourceController" {
-  count = var.create_cluster_role ? 1 : 0
-  
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController"
-  role       = aws_iam_role.cluster[0].name
-}
-
 # EKS Cluster
 resource "aws_eks_cluster" "main" {
   name     = var.cluster_name
-  role_arn = var.create_cluster_role ? aws_iam_role.cluster[0].arn : var.cluster_role_arn
+  role_arn = var.eks_cluster_role_arn
   version  = var.cluster_version
   
   vpc_config {
-    subnet_ids              = var.subnet_ids
-    endpoint_private_access = var.cluster_endpoint_private_access
-    endpoint_public_access  = var.cluster_endpoint_public_access
+    subnet_ids              = var.private_subnet_ids
+    endpoint_private_access = true # Enforce private access for API server
+    endpoint_public_access  = false # Disable public access for API server
   }
-  
-  # Ensure that IAM Role permissions are created before and deleted after EKS Cluster handling
-  depends_on = [
-    aws_iam_role_policy_attachment.cluster_AmazonEKSClusterPolicy,
-    aws_iam_role_policy_attachment.cluster_AmazonEKSVPCResourceController,
+
+  enabled_cluster_log_types = [
+    "api",
+    "audit",
+    "authenticator",
+    "controllerManager",
+    "scheduler"
   ]
-  
+
   tags = local.common_tags
-}
-
-# Node Group IAM Role
-resource "aws_iam_role" "node_group" {
-  name = local.node_groups_iam_role_name
-  
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          Service = "ec2.amazonaws.com"
-        }
-      }
-    ]
-  })
-  
-  tags = local.common_tags
-}
-
-# Attach required policies to node group role
-resource "aws_iam_role_policy_attachment" "node_AmazonEKSWorkerNodePolicy" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
-  role       = aws_iam_role.node_group.name
-}
-
-resource "aws_iam_role_policy_attachment" "node_AmazonEKS_CNI_Policy" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-  role       = aws_iam_role.node_group.name
-}
-
-resource "aws_iam_role_policy_attachment" "node_AmazonEC2ContainerRegistryReadOnly" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-  role       = aws_iam_role.node_group.name
 }
 
 # EKS Node Groups
@@ -118,8 +41,8 @@ resource "aws_eks_node_group" "main" {
   
   cluster_name    = aws_eks_cluster.main.name
   node_group_name = each.value.name
-  node_role_arn   = aws_iam_role.node_group.arn
-  subnet_ids      = var.subnet_ids
+  node_role_arn   = var.eks_node_group_role_arn
+  subnet_ids      = var.private_subnet_ids
   
   scaling_config {
     desired_size = each.value.desired_size
@@ -136,13 +59,6 @@ resource "aws_eks_node_group" "main" {
     },
     each.value.labels
   )
-  
-  # Ensure that IAM Role permissions are created before and deleted after EKS Node Group handling
-  depends_on = [
-    aws_iam_role_policy_attachment.node_AmazonEKSWorkerNodePolicy,
-    aws_iam_role_policy_attachment.node_AmazonEKS_CNI_Policy,
-    aws_iam_role_policy_attachment.node_AmazonEC2ContainerRegistryReadOnly,
-  ]
   
   tags = local.common_tags
 }
@@ -232,3 +148,5 @@ resource "helm_release" "lb_controller" {
     aws_iam_role_policy_attachment.lb_controller
   ]
 }
+
+
