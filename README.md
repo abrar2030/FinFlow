@@ -38,7 +38,6 @@ FinFlow is a comprehensive financial operations platform that streamlines paymen
   - [Generating Coverage Reports](#generating-coverage-reports)
   - [Test Structure](#test-structure)
 - [Troubleshooting](#troubleshooting)
-- [Feature Implementation Status](#feature-implementation-status)
 - [Contributing](#contributing)
 - [License](#license)
 
