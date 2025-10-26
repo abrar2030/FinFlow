@@ -1,6 +1,6 @@
 # FinFlow - Financial Operations & Workflow Platform
 
-[![CI/CD Status](https://img.shields.io/github/actions/workflow/status/abrar2030/FinFlow/ci-cd.yml?branch=main&label=CI/CD&logo=github)](https://github.com/abrar2030/FinFlow/actions)
+![CI/CD Status](https://img.shields.io/github/actions/workflow/status/abrar2030/Finflow/cicd.yml?branch=main&label=CI/CD&logo=github)
 [![Test Coverage](https://img.shields.io/badge/coverage-96%25-brightgreen)](https://github.com/abrar2030/FinFlow/tree/main/coverage)
 [![License](https://img.shields.io/github/license/abrar2030/FinFlow?style=flat-square)](LICENSE)
 
