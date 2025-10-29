@@ -271,12 +271,6 @@ If you encounter issues not covered above, please:
 
 ---
 
-## 🤝 Contributing
-
-We welcome contributions to FinFlow! Please see our [Contributing Guide](CONTRIBUTING.md) for detailed information on development workflow, code standards, and the review process.
-
----
-
 ## 📄 License
 
 FinFlow is licensed under the **MIT License**.
