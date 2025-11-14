@@ -14,13 +14,14 @@
 
 FinFlow is a comprehensive financial operations platform that streamlines payment processing, accounting, analytics, and credit management through a unified **microservices architecture**. The platform provides secure authentication, real-time transaction processing, and advanced financial analytics to help businesses manage their financial workflows efficiently.
 
-**Key Highlights:**
-*   **Payment Integration**: Multi-processor payment gateway integration (Stripe, PayPal, Square).
-*   **Core Accounting**: Robust double-entry accounting system with comprehensive financial reporting.
-*   **Analytics**: Interactive dashboards providing real-time financial metrics and KPIs.
-*   **Security**: Secure authentication with multi-factor and role-based access control (RBAC).
-*   **Architecture**: Highly scalable and resilient microservices design.
-*   **User Experience**: Modern cross-platform mobile frontend with comprehensive feature coverage.
+| Highlight | Description |
+| :--- | :--- |
+| **Payment Integration** | Multi-processor payment gateway integration (Stripe, PayPal, Square). |
+| **Core Accounting** | Robust double-entry accounting system with comprehensive financial reporting. |
+| **Analytics** | Interactive dashboards providing real-time financial metrics and KPIs. |
+| **Security** | Secure authentication with multi-factor and role-based access control (RBAC). |
+| **Architecture** | Highly scalable and resilient microservices design. |
+| **User Experience** | Modern cross-platform mobile frontend with comprehensive feature coverage. |
 
 ---
 
@@ -52,50 +53,68 @@ FinFlow's functionality is organized into five core service domains and a dedica
 ### Authentication & Authorization
 
 Security and access control are paramount:
-*   **Secure Authentication**: Features Multi-factor Authentication (MFA) with support for SMS and authenticator apps.
-*   **Access Control**: Implements **Role-based Access Control (RBAC)** for granular permissions across different user roles.
-*   **Integration**: Supports OAuth integration with third-party providers (Google, GitHub, Microsoft).
-*   **Session Management**: Utilizes secure, token-based authentication and session handling.
+
+| Feature | Description |
+| :--- | :--- |
+| **Secure Authentication** | Features Multi-factor Authentication (MFA) with support for SMS and authenticator apps. |
+| **Access Control** | Implements **Role-based Access Control (RBAC)** for granular permissions across different user roles. |
+| **Integration** | Supports OAuth integration with third-party providers (Google, GitHub, Microsoft). |
+| **Session Management** | Utilizes secure, token-based authentication and session handling. |
 
 ### Payment Processing
 
 A flexible and real-time payment infrastructure:
-*   **Multi-Processor Support**: Integrated support for major payment gateways, including **Stripe, PayPal, and Square**.
-*   **Real-time Processing**: Instant payment verification and processing for immediate transaction finality.
-*   **Automated Billing**: Features recurring payments for subscription-based services.
-*   **Wallet Integration**: Supports digital wallets like Apple Pay, Google Pay, and PayPal.
+
+| Feature | Description |
+| :--- | :--- |
+| **Multi-Processor Support** | Integrated support for major payment gateways, including **Stripe, PayPal, and Square**. |
+| **Real-time Processing** | Instant payment verification and processing for immediate transaction finality. |
+| **Automated Billing** | Features recurring payments for subscription-based services. |
+| **Wallet Integration** | Supports digital wallets like Apple Pay, Google Pay, and PayPal. |
 
 ### Accounting & Reconciliation
 
 The backbone for accurate financial record-keeping:
-*   **Core Accounting**: Robust **Double-Entry Accounting** engine.
-*   **Financial Reporting**: Ability to generate essential reports, including **balance sheets, income statements, and cash flow reports**.
-*   **Reconciliation**: Automated account reconciliation tools for discrepancy detection.
-*   **Trial Balance**: Automatic generation of trial balance reports for audit readiness.
+
+| Feature | Description |
+| :--- | :--- |
+| **Core Accounting** | Robust **Double-Entry Accounting** engine. |
+| **Financial Reporting** | Ability to generate essential reports, including **balance sheets, income statements, and cash flow reports**. |
+| **Reconciliation** | Automated account reconciliation tools for discrepancy detection. |
+| **Trial Balance** | Automatic generation of trial balance reports for audit readiness. |
 
 ### Analytics & Reporting
 
 Transforming raw data into actionable insights:
-*   **Interactive Dashboards**: Visual representation of financial metrics and Key Performance Indicators (KPIs).
-*   **Data Analysis**: Provides detailed breakdown and analysis of transaction data.
-*   **Visualization**: Historical data analysis with interactive trend charts.
-*   **Export Capabilities**: Supports data export in multiple formats (CSV, Excel, PDF).
+
+| Feature | Description |
+| :--- | :--- |
+| **Interactive Dashboards** | Visual representation of financial metrics and Key Performance Indicators (KPIs). |
+| **Data Analysis** | Provides detailed breakdown and analysis of transaction data. |
+| **Visualization** | Historical data analysis with interactive trend charts. |
+| **Export Capabilities** | Supports data export in multiple formats (CSV, Excel, PDF). |
 
 ### Credit Management
 
 Streamlining the lending process with data-driven decisions:
-*   **Credit Scoring**: Automated credit risk assessment for fast decisions.
-*   **Loan Processing**: Streamlined application and approval workflow.
-*   **Repayment Tracking**: Automated tracking and management of loan repayments.
-*   **Default Prediction**: Utilizes ML-based models for predicting default risk.
+
+| Feature | Description |
+| :--- | :--- |
+| **Credit Scoring** | Automated credit risk assessment for fast decisions. |
+| **Loan Processing** | Streamlined application and approval workflow. |
+| **Repayment Tracking** | Automated tracking and management of loan repayments. |
+| **Default Prediction** | Utilizes ML-based models for predicting default risk. |
 
 ### Mobile Frontend
 
 A modern, cross-platform experience for on-the-go management:
-*   **Cross-platform Support**: Built with **React Native** for a consistent experience on iOS and Android.
-*   **Offline Capabilities**: Core functionality remains available even without an internet connection.
-*   **Biometric Security**: Secure login using fingerprint and face recognition.
-*   **Real-time Notifications**: Push notifications for important financial events.
+
+| Feature | Description |
+| :--- | :--- |
+| **Cross-platform Support** | Built with **React Native** for a consistent experience on iOS and Android. |
+| **Offline Capabilities** | Core functionality remains available even without an internet connection. |
+| **Biometric Security** | Secure login using fingerprint and face recognition. |
+| **Real-time Notifications** | Push notifications for important financial events. |
 
 ---
 
@@ -115,18 +134,27 @@ The platform is composed of several independent backend services, each responsib
 | **Analytics Service** | Data analysis, metrics calculation, and visualization. |
 | **Credit Engine** | Credit scoring, loan application processing, and risk assessment. |
 
-These services are supported by a robust infrastructure layer:
-*   **API Gateway**: Handles request routing, load balancing, and composition.
-*   **Service Mesh**: Manages inter-service communication, security, and observability.
-*   **Message Broker**: Facilitates event-driven communication between services.
-*   **Monitoring Stack**: Provides logging, metrics, and alerting for operational visibility.
+### Infrastructure Components
+
+The services are supported by a robust infrastructure layer:
+
+| Component | Function |
+| :--- | :--- |
+| **API Gateway** | Handles request routing, load balancing, and composition. |
+| **Service Mesh** | Manages inter-service communication, security, and observability. |
+| **Message Broker** | Facilitates event-driven communication between services (RabbitMQ). |
+| **Event Stream** | Enables high-throughput data pipelines and real-time processing (Kafka). |
+| **Monitoring Stack** | Provides logging, metrics, and alerting for operational visibility (Prometheus, Grafana, ELK Stack). |
 
 ### Event-Driven Communication
 
 FinFlow utilizes an event-driven architecture to ensure loose coupling and real-time data flow. Key event types include:
-1.  **Payment Events**: Trigger accounting entries, analytics updates, and credit assessments.
-2.  **User Events**: Manage authentication state and authorization updates across services.
-3.  **System Events**: Handle infrastructure scaling and monitoring alerts.
+
+| Event Type | Purpose |
+| :--- | :--- |
+| **Payment Events** | Trigger accounting entries, analytics updates, and credit assessments. |
+| **User Events** | Manage authentication state and authorization updates across services. |
+| **System Events** | Handle infrastructure scaling and monitoring alerts. |
 
 ---
 
@@ -150,11 +178,15 @@ The FinFlow platform is built using a modern, performant, and well-supported tec
 ### Prerequisites
 
 Before setting up FinFlow, ensure you have the following installed:
-*   **Node.js** (v16+)
-*   **Docker** and Docker Compose
-*   **PostgreSQL** (v13+)
-*   **MongoDB** (v5+)
-*   **Redis** (v6+)
+
+| Prerequisite | Version |
+| :--- | :--- |
+| **Node.js** | v16+ |
+| **Docker** | Latest |
+| **Docker Compose** | Latest |
+| **PostgreSQL** | v13+ |
+| **MongoDB** | v5+ |
+| **Redis** | v6+ |
 
 ### Quick Setup
 
@@ -167,9 +199,12 @@ The recommended way to set up the development environment is by using the provid
 | **3. Start Application** | `docker-compose up` | Starts all backend services, databases, and the API Gateway. |
 
 **Access Points:**
-*   **Frontend**: `http://localhost:3000`
-*   **API Gateway**: `http://localhost:8080`
-*   **Swagger Documentation**: `http://localhost:8080/api-docs`
+
+| Component | Endpoint |
+| :--- | :--- |
+| **Web Frontend** | `http://localhost:3000` |
+| **API Gateway** | `http://localhost:8080` |
+| **Swagger Documentation** | `http://localhost:8080/api-docs` |
 
 ### Manual Setup
 
@@ -261,13 +296,6 @@ A combined coverage report for the entire project can be generated by running th
 | **Authentication Issues** | Ensure `JWT_SECRET` is set, check token expiration, and clear browser cookies/local storage. |
 | **Docker Compose Issues** | Check if ports are already in use (`netstat -tulpn`), ensure Docker is up to date, or try rebuilding containers (`docker-compose build --no-cache`). |
 | **Mobile App Connection** | Verify API endpoint configuration in the mobile app and ensure backend services are running and accessible. |
-
-### Getting Help
-
-If you encounter issues not covered above, please:
-1.  Check the GitHub Issues page for similar problems.
-2.  Join the community Discord server for real-time support.
-3.  Open a new issue with detailed reproduction steps and logs.
 
 ---
 
