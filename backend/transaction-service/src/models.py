@@ -1,9 +1,10 @@
-from pydantic import BaseModel, Field, validator, root_validator
-from typing import List, Dict, Any, Optional, Union
-from datetime import datetime
-from enum import Enum
 import re
 import uuid
+from datetime import datetime
+from enum import Enum
+from typing import Any, Dict, List, Optional, Union
+
+from pydantic import BaseModel, Field, root_validator, validator
 
 
 class TransactionType(str, Enum):
@@ -44,42 +45,65 @@ class ValidationError(BaseModel):
 
 
 class TransactionRequest(BaseModel):
-    transaction_id: Optional[str] = Field(None, description="Unique transaction identifier")
+    transaction_id: Optional[str] = Field(
+        None, description="Unique transaction identifier"
+    )
     source_account_id: str = Field(..., description="Source account identifier")
-    destination_account_id: Optional[str] = Field(None, description="Destination account identifier")
+    destination_account_id: Optional[str] = Field(
+        None, description="Destination account identifier"
+    )
     amount: float = Field(..., gt=0, description="Transaction amount")
-    currency: str = Field(..., min_length=3, max_length=3, description="Currency code (ISO 4217)")
+    currency: str = Field(
+        ..., min_length=3, max_length=3, description="Currency code (ISO 4217)"
+    )
     transaction_type: TransactionType
-    reference: Optional[str] = Field(None, max_length=255, description="Transaction reference")
-    description: Optional[str] = Field(None, max_length=500, description="Transaction description")
-    metadata: Optional[Dict[str, Any]] = Field(None, description="Additional transaction metadata")
-    
-    @validator('transaction_id')
+    reference: Optional[str] = Field(
+        None, max_length=255, description="Transaction reference"
+    )
+    description: Optional[str] = Field(
+        None, max_length=500, description="Transaction description"
+    )
+    metadata: Optional[Dict[str, Any]] = Field(
+        None, description="Additional transaction metadata"
+    )
+
+    @validator("transaction_id")
     def validate_transaction_id(cls, v):
         if v is None:
             return str(uuid.uuid4())
-        if not re.match(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$', v):
+        if not re.match(
+            r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", v
+        ):
             raise ValueError("Invalid transaction ID format. Must be a valid UUID.")
         return v
-    
-    @validator('currency')
+
+    @validator("currency")
     def validate_currency(cls, v):
-        if not re.match(r'^[A-Z]{3}$', v):
-            raise ValueError("Currency must be a valid 3-letter ISO 4217 code (e.g., USD, EUR, GBP)")
+        if not re.match(r"^[A-Z]{3}$", v):
+            raise ValueError(
+                "Currency must be a valid 3-letter ISO 4217 code (e.g., USD, EUR, GBP)"
+            )
         return v
-    
+
     @root_validator
     def validate_accounts(cls, values):
-        transaction_type = values.get('transaction_type')
-        source_account = values.get('source_account_id')
-        destination_account = values.get('destination_account_id')
-        
+        transaction_type = values.get("transaction_type")
+        source_account = values.get("source_account_id")
+        destination_account = values.get("destination_account_id")
+
         if transaction_type == TransactionType.TRANSFER and not destination_account:
-            raise ValueError("Destination account is required for transfer transactions")
-        
-        if transaction_type == TransactionType.DEPOSIT and source_account == destination_account:
-            raise ValueError("Source and destination accounts cannot be the same for deposits")
-        
+            raise ValueError(
+                "Destination account is required for transfer transactions"
+            )
+
+        if (
+            transaction_type == TransactionType.DEPOSIT
+            and source_account == destination_account
+        ):
+            raise ValueError(
+                "Source and destination accounts cannot be the same for deposits"
+            )
+
         return values
 
 
@@ -117,13 +141,15 @@ class TransactionBatch(BaseModel):
     batch_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     transactions: List[TransactionRequest]
     created_at: datetime = Field(default_factory=datetime.now)
-    
-    @validator('transactions')
+
+    @validator("transactions")
     def validate_transactions(cls, v):
         if not v:
             raise ValueError("Transaction batch cannot be empty")
         if len(v) > 1000:
-            raise ValueError("Transaction batch cannot contain more than 1000 transactions")
+            raise ValueError(
+                "Transaction batch cannot contain more than 1000 transactions"
+            )
         return v
 
 
