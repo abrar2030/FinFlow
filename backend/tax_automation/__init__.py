@@ -1,32 +1,32 @@
 # Tax Automation Module Initialization
 
-"""
-Tax Automation Module for Finflow
+#""""""
+## Tax Automation Module for Finflow
+#
+## This module provides comprehensive tax calculation and automation capabilities
+## for the Finflow financial platform, including:
+#
+## - Advanced tax calculation engine
+## - Tax rule management system
+## - International compliance features
+## - RESTful API for integration
+#
+## Author: Manus AI
+## Version: 1.0.0
+#""""""
 
-This module provides comprehensive tax calculation and automation capabilities
-for the Finflow financial platform, including:
+# from .tax_api_service import app as tax_api_app
+# from .tax_api_service import init_tax_system
+# from .tax_calculation_engine import (CalculationMethod, TaxCalculationEngine,
+#                                      TaxCalculationResult, TaxProfile, TaxRule,
+#                                      TaxRuleEngine, TaxType, Transaction)
+# from .tax_rule_management import (SAMPLE_TAX_RULES, TaxRuleDatabase,
+#                                   TaxRuleManager)
 
-- Advanced tax calculation engine
-- Tax rule management system
-- International compliance features
-- RESTful API for integration
+# __version__ = "1.0.0"
+# __author__ = "Manus AI"
 
-Author: Manus AI
-Version: 1.0.0
-"""
-
-from .tax_api_service import app as tax_api_app
-from .tax_api_service import init_tax_system
-from .tax_calculation_engine import (CalculationMethod, TaxCalculationEngine,
-                                     TaxCalculationResult, TaxProfile, TaxRule,
-                                     TaxRuleEngine, TaxType, Transaction)
-from .tax_rule_management import (SAMPLE_TAX_RULES, TaxRuleDatabase,
-                                  TaxRuleManager)
-
-__version__ = "1.0.0"
-__author__ = "Manus AI"
-
-__all__ = [
+# __all__ = [
     "TaxCalculationEngine",
     "TaxRule",
     "TaxProfile",
