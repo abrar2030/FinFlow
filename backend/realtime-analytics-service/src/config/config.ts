@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import logger from '../../common/logger';
 
 dotenv.config();
 
@@ -180,9 +181,8 @@ const requiredEnvVars = [
 const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
 
 if (missingEnvVars.length > 0) {
-  console.error('Missing required environment variables:', missingEnvVars);
+  logger.error('Missing required environment variables:', missingEnvVars);
   process.exit(1);
 }
 
 export default config;
-

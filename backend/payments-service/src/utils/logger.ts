@@ -1,21 +1,22 @@
-/**
- * Logger utility for application-wide logging
- */
+import commonLogger from '../../common/logger';
 
+/**
+ * Logger utility for application-wide logging, wrapping the common logger.
+ */
 export const logger = {
   info: (message: string, meta?: Record<string, any>) => {
-    console.log(`[INFO] ${message}`, meta ? JSON.stringify(meta) : '');
+    commonLogger.info(message, meta);
   },
   
   warn: (message: string, meta?: Record<string, any>) => {
-    console.warn(`[WARN] ${message}`, meta ? JSON.stringify(meta) : '');
+    commonLogger.warn(message, meta);
   },
   
   error: (message: string, meta?: Record<string, any>) => {
-    console.error(`[ERROR] ${message}`, meta ? JSON.stringify(meta) : '');
+    commonLogger.error(message, meta);
   },
   
   debug: (message: string, meta?: Record<string, any>) => {
-    console.debug(`[DEBUG] ${message}`, meta ? JSON.stringify(meta) : '');
+    commonLogger.debug(message, meta);
   }
 };

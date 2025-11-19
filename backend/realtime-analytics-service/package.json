@@ -46,7 +46,7 @@
     "lodash": "^4.17.21",
     "bull": "^4.11.3",
     "node-cron": "^3.0.2",
-    "prometheus-client": "^14.2.0",
+    "prometheus-client": "^0.1.1",
     "swagger-ui-express": "^5.0.0",
     "swagger-jsdoc": "^6.2.8",
     "@types/node": "^20.4.5"

@@ -1,4 +1,6 @@
 import { User } from '@prisma/client';
+import { BadRequestError, UnauthorizedError, NotFoundError, OAuthError } from '../../../common/errors';
+import config from '../../../common/config';
 import jwt from 'jsonwebtoken';
 import userService from './user.service';
 import { comparePassword } from '../utils/password.utils';
@@ -13,7 +15,7 @@ import {
 } from '../types/auth.types';
 import { UserCreateInput } from '../types/user.types';
 import { hashPassword } from '../utils/password.utils';
-import { logger } from '../utils/logger';
+import logger from '../../../common/logger';
 import { sendMessage } from '../config/kafka';
 import axios from 'axios';
 import crypto from 'crypto';
@@ -79,9 +81,7 @@ class AuthService {
       // Find user by email
       const user = await userService.findByEmail(loginDto.email);
       if (!user) {
-        const error = new Error('Invalid credentials');
-        error.name = 'UnauthorizedError';
-        throw error;
+        throw new UnauthorizedError('Invalid credentials');
       }
 
       // Verify password
@@ -99,9 +99,7 @@ class AuthService {
           }
         });
         
-        const error = new Error('Invalid credentials');
-        error.name = 'UnauthorizedError';
-        throw error;
+        throw new UnauthorizedError('Invalid credentials');
       }
 
       // Generate tokens
@@ -144,9 +142,7 @@ class AuthService {
       const profile = await this.getOAuthUserProfile(provider, code, redirectUri);
       
       if (!profile || !profile.email) {
-        const error = new Error('Failed to get user profile from OAuth provider');
-        error.name = 'OAuthError';
-        throw error;
+        throw new OAuthError('Failed to get user profile from OAuth provider');
       }
       
       // Check if user exists
@@ -214,7 +210,7 @@ class AuthService {
       // Verify refresh token
       const decoded = jwt.verify(
         refreshToken,
-        process.env.JWT_SECRET || 'default_jwt_secret'
+        config.jwt.secret
       ) as TokenPayload;
 
       // Find user by ID
@@ -231,9 +227,7 @@ class AuthService {
           }
         });
         
-        const error = new Error('Invalid refresh token');
-        error.name = 'UnauthorizedError';
-        throw error;
+        throw new UnauthorizedError('Invalid refresh token');
       }
 
       // Generate new access token
@@ -255,9 +249,7 @@ class AuthService {
       logger.error(`Error refreshing token: ${error}`);
       
       if (error instanceof jwt.JsonWebTokenError) {
-        const customError = new Error('Invalid refresh token');
-        customError.name = 'UnauthorizedError';
-        throw customError;
+        throw new UnauthorizedError('Invalid refresh token');
       }
       
       throw error;
@@ -290,9 +282,7 @@ class AuthService {
       // Find user
       const user = await userService.findById(userId);
       if (!user) {
-        const error = new Error('User not found');
-        error.name = 'NotFoundError';
-        throw error;
+        throw new NotFoundError('User not found');
       }
       
       // Verify current password
@@ -310,9 +300,7 @@ class AuthService {
           }
         });
         
-        const error = new Error('Current password is incorrect');
-        error.name = 'UnauthorizedError';
-        throw error;
+        throw new UnauthorizedError('Current password is incorrect');
       }
       
       // Validate new password strength
@@ -345,8 +333,8 @@ class AuthService {
   private generateAccessToken(userId: string, role: string): string {
     return jwt.sign(
       { sub: userId, role },
-      process.env.JWT_SECRET || 'default_jwt_secret',
-      { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
+      config.jwt.secret,
+      { expiresIn: config.jwt.expiresIn }
     );
   }
 
@@ -354,8 +342,8 @@ class AuthService {
   private generateRefreshToken(userId: string, role: string): string {
     return jwt.sign(
       { sub: userId, role },
-      process.env.JWT_SECRET || 'default_jwt_secret',
-      { expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d' }
+      config.jwt.secret,
+      { expiresIn: config.jwt.refreshExpiresIn }
     );
   }
   
@@ -363,27 +351,27 @@ class AuthService {
   private validatePasswordStrength(password: string): void {
     // Password must be at least 8 characters long
     if (password.length < 8) {
-      throw new Error('Password must be at least 8 characters long');
+      throw new BadRequestError('Password must be at least 8 characters long');
     }
     
     // Password must contain at least one uppercase letter
     if (!/[A-Z]/.test(password)) {
-      throw new Error('Password must contain at least one uppercase letter');
+      throw new BadRequestError('Password must contain at least one uppercase letter');
     }
     
     // Password must contain at least one lowercase letter
     if (!/[a-z]/.test(password)) {
-      throw new Error('Password must contain at least one lowercase letter');
+      throw new BadRequestError('Password must contain at least one lowercase letter');
     }
     
     // Password must contain at least one number
     if (!/[0-9]/.test(password)) {
-      throw new Error('Password must contain at least one number');
+      throw new BadRequestError('Password must contain at least one number');
     }
     
     // Password must contain at least one special character
     if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
-      throw new Error('Password must contain at least one special character');
+      throw new BadRequestError('Password must contain at least one special character');
     }
   }
   
@@ -402,7 +390,7 @@ class AuthService {
         case OAuthProviderType.MICROSOFT:
           return await this.getMicrosoftUserProfile(code, redirectUri);
         default:
-          throw new Error(`Unsupported OAuth provider: ${provider}`);
+          throw new BadRequestError(`Unsupported OAuth provider: ${provider}`);
       }
     } catch (error) {
       logger.error(`Error getting OAuth user profile: ${error}`);

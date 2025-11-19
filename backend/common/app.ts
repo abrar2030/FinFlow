@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import logger from './logger';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -7,7 +8,7 @@ import routes from './routes';
 import { initializeDatabase } from './config/database';
 import { initializeKafka } from './config/kafka';
 import { initializePassport } from './config/passport';
-import errorMiddleware from './middlewares/error.middleware';
+import errorMiddleware from './error.middleware';
 import loggerMiddleware from './middlewares/logger.middleware';
 
 // Load environment variables
@@ -47,9 +48,9 @@ const initializeApp = async () => {
     // Connect to Kafka
     await initializeKafka();
     
-    console.log('All services initialized successfully');
+    logger.info('All services initialized successfully');
   } catch (error) {
-    console.error('Failed to initialize services:', error);
+    logger.error('Failed to initialize services:', error);
     process.exit(1);
   }
 };

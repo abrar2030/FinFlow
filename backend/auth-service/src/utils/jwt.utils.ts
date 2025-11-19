@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import config from '../../../common/config';
 import jwt from 'jsonwebtoken';
 import { TokenPayload } from '../types/auth.types';
 
@@ -17,11 +18,11 @@ export const comparePassword = async (password: string, hash: string): Promise<b
 export const generateToken = (
   userId: string,
   role: string,
-  expiresIn: string = process.env.JWT_EXPIRES_IN || '1h'
+  expiresIn: string = config.jwt.expiresIn
 ): string => {
   return jwt.sign(
     { sub: userId, role },
-    process.env.JWT_SECRET || 'default_jwt_secret',
+    config.jwt.secret,
     { expiresIn }
   );
 };
@@ -30,7 +31,7 @@ export const generateToken = (
 export const verifyToken = (token: string): TokenPayload => {
   return jwt.verify(
     token,
-    process.env.JWT_SECRET || 'default_jwt_secret'
+    config.jwt.secret
   ) as TokenPayload;
 };
 

@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import logger from './logger';
 import { Kafka, Producer, Consumer, KafkaConfig } from 'kafkajs';
 
 // Load environment variables
@@ -29,12 +30,12 @@ const consumer: Consumer = kafka.consumer({
 export const initializeKafka = async (): Promise<void> => {
   try {
     await producer.connect();
-    console.log('Kafka producer connected');
+    logger.info('Kafka producer connected');
     
     await consumer.connect();
-    console.log('Kafka consumer connected');
+    logger.info('Kafka consumer connected');
   } catch (error) {
-    console.error('Failed to connect to Kafka:', error);
+    logger.error('Failed to connect to Kafka:', error);
     throw error;
   }
 };
@@ -43,12 +44,12 @@ export const initializeKafka = async (): Promise<void> => {
 export const disconnectKafka = async (): Promise<void> => {
   try {
     await producer.disconnect();
-    console.log('Kafka producer disconnected');
+    logger.info('Kafka producer disconnected');
     
     await consumer.disconnect();
-    console.log('Kafka consumer disconnected');
+    logger.info('Kafka consumer disconnected');
   } catch (error) {
-    console.error('Failed to disconnect from Kafka:', error);
+    logger.error('Failed to disconnect from Kafka:', error);},{find:
     throw error;
   }
 };
@@ -65,9 +66,9 @@ export const sendMessage = async (topic: string, message: any): Promise<void> =>
         }
       ]
     });
-    console.log(`Message sent to topic ${topic}`);
+    logger.info(`Message sent to topic ${topic}`);
   } catch (error) {
-    console.error(`Failed to send message to topic ${topic}:`, error);
+    logger.error(`Failed to send message to topic ${topic}:`, error);
     throw error;
   }
 };
@@ -88,15 +89,15 @@ export const subscribeToTopic = async (
             const parsedValue = JSON.parse(value);
             await callback(parsedValue);
           } catch (error) {
-            console.error(`Failed to process message from topic ${topic}:`, error);
+            logger.error(`Failed to process message from topic ${topic}:`, error);
           }
         }
       }
     });
     
-    console.log(`Subscribed to topic ${topic}`);
+    logger.info(`Subscribed to topic ${topic}`);
   } catch (error) {
-    console.error(`Failed to subscribe to topic ${topic}:`, error);
+    logger.error(`Failed to subscribe to topic ${topic}:`, error);
     throw error;
   }
 };

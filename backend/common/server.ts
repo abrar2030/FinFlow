@@ -1,4 +1,5 @@
 import app from './app';
+import logger from './logger';
 import dotenv from 'dotenv';
 import { disconnectDatabase } from './config/database';
 import { disconnectKafka } from './config/kafka';
@@ -11,16 +12,16 @@ const PORT = process.env.PORT || 4000;
 
 // Start server
 const server = app.listen(PORT, () => {
-  console.log(`Auth service running on port ${PORT}`);
+  logger.info(`Auth service running on port ${PORT}`);
 });
 
 // Handle graceful shutdown
 const gracefulShutdown = async () => {
-  console.log('Shutting down auth service...');
+  logger.info('Shutting down auth service...');
   
   // Close server
   server.close(() => {
-    console.log('HTTP server closed');
+    logger.info('HTTP server closed');
   });
   
   try {
@@ -30,10 +31,10 @@ const gracefulShutdown = async () => {
     // Disconnect from Kafka
     await disconnectKafka();
     
-    console.log('All connections closed successfully');
+    logger.info('All connections closed successfully');
     process.exit(0);
   } catch (error) {
-    console.error('Error during shutdown:', error);
+    logger.error('Error during shutdown:', error);
     process.exit(1);
   }
 };

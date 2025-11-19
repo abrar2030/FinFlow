@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import config from '../../../common/config';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import userModel from '../models/user.model';
@@ -6,7 +7,24 @@ import { LoginDTO, RegisterDTO, RefreshTokenDTO, TokenPayload } from '../types/a
 import { sendMessage } from '../config/kafka';
 
 class AuthController {
-  // Register a new user
+  /**
+   * @swagger
+   * /auth/register:
+   *   post:
+   *     summary: Register a new user
+   *     tags: [Auth]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/RegisterDTO'
+   *     responses:
+   *       201:
+   *         description: User registered successfully
+   *       409:
+   *         description: User already exists
+   */
   async register(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { email, password }: RegisterDTO = req.body;
@@ -58,7 +76,24 @@ class AuthController {
     }
   }
 
-  // Login user
+  /**
+   * @swagger
+   * /auth/login:
+   *   post:
+   *     summary: Login a user
+   *     tags: [Auth]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/LoginDTO'
+   *     responses:
+   *       200:
+   *         description: User logged in successfully
+   *       401:
+   *         description: Invalid credentials
+   */
   async login(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { email, password }: LoginDTO = req.body;
@@ -99,7 +134,20 @@ class AuthController {
     }
   }
 
-  // Get current user
+  /**
+   * @swagger
+   * /auth/me:
+   *   get:
+   *     summary: Get current authenticated user
+   *     tags: [Auth]
+   *     security:
+   *       - bearerAuth: []
+   *     responses:
+   *       200:
+   *         description: Current user data
+   *       401:
+   *         description: Unauthorized
+   */
   async me(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       // User is attached to request by auth middleware
@@ -120,7 +168,26 @@ class AuthController {
     }
   }
 
-  // Refresh access token
+  /**
+   * @swagger
+   * /auth/refresh:
+   *   post:
+   *     summary: Refresh access token using refresh token
+   *     tags: [Auth]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/RefreshTokenDTO'
+   *     responses:
+   *       200:
+   *         description: New access token generated
+   *       400:
+   *         description: Refresh token is required
+   *       401:
+   *         description: Invalid refresh token
+   */
   async refreshToken(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { refreshToken }: RefreshTokenDTO = req.body;
@@ -133,7 +200,7 @@ class AuthController {
       // Verify refresh token
       const decoded = jwt.verify(
         refreshToken,
-        process.env.JWT_SECRET || 'default_jwt_secret'
+        config.jwt.secret
       ) as TokenPayload;
 
       // Find user by ID
@@ -157,7 +224,20 @@ class AuthController {
     }
   }
 
-  // Logout user
+  /**
+   * @swagger
+   * /auth/logout:
+   *   post:
+   *     summary: Logout user and invalidate refresh token
+   *     tags: [Auth]
+   *     security:
+   *       - bearerAuth: []
+   *     responses:
+   *       200:
+   *         description: Logged out successfully
+   *       401:
+   *         description: Unauthorized
+   */
   async logout(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       // User is attached to request by auth middleware
@@ -177,21 +257,31 @@ class AuthController {
     }
   }
 
-  // Helper method to generate access token
+  /**
+   * Helper method to generate an access token.
+   * @param userId The ID of the user.
+   * @param role The role of the user.
+   * @returns The generated JWT access token.
+   */
   private generateAccessToken(userId: string, role: string): string {
     return jwt.sign(
       { sub: userId, role },
-      process.env.JWT_SECRET || 'default_jwt_secret',
-      { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
+      config.jwt.secret,
+      { expiresIn: config.jwt.expiresIn }
     );
   }
 
-  // Helper method to generate refresh token
+  /**
+   * Helper method to generate a refresh token.
+   * @param userId The ID of the user.
+   * @param role The role of the user.
+   * @returns The generated JWT refresh token.
+   */
   private generateRefreshToken(userId: string, role: string): string {
     return jwt.sign(
       { sub: userId, role },
-      process.env.JWT_SECRET || 'default_jwt_secret',
-      { expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d' }
+      config.jwt.secret,
+      { expiresIn: config.jwt.refreshExpiresIn }
     );
   }
 }

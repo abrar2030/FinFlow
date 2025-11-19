@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import config from './config';
 import passport from 'passport';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import { Strategy as OAuth2Strategy } from 'passport-oauth2';
@@ -13,7 +14,7 @@ const prisma = new PrismaClient();
 // Configure JWT Strategy
 const jwtOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: process.env.JWT_SECRET || 'default_jwt_secret'
+  secretOrKey: config.jwt.secret
 };
 
 // JWT Strategy for authentication

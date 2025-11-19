@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import logger from './logger';
 import { PrismaClient } from '@prisma/client';
 
 // Load environment variables
@@ -12,9 +13,9 @@ export const initializeDatabase = async (): Promise<void> => {
   try {
     // Test connection by querying the database
     await prisma.$connect();
-    console.log('Database connection established');
+    logger.info('Database connection established');
   } catch (error) {
-    console.error('Failed to connect to database:', error);
+    logger.error('Failed to connect to database:', error);
     throw error;
   }
 };
@@ -23,9 +24,9 @@ export const initializeDatabase = async (): Promise<void> => {
 export const disconnectDatabase = async (): Promise<void> => {
   try {
     await prisma.$disconnect();
-    console.log('Database connection closed');
+    logger.info('Database connection closed');
   } catch (error) {
-    console.error('Failed to disconnect from database:', error);
+    logger.error('Failed to disconnect from database:', error);
     throw error;
   }
 };
