@@ -1,9 +1,9 @@
-import { PrismaClient } from '@prisma/client';
-import { 
-  LedgerEntry, 
-  LedgerEntryCreateInput, 
-  LedgerEntryUpdateInput 
-} from '../types/ledger-entry.types';
+import { PrismaClient } from "@prisma/client";
+import {
+  LedgerEntry,
+  LedgerEntryCreateInput,
+  LedgerEntryUpdateInput,
+} from "../types/ledger-entry.types";
 
 class LedgerEntryModel {
   private prisma: PrismaClient;
@@ -33,7 +33,7 @@ class LedgerEntryModel {
       include: {
         journalEntry: true,
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
   }
 
@@ -77,11 +77,14 @@ class LedgerEntryModel {
         account: true,
         journalEntry: true,
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
   }
 
-  async findByDateRange(startDate: Date, endDate: Date): Promise<LedgerEntry[]> {
+  async findByDateRange(
+    startDate: Date,
+    endDate: Date,
+  ): Promise<LedgerEntry[]> {
     return this.prisma.ledgerEntry.findMany({
       where: {
         journalEntry: {
@@ -95,7 +98,7 @@ class LedgerEntryModel {
         account: true,
         journalEntry: true,
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
   }
 }

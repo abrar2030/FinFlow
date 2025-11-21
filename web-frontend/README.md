@@ -45,7 +45,7 @@ The modernized frontend uses the following technologies:
 
 ## Pages Implemented
 
-1. **Dashboard**: 
+1. **Dashboard**:
    - Interactive charts for revenue, expenses, and cash flow
    - KPI cards with key metrics
    - Financial metrics overview

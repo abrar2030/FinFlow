@@ -1,9 +1,9 @@
-import { configureStore } from '@reduxjs/toolkit';
-import authReducer from './authSlice';
-import invoiceReducer from './invoiceSlice';
-import paymentReducer from './paymentSlice';
-import transactionReducer from './transactionSlice';
-import uiReducer from './uiSlice';
+import { configureStore } from "@reduxjs/toolkit";
+import authReducer from "./authSlice";
+import invoiceReducer from "./invoiceSlice";
+import paymentReducer from "./paymentSlice";
+import transactionReducer from "./transactionSlice";
+import uiReducer from "./uiSlice";
 
 export const store = configureStore({
   reducer: {

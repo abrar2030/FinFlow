@@ -17,7 +17,7 @@ export class Logger {
   private createLogger(): WinstonLogger {
     const logFormat = format.combine(
       format.timestamp({
-        format: 'YYYY-MM-DD HH:mm:ss.SSS'
+        format: 'YYYY-MM-DD HH:mm:ss.SSS',
       }),
       format.errors({ stack: true }),
       format.json(),
@@ -27,7 +27,7 @@ export class Logger {
           level: level.toUpperCase(),
           context: context || this.context,
           message,
-          ...meta
+          ...meta,
         };
 
         // Add correlation ID if available
@@ -50,15 +50,12 @@ export class Logger {
       defaultMeta: {
         service: 'finflow-kafka',
         version: process.env.APP_VERSION || '1.0.0',
-        environment: process.env.NODE_ENV || 'development'
+        environment: process.env.NODE_ENV || 'development',
       },
       transports: [
         // Console transport for development
         new transports.Console({
-          format: format.combine(
-            format.colorize(),
-            format.simple()
-          )
+          format: format.combine(format.colorize(), format.simple()),
         }),
 
         // Application logs
@@ -67,7 +64,7 @@ export class Logger {
           datePattern: 'YYYY-MM-DD',
           maxSize: '100m',
           maxFiles: '30d',
-          level: 'info'
+          level: 'info',
         }),
 
         // Error logs
@@ -76,7 +73,7 @@ export class Logger {
           datePattern: 'YYYY-MM-DD',
           maxSize: '100m',
           maxFiles: '90d',
-          level: 'error'
+          level: 'error',
         }),
 
         // Audit logs for compliance
@@ -86,10 +83,7 @@ export class Logger {
           maxSize: '100m',
           maxFiles: '2555d', // 7 years retention for financial compliance
           level: 'info',
-          format: format.combine(
-            format.timestamp(),
-            format.json()
-          )
+          format: format.combine(format.timestamp(), format.json()),
         }),
 
         // Security logs
@@ -98,8 +92,8 @@ export class Logger {
           datePattern: 'YYYY-MM-DD',
           maxSize: '100m',
           maxFiles: '2555d', // 7 years retention
-          level: 'warn'
-        })
+          level: 'warn',
+        }),
       ],
 
       // Handle uncaught exceptions and rejections
@@ -108,8 +102,8 @@ export class Logger {
           filename: '/var/log/kafka/exceptions-%DATE%.log',
           datePattern: 'YYYY-MM-DD',
           maxSize: '100m',
-          maxFiles: '90d'
-        })
+          maxFiles: '90d',
+        }),
       ],
 
       rejectionHandlers: [
@@ -117,9 +111,9 @@ export class Logger {
           filename: '/var/log/kafka/rejections-%DATE%.log',
           datePattern: 'YYYY-MM-DD',
           maxSize: '100m',
-          maxFiles: '90d'
-        })
-      ]
+          maxFiles: '90d',
+        }),
+      ],
     });
 
     return logger;
@@ -143,18 +137,21 @@ export class Logger {
    * Log error level message
    */
   public error(message: string, error?: Error | any, meta?: any): void {
-    const errorMeta = error instanceof Error ? {
-      error: {
-        name: error.name,
-        message: error.message,
-        stack: error.stack
-      }
-    } : { error };
+    const errorMeta =
+      error instanceof Error
+        ? {
+            error: {
+              name: error.name,
+              message: error.message,
+              stack: error.stack,
+            },
+          }
+        : { error };
 
-    this.logger.error(message, { 
-      context: this.context, 
-      ...errorMeta, 
-      ...meta 
+    this.logger.error(message, {
+      context: this.context,
+      ...errorMeta,
+      ...meta,
     });
   }
 
@@ -180,7 +177,7 @@ export class Logger {
       details: event.details,
       sourceIp: event.sourceIp,
       userAgent: event.userAgent,
-      sessionId: event.sessionId
+      sessionId: event.sessionId,
     });
   }
 
@@ -196,7 +193,7 @@ export class Logger {
       sourceIp: event.sourceIp,
       userId: event.userId,
       timestamp: event.timestamp || new Date().toISOString(),
-      details: event.details
+      details: event.details,
     });
   }
 
@@ -210,7 +207,7 @@ export class Logger {
       value: metric.value,
       unit: metric.unit,
       timestamp: metric.timestamp || new Date().toISOString(),
-      tags: metric.tags
+      tags: metric.tags,
     });
   }
 
@@ -225,7 +222,7 @@ export class Logger {
       entityId: event.entityId,
       action: event.action,
       timestamp: event.timestamp || new Date().toISOString(),
-      metadata: event.metadata
+      metadata: event.metadata,
     });
   }
 
@@ -300,4 +297,3 @@ export interface BusinessEvent {
   timestamp?: string;
   metadata?: any;
 }
-

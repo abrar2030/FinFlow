@@ -4,7 +4,7 @@
 export interface User {
   id: string;
   email: string;
-  role: 'USER' | 'ADMIN';
+  role: "USER" | "ADMIN";
 }
 
 export interface AuthState {
@@ -22,7 +22,7 @@ export interface Invoice {
   client: string;
   amount: number;
   dueDate: string;
-  status: 'PENDING' | 'PAID' | 'OVERDUE' | 'CANCELLED';
+  status: "PENDING" | "PAID" | "OVERDUE" | "CANCELLED";
   createdAt: string;
   updatedAt: string;
 }
@@ -40,7 +40,7 @@ export interface Payment {
   userId: string;
   amount: number;
   currency: string;
-  status: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED' | 'REFUNDED';
+  status: "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED" | "REFUNDED";
   processorId?: string;
   processorData?: any;
   metadata?: any;
@@ -84,7 +84,7 @@ export interface UIState {
 export interface Notification {
   id: string;
   message: string;
-  type: 'success' | 'error' | 'info' | 'warning';
+  type: "success" | "error" | "info" | "warning";
   read: boolean;
   createdAt: string;
 }
@@ -97,7 +97,7 @@ export interface ForecastData {
 
 export interface CashFlowForecast {
   userId: string;
-  forecastType: 'revenue' | 'expense' | 'cashflow';
+  forecastType: "revenue" | "expense" | "cashflow";
   startDate: string;
   endDate: string;
   data: ForecastData[];

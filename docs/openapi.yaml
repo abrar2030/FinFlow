@@ -36,7 +36,7 @@ paths:
             type: string
             enum: [PENDING, PROCESSING, COMPLETED, FAILED, REFUNDED]
       responses:
-        '200':
+        "200":
           description: Payments retrieved successfully
           content:
             application/json:
@@ -46,16 +46,16 @@ paths:
                   payments:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Payment'
+                      $ref: "#/components/schemas/Payment"
                   total:
                     type: integer
                   page:
                     type: integer
                   limit:
                     type: integer
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '500':
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "500":
           description: Internal server error
     post:
       summary: Create payment
@@ -86,17 +86,17 @@ paths:
                 description:
                   type: string
       responses:
-        '201':
+        "201":
           description: Payment initiated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Payment'
-        '400':
+                $ref: "#/components/schemas/Payment"
+        "400":
           description: Invalid input
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '500':
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "500":
           description: Internal server error
   /payments/{id}:
     get:
@@ -112,19 +112,19 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Payment retrieved successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Payment'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
+                $ref: "#/components/schemas/Payment"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
           description: Forbidden - payment belongs to another user
-        '404':
+        "404":
           description: Payment not found
-        '500':
+        "500":
           description: Internal server error
   /payments/{id}/refund:
     post:
@@ -154,21 +154,21 @@ paths:
                   type: string
                   description: Reason for refund
       responses:
-        '200':
+        "200":
           description: Refund initiated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Payment'
-        '400':
+                $ref: "#/components/schemas/Payment"
+        "400":
           description: Invalid input or payment cannot be refunded
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
           description: Forbidden - payment belongs to another user
-        '404':
+        "404":
           description: Payment not found
-        '500':
+        "500":
           description: Internal server error
   /payments/webhook:
     post:
@@ -181,11 +181,11 @@ paths:
             schema:
               type: object
       responses:
-        '200':
+        "200":
           description: Webhook processed successfully
-        '400':
+        "400":
           description: Invalid webhook payload
-        '500':
+        "500":
           description: Internal server error
   /users/{userId}/data:
     get:
@@ -201,7 +201,7 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Payment data exported successfully
           content:
             application/json:
@@ -211,14 +211,14 @@ paths:
                   payments:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Payment'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
+                      $ref: "#/components/schemas/Payment"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
           description: Forbidden - requires admin role or own user
-        '404':
+        "404":
           description: User not found
-        '500':
+        "500":
           description: Internal server error
     delete:
       summary: Delete user payment data
@@ -233,22 +233,22 @@ paths:
           schema:
             type: string
       responses:
-        '204':
+        "204":
           description: Payment data deleted successfully
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
           description: Forbidden - requires admin role or own user
-        '404':
+        "404":
           description: User not found
-        '500':
+        "500":
           description: Internal server error
   /health:
     get:
       summary: Health check
       description: Health check endpoint for monitoring
       responses:
-        '200':
+        "200":
           description: Service is healthy
           content:
             application/json:

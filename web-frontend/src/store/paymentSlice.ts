@@ -1,5 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { PaymentState, Payment } from '../types';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { PaymentState, Payment } from "../types";
 
 const initialState: PaymentState = {
   payments: [],
@@ -9,7 +9,7 @@ const initialState: PaymentState = {
 };
 
 const paymentSlice = createSlice({
-  name: 'payment',
+  name: "payment",
   initialState,
   reducers: {
     getPaymentsStart: (state) => {
@@ -56,7 +56,7 @@ const paymentSlice = createSlice({
     updatePaymentSuccess: (state, action: PayloadAction<Payment>) => {
       state.isLoading = false;
       state.payments = state.payments.map((payment) =>
-        payment.id === action.payload.id ? action.payload : payment
+        payment.id === action.payload.id ? action.payload : payment,
       );
       state.currentPayment = action.payload;
     },

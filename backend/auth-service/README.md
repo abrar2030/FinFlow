@@ -1,9 +1,11 @@
 # Auth Service
 
 ## Overview
+
 The Auth Service is responsible for user authentication, authorization, and user management in the FinFlow platform. It provides JWT-based authentication and handles user registration, login, and profile management.
 
 ## Features
+
 - User registration and login
 - JWT token generation and validation
 - Password hashing and verification
@@ -12,6 +14,7 @@ The Auth Service is responsible for user authentication, authorization, and user
 - Session management
 
 ## API Endpoints
+
 - `POST /api/auth/register` - Register a new user
 - `POST /api/auth/login` - Authenticate a user and return JWT
 - `GET /api/auth/profile` - Get current user profile
@@ -21,6 +24,7 @@ The Auth Service is responsible for user authentication, authorization, and user
 - `DELETE /api/auth/account` - Delete user account (GDPR compliance)
 
 ## Environment Variables
+
 - `AUTH_PORT` - Port for the Auth service (default: 3001)
 - `JWT_SECRET` - Secret key for JWT signing
 - `JWT_EXPIRY` - JWT token expiration time (default: 24h)
@@ -31,7 +35,9 @@ The Auth Service is responsible for user authentication, authorization, and user
 - `POSTGRES_DB` - PostgreSQL database name
 
 ## Getting Started
+
 1. Install dependencies:
+
    ```
    npm install
    ```
@@ -44,18 +50,23 @@ The Auth Service is responsible for user authentication, authorization, and user
    ```
 
 ## Testing
+
 Run tests with:
+
 ```
 npm test
 ```
 
 ## Docker
+
 Build the Docker image:
+
 ```
 docker build -t finflow-auth-service .
 ```
 
 Run the container:
+
 ```
 docker run -p 3001:3001 --env-file .env finflow-auth-service
 ```

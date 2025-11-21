@@ -27,7 +27,7 @@ export class SecureProducer extends EventEmitter {
     this.securityManager = securityManager;
     this.complianceManager = complianceManager;
     this.logger = new Logger('SecureProducer');
-    
+
     this.setupEventHandlers();
     this.startRetryProcessor();
   }
@@ -40,23 +40,23 @@ export class SecureProducer extends EventEmitter {
       this.logger.info('Connecting to Kafka cluster');
       await this.producer.connect();
       this.isConnected = true;
-      
+
       this.logger.audit({
         eventType: 'KAFKA_PRODUCER_CONNECTED',
         resource: 'kafka-cluster',
         action: 'CONNECT',
-        result: 'SUCCESS'
+        result: 'SUCCESS',
       });
 
       this.emit('connected');
     } catch (error) {
       this.logger.error('Failed to connect to Kafka cluster', error);
-      
+
       this.logger.security({
         eventType: 'KAFKA_CONNECTION_FAILED',
         severity: 'HIGH',
         description: 'Producer failed to connect to Kafka cluster',
-        details: { error: error.message }
+        details: { error: error.message },
       });
 
       throw error;
@@ -69,18 +69,18 @@ export class SecureProducer extends EventEmitter {
   public async disconnect(): Promise<void> {
     try {
       this.logger.info('Disconnecting from Kafka cluster');
-      
+
       // Process any remaining buffered messages
       await this.flushBufferedMessages();
-      
+
       await this.producer.disconnect();
       this.isConnected = false;
-      
+
       this.logger.audit({
         eventType: 'KAFKA_PRODUCER_DISCONNECTED',
         resource: 'kafka-cluster',
         action: 'DISCONNECT',
-        result: 'SUCCESS'
+        result: 'SUCCESS',
       });
 
       this.emit('disconnected');
@@ -100,7 +100,7 @@ export class SecureProducer extends EventEmitter {
   ): Promise<SendMessageResult> {
     const startTime = Date.now();
     const messageId = this.securityManager.generateSecureMessageId();
-    
+
     try {
       // Validate connection
       if (!this.isConnected) {
@@ -112,7 +112,7 @@ export class SecureProducer extends EventEmitter {
 
       // Validate compliance
       const complianceResult = await this.complianceManager.validateMessageCompliance(
-        topic, 
+        topic,
         enrichedMessage
       );
 
@@ -121,7 +121,7 @@ export class SecureProducer extends EventEmitter {
           'Message failed compliance validation',
           complianceResult.violations
         );
-        
+
         this.logger.security({
           eventType: 'COMPLIANCE_VIOLATION',
           severity: 'HIGH',
@@ -129,36 +129,34 @@ export class SecureProducer extends EventEmitter {
           details: {
             messageId,
             topic,
-            violations: complianceResult.violations
-          }
+            violations: complianceResult.violations,
+          },
         });
 
         throw error;
       }
 
       // Encrypt sensitive data if required
-      const processedMessage = await this.processMessageSecurity(
-        topic, 
-        enrichedMessage, 
-        options
-      );
+      const processedMessage = await this.processMessageSecurity(topic, enrichedMessage, options);
 
       // Create producer record
       const producerRecord: ProducerRecord = {
         topic,
-        messages: [{
-          key: options.key || messageId,
-          value: JSON.stringify(processedMessage),
-          partition: options.partition,
-          timestamp: options.timestamp || Date.now().toString(),
-          headers: {
-            messageId,
-            contentType: 'application/json',
-            encrypted: processedMessage.encrypted ? 'true' : 'false',
-            complianceAuditId: complianceResult.auditId,
-            ...options.headers
-          }
-        }]
+        messages: [
+          {
+            key: options.key || messageId,
+            value: JSON.stringify(processedMessage),
+            partition: options.partition,
+            timestamp: options.timestamp || Date.now().toString(),
+            headers: {
+              messageId,
+              contentType: 'application/json',
+              encrypted: processedMessage.encrypted ? 'true' : 'false',
+              complianceAuditId: complianceResult.auditId,
+              ...options.headers,
+            },
+          },
+        ],
       };
 
       // Send message with retry logic
@@ -166,12 +164,12 @@ export class SecureProducer extends EventEmitter {
 
       // Log successful send
       const duration = Date.now() - startTime;
-      
+
       this.logger.performance({
         name: 'message_send_duration',
         value: duration,
         unit: 'milliseconds',
-        tags: { topic, messageId }
+        tags: { topic, messageId },
       });
 
       this.logger.business({
@@ -183,8 +181,8 @@ export class SecureProducer extends EventEmitter {
           topic,
           partition: metadata[0].partition,
           offset: metadata[0].offset,
-          duration
-        }
+          duration,
+        },
       });
 
       return {
@@ -192,16 +190,15 @@ export class SecureProducer extends EventEmitter {
         metadata: metadata[0],
         complianceAuditId: complianceResult.auditId,
         encrypted: processedMessage.encrypted || false,
-        warnings: complianceResult.warnings
+        warnings: complianceResult.warnings,
       };
-
     } catch (error) {
       const duration = Date.now() - startTime;
-      
+
       this.logger.error('Failed to send message', error, {
         messageId,
         topic,
-        duration
+        duration,
       });
 
       // Add to retry queue if retryable
@@ -213,7 +210,7 @@ export class SecureProducer extends EventEmitter {
           messageId,
           attempts: 0,
           lastAttempt: Date.now(),
-          error: error.message
+          error: error.message,
         });
       }
 
@@ -231,11 +228,11 @@ export class SecureProducer extends EventEmitter {
   ): Promise<BatchSendResult> {
     const batchId = this.securityManager.generateSecureMessageId();
     const startTime = Date.now();
-    
+
     this.logger.info(`Sending batch of ${messages.length} messages`, {
       batchId,
       topic,
-      messageCount: messages.length
+      messageCount: messages.length,
     });
 
     const results: SendMessageResult[] = [];
@@ -251,14 +248,14 @@ export class SecureProducer extends EventEmitter {
           try {
             const result = await this.sendMessage(topic, message, {
               ...options,
-              key: options.keyGenerator ? options.keyGenerator(message, index) : undefined
+              key: options.keyGenerator ? options.keyGenerator(message, index) : undefined,
             });
             results.push(result);
           } catch (error) {
             errors.push({
               index,
               message,
-              error: error.message
+              error: error.message,
             });
           }
         });
@@ -267,18 +264,18 @@ export class SecureProducer extends EventEmitter {
       }
 
       const duration = Date.now() - startTime;
-      
+
       this.logger.performance({
         name: 'batch_send_duration',
         value: duration,
         unit: 'milliseconds',
-        tags: { 
-          topic, 
-          batchId, 
+        tags: {
+          topic,
+          batchId,
           messageCount: messages.length.toString(),
           successCount: results.length.toString(),
-          errorCount: errors.length.toString()
-        }
+          errorCount: errors.length.toString(),
+        },
       });
 
       return {
@@ -288,9 +285,8 @@ export class SecureProducer extends EventEmitter {
         failedMessages: errors.length,
         results,
         errors,
-        duration
+        duration,
       };
-
     } catch (error) {
       this.logger.error('Batch send failed', error, { batchId, topic });
       throw error;
@@ -304,7 +300,7 @@ export class SecureProducer extends EventEmitter {
     try {
       await this.producer.flush({ timeout });
       await this.flushBufferedMessages();
-      
+
       this.logger.info('Producer flush completed');
     } catch (error) {
       this.logger.error('Producer flush failed', error);
@@ -328,11 +324,7 @@ export class SecureProducer extends EventEmitter {
     });
   }
 
-  private enrichMessage(
-    message: any, 
-    messageId: string, 
-    options: SendMessageOptions
-  ): any {
+  private enrichMessage(message: any, messageId: string, options: SendMessageOptions): any {
     return {
       ...message,
       messageId,
@@ -342,7 +334,7 @@ export class SecureProducer extends EventEmitter {
       correlationId: options.correlationId || process.env.CORRELATION_ID,
       sessionId: options.sessionId || process.env.SESSION_ID,
       userId: options.userId,
-      eventType: options.eventType || 'GENERIC_EVENT'
+      eventType: options.eventType || 'GENERIC_EVENT',
     };
   }
 
@@ -351,12 +343,7 @@ export class SecureProducer extends EventEmitter {
     message: any,
     options: SendMessageOptions
   ): Promise<any> {
-    const sensitiveTopics = [
-      'payment_completed',
-      'invoice_paid',
-      'user_registered',
-      'kyc_data'
-    ];
+    const sensitiveTopics = ['payment_completed', 'invoice_paid', 'user_registered', 'kyc_data'];
 
     if (sensitiveTopics.includes(topic) || options.forceEncryption) {
       const encryptedData = this.securityManager.encryptMessage(message);
@@ -367,7 +354,7 @@ export class SecureProducer extends EventEmitter {
         data: encryptedData,
         signature,
         algorithm: 'aes-256-gcm',
-        keyVersion: '1.0'
+        keyVersion: '1.0',
       };
     }
 
@@ -375,7 +362,7 @@ export class SecureProducer extends EventEmitter {
     const signature = this.securityManager.signMessage(message);
     return {
       ...message,
-      signature
+      signature,
     };
   }
 
@@ -391,14 +378,14 @@ export class SecureProducer extends EventEmitter {
         return await this.producer.send(record);
       } catch (error) {
         lastError = error;
-        
+
         if (attempt < maxRetries && this.isRetryableError(error)) {
           const delay = this.calculateRetryDelay(attempt);
           this.logger.warn(`Send attempt ${attempt + 1} failed, retrying in ${delay}ms`, {
             error: error.message,
-            topic: record.topic
+            topic: record.topic,
           });
-          
+
           await this.sleep(delay);
         }
       }
@@ -413,11 +400,11 @@ export class SecureProducer extends EventEmitter {
       'REQUEST_TIMED_OUT',
       'NOT_ENOUGH_REPLICAS',
       'NOT_ENOUGH_REPLICAS_AFTER_APPEND',
-      'BROKER_NOT_AVAILABLE'
+      'BROKER_NOT_AVAILABLE',
     ];
 
-    return retryableErrors.some(retryableError => 
-      error.message?.includes(retryableError) || error.code === retryableError
+    return retryableErrors.some(
+      (retryableError) => error.message?.includes(retryableError) || error.code === retryableError
     );
   }
 
@@ -427,12 +414,12 @@ export class SecureProducer extends EventEmitter {
     const maxDelay = 30000;
     const delay = Math.min(baseDelay * Math.pow(2, attempt), maxDelay);
     const jitter = Math.random() * 0.1 * delay;
-    
+
     return Math.floor(delay + jitter);
   }
 
   private sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   private chunkArray<T>(array: T[], chunkSize: number): T[][] {
@@ -447,7 +434,7 @@ export class SecureProducer extends EventEmitter {
     this.retryQueue.push(message);
     this.logger.info('Message added to retry queue', {
       messageId: message.messageId,
-      topic: message.topic
+      topic: message.topic,
     });
   }
 
@@ -456,7 +443,7 @@ export class SecureProducer extends EventEmitter {
       if (this.retryQueue.length === 0) return;
 
       const now = Date.now();
-      const retryableMessages = this.retryQueue.filter(msg => {
+      const retryableMessages = this.retryQueue.filter((msg) => {
         const timeSinceLastAttempt = now - msg.lastAttempt;
         const shouldRetry = timeSinceLastAttempt > this.calculateRetryDelay(msg.attempts);
         return shouldRetry && msg.attempts < 5; // Max 5 retry attempts
@@ -465,32 +452,32 @@ export class SecureProducer extends EventEmitter {
       for (const message of retryableMessages) {
         try {
           await this.sendMessage(message.topic, message.message, message.options);
-          
+
           // Remove from retry queue on success
           const index = this.retryQueue.indexOf(message);
           if (index > -1) {
             this.retryQueue.splice(index, 1);
           }
-          
+
           this.logger.info('Retry message sent successfully', {
             messageId: message.messageId,
-            attempts: message.attempts + 1
+            attempts: message.attempts + 1,
           });
         } catch (error) {
           message.attempts++;
           message.lastAttempt = now;
           message.error = error.message;
-          
+
           if (message.attempts >= 5) {
             // Remove from retry queue after max attempts
             const index = this.retryQueue.indexOf(message);
             if (index > -1) {
               this.retryQueue.splice(index, 1);
             }
-            
+
             this.logger.error('Message retry failed after max attempts', error, {
               messageId: message.messageId,
-              attempts: message.attempts
+              attempts: message.attempts,
             });
           }
         }
@@ -576,4 +563,3 @@ export class ComplianceError extends Error {
     this.violations = violations;
   }
 }
-

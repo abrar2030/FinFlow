@@ -22,7 +22,7 @@ fluentd:
     enabled: true
     storageClass: standard
     size: 20Gi
-  
+
   # Fluentd configuration
   configMaps:
     fluentd-conf: |
@@ -132,7 +132,7 @@ elasticsearch:
     storageClass: standard
     size: 100Gi
   esJavaOpts: "-Xmx1g -Xms1g"
-  
+
 # Kibana configuration
 kibana:
   enabled: true

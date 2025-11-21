@@ -1,7 +1,7 @@
-import bcrypt from 'bcrypt';
-import config from '../../../common/config';
-import jwt from 'jsonwebtoken';
-import { TokenPayload } from '../types/auth.types';
+import bcrypt from "bcrypt";
+import config from "../../../common/config";
+import jwt from "jsonwebtoken";
+import { TokenPayload } from "../types/auth.types";
 
 // Hash password
 export const hashPassword = async (password: string): Promise<string> => {
@@ -10,7 +10,10 @@ export const hashPassword = async (password: string): Promise<string> => {
 };
 
 // Compare password with hash
-export const comparePassword = async (password: string, hash: string): Promise<boolean> => {
+export const comparePassword = async (
+  password: string,
+  hash: string,
+): Promise<boolean> => {
   return bcrypt.compare(password, hash);
 };
 
@@ -18,26 +21,19 @@ export const comparePassword = async (password: string, hash: string): Promise<b
 export const generateToken = (
   userId: string,
   role: string,
-  expiresIn: string = config.jwt.expiresIn
+  expiresIn: string = config.jwt.expiresIn,
 ): string => {
-  return jwt.sign(
-    { sub: userId, role },
-    config.jwt.secret,
-    { expiresIn }
-  );
+  return jwt.sign({ sub: userId, role }, config.jwt.secret, { expiresIn });
 };
 
 // Verify JWT token
 export const verifyToken = (token: string): TokenPayload => {
-  return jwt.verify(
-    token,
-    config.jwt.secret
-  ) as TokenPayload;
+  return jwt.verify(token, config.jwt.secret) as TokenPayload;
 };
 
 export default {
   hashPassword,
   comparePassword,
   generateToken,
-  verifyToken
+  verifyToken,
 };

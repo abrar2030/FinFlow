@@ -9,6 +9,7 @@ This document provides comprehensive documentation for the FinFlow infrastructur
 The FinFlow infrastructure is built using a microservices architecture deployed on Kubernetes, with the following key components:
 
 ### Core Components
+
 - **Frontend**: Modern React application with TypeScript and Tailwind CSS
 - **API Gateway**: Entry point for all client requests
 - **Microservices**:
@@ -19,6 +20,7 @@ The FinFlow infrastructure is built using a microservices architecture deployed 
   - Credit Engine: Manages credit scoring and decisions
 
 ### Infrastructure Components
+
 - **Kubernetes Cluster**: Orchestrates containerized applications
 - **Databases**: PostgreSQL instances for each service
 - **Messaging**: Kafka for event-driven communication
@@ -82,6 +84,7 @@ finflow-infra/
 Docker is used to containerize all application components. Each service has its own Dockerfile optimized for production use with multi-stage builds to minimize image size and improve security.
 
 Key features:
+
 - Multi-stage builds
 - Non-root users
 - Minimal base images
@@ -91,6 +94,7 @@ Key features:
 ### Kubernetes
 
 Kubernetes is used for orchestrating the containerized applications, providing:
+
 - High availability
 - Scalability
 - Self-healing
@@ -98,6 +102,7 @@ Kubernetes is used for orchestrating the containerized applications, providing:
 - Service discovery
 
 The Kubernetes manifests are organized by service and include:
+
 - Deployments
 - Services
 - Ingress configurations
@@ -108,6 +113,7 @@ The Kubernetes manifests are organized by service and include:
 ### Ansible
 
 Ansible is used for configuration management and deployment automation, with roles for:
+
 - Common server setup
 - Docker installation and configuration
 - Kubernetes cluster setup
@@ -119,12 +125,14 @@ The Ansible playbooks are idempotent and can be used for initial setup as well a
 ### Terraform
 
 Terraform is used for infrastructure as code, providing:
+
 - Reproducible infrastructure
 - Version-controlled configurations
 - Dependency management
 - State management
 
 The Terraform modules include:
+
 - VPC: Network infrastructure
 - EKS: Kubernetes cluster
 - RDS: Database instances
@@ -135,6 +143,7 @@ The Terraform modules include:
 ### Monitoring and Logging
 
 The monitoring and logging stack includes:
+
 - **Prometheus**: Metrics collection and alerting
 - **Grafana**: Visualization and dashboards
 - **Fluentd**: Log collection and forwarding
@@ -142,6 +151,7 @@ The monitoring and logging stack includes:
 - **Kibana**: Log visualization
 
 Custom dashboards are provided for:
+
 - System overview
 - Microservices performance
 - Database metrics
@@ -159,6 +169,7 @@ Several automation scripts are provided to simplify common operations:
 ## Security Considerations
 
 The infrastructure implements several security best practices:
+
 - Network segmentation with VPC
 - Least privilege principle for IAM roles
 - Encrypted data at rest and in transit
@@ -170,6 +181,7 @@ The infrastructure implements several security best practices:
 ## Scaling Considerations
 
 The infrastructure is designed to scale horizontally:
+
 - Stateless services can scale with Horizontal Pod Autoscalers
 - Database scaling with read replicas
 - Kafka scaling with additional brokers
@@ -178,6 +190,7 @@ The infrastructure is designed to scale horizontally:
 ## Disaster Recovery
 
 Disaster recovery is implemented through:
+
 - Regular automated backups
 - Multi-AZ deployments
 - Stateful service replication
@@ -186,6 +199,7 @@ Disaster recovery is implemented through:
 ## Getting Started
 
 ### Prerequisites
+
 - AWS account with appropriate permissions
 - kubectl installed
 - Terraform installed
@@ -195,28 +209,33 @@ Disaster recovery is implemented through:
 ### Deployment Steps
 
 1. Initialize Terraform:
+
    ```
    cd terraform
    terraform init
    ```
 
 2. Apply Terraform configuration:
+
    ```
    terraform apply -var-file=environments/prod.tfvars
    ```
 
 3. Configure kubectl:
+
    ```
    aws eks update-kubeconfig --region us-west-2 --name finflow-cluster
    ```
 
 4. Run Ansible playbook:
+
    ```
    cd ansible
    ansible-playbook -i inventory/prod site.yml
    ```
 
 5. Deploy applications:
+
    ```
    ./scripts/deploy.sh
    ```
@@ -229,6 +248,7 @@ Disaster recovery is implemented through:
 ## Maintenance
 
 ### Regular Maintenance Tasks
+
 - Apply security updates
 - Rotate credentials
 - Review and optimize resource allocation
@@ -238,6 +258,7 @@ Disaster recovery is implemented through:
 ### Troubleshooting
 
 Common issues and their solutions:
+
 - Pod scheduling failures: Check resource constraints
 - Database connection issues: Verify network policies
 - Monitoring alerts: Check service health and logs

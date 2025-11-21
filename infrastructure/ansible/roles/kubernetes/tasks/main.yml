@@ -51,7 +51,7 @@
   file:
     path: /root/.kube
     state: directory
-    mode: '0700'
+    mode: "0700"
   when: inventory_hostname == groups['k8s_nodes'][0]
 
 - name: Copy admin.conf to root's .kube directory
@@ -59,7 +59,7 @@
     src: /etc/kubernetes/admin.conf
     dest: /root/.kube/config
     remote_src: yes
-    mode: '0600'
+    mode: "0600"
   when: inventory_hostname == groups['k8s_nodes'][0]
 
 - name: Get join command
@@ -81,7 +81,7 @@
 - name: Install CNI plugin (Calico)
   command: >
     kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
-  when: 
+  when:
     - inventory_hostname == groups['k8s_nodes'][0]
     - kubernetes_cni == "calico"
 
@@ -117,19 +117,19 @@
       get_url:
         url: https://get.helm.sh/helm-v3.12.0-linux-amd64.tar.gz
         dest: /tmp/helm.tar.gz
-        mode: '0644'
-    
+        mode: "0644"
+
     - name: Extract Helm
       unarchive:
         src: /tmp/helm.tar.gz
         dest: /tmp
         remote_src: yes
-    
+
     - name: Move Helm binary
       copy:
         src: /tmp/linux-amd64/helm
         dest: /usr/local/bin/helm
-        mode: '0755'
+        mode: "0755"
         remote_src: yes
   when: inventory_hostname == groups['k8s_nodes'][0]
 
@@ -138,7 +138,10 @@
   loop:
     - { name: "stable", url: "https://charts.helm.sh/stable" }
     - { name: "bitnami", url: "https://charts.bitnami.com/bitnami" }
-    - { name: "prometheus-community", url: "https://prometheus-community.github.io/helm-charts" }
+    - {
+        name: "prometheus-community",
+        url: "https://prometheus-community.github.io/helm-charts",
+      }
   when: inventory_hostname == groups['k8s_nodes'][0]
 
 - name: Update Helm repositories

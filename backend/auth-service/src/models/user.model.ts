@@ -1,5 +1,5 @@
-import { PrismaClient } from '@prisma/client';
-import { User, UserCreateInput, UserUpdateInput } from '../types/user.types';
+import { PrismaClient } from "@prisma/client";
+import { User, UserCreateInput, UserUpdateInput } from "../types/user.types";
 
 class UserModel {
   private prisma: PrismaClient;
@@ -43,7 +43,10 @@ class UserModel {
     return this.prisma.user.findMany();
   }
 
-  async updateRefreshToken(id: string, refreshToken: string | null): Promise<User> {
+  async updateRefreshToken(
+    id: string,
+    refreshToken: string | null,
+  ): Promise<User> {
     return this.prisma.user.update({
       where: { id },
       data: { refreshToken },

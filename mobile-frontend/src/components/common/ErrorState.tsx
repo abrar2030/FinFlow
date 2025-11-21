@@ -1,6 +1,12 @@
-import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import React from "react";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 interface ErrorStateProps {
   title: string;
@@ -13,19 +19,24 @@ interface ErrorStateProps {
 const ErrorState: React.FC<ErrorStateProps> = ({
   title,
   message,
-  buttonText = 'Try Again',
+  buttonText = "Try Again",
   onButtonPress,
-  loading = false
+  loading = false,
 }) => {
   return (
     <View style={styles.container}>
-      <Ionicons name="alert-circle-outline" size={64} color="#e74c3c" style={styles.icon} />
+      <Ionicons
+        name="alert-circle-outline"
+        size={64}
+        color="#e74c3c"
+        style={styles.icon}
+      />
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.message}>{message}</Text>
-      
+
       {buttonText && onButtonPress && (
-        <TouchableOpacity 
-          style={styles.button} 
+        <TouchableOpacity
+          style={styles.button}
           onPress={onButtonPress}
           disabled={loading}
         >
@@ -43,8 +54,8 @@ const ErrorState: React.FC<ErrorStateProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 24,
   },
   icon: {
@@ -52,27 +63,27 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#e74c3c',
+    fontWeight: "bold",
+    color: "#e74c3c",
     marginBottom: 8,
-    textAlign: 'center',
+    textAlign: "center",
   },
   message: {
     fontSize: 16,
-    color: '#7f8c8d',
-    textAlign: 'center',
+    color: "#7f8c8d",
+    textAlign: "center",
     marginBottom: 24,
   },
   button: {
-    backgroundColor: '#e74c3c',
+    backgroundColor: "#e74c3c",
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
   },
   buttonText: {
-    color: '#ffffff',
+    color: "#ffffff",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });
 

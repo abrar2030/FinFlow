@@ -10,8 +10,8 @@ const kafkaConfig: KafkaConfig = {
   brokers: (process.env.KAFKA_BROKERS || 'localhost:9092').split(','),
   retry: {
     initialRetryTime: 100,
-    retries: 8
-  }
+    retries: 8,
+  },
 };
 
 // Create Kafka instance
@@ -22,7 +22,7 @@ const producer: Producer = kafka.producer();
 
 // Create consumer
 const consumer: Consumer = kafka.consumer({
-  groupId: process.env.KAFKA_GROUP_ID || 'auth-service-group'
+  groupId: process.env.KAFKA_GROUP_ID || 'auth-service-group',
 });
 
 // Initialize Kafka connections
@@ -30,7 +30,7 @@ export const initializeKafka = async (): Promise<void> => {
   try {
     await producer.connect();
     console.log('Kafka producer connected');
-    
+
     await consumer.connect();
     console.log('Kafka consumer connected');
   } catch (error) {
@@ -44,7 +44,7 @@ export const disconnectKafka = async (): Promise<void> => {
   try {
     await producer.disconnect();
     console.log('Kafka producer disconnected');
-    
+
     await consumer.disconnect();
     console.log('Kafka consumer disconnected');
   } catch (error) {
@@ -59,11 +59,11 @@ export const sendMessage = async (topic: string, message: any): Promise<void> =>
     await producer.send({
       topic,
       messages: [
-        { 
+        {
           key: message.id || String(Date.now()),
-          value: JSON.stringify(message)
-        }
-      ]
+          value: JSON.stringify(message),
+        },
+      ],
     });
     console.log(`Message sent to topic ${topic}`);
   } catch (error) {
@@ -74,12 +74,12 @@ export const sendMessage = async (topic: string, message: any): Promise<void> =>
 
 // Subscribe to Kafka topic
 export const subscribeToTopic = async (
-  topic: string, 
+  topic: string,
   callback: (message: any) => Promise<void>
 ): Promise<void> => {
   try {
     await consumer.subscribe({ topic, fromBeginning: false });
-    
+
     await consumer.run({
       eachMessage: async ({ topic, partition, message }) => {
         const value = message.value?.toString();
@@ -91,9 +91,9 @@ export const subscribeToTopic = async (
             console.error(`Failed to process message from topic ${topic}:`, error);
           }
         }
-      }
+      },
     });
-    
+
     console.log(`Subscribed to topic ${topic}`);
   } catch (error) {
     console.error(`Failed to subscribe to topic ${topic}:`, error);
@@ -108,5 +108,5 @@ export default {
   initializeKafka,
   disconnectKafka,
   sendMessage,
-  subscribeToTopic
+  subscribeToTopic,
 };

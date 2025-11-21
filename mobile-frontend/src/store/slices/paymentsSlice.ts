@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { paymentsApi } from '../../services/api';
-import { Transaction, PaymentRequest, PaginatedResponse } from '../../types';
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { paymentsApi } from "../../services/api";
+import { Transaction, PaymentRequest, PaginatedResponse } from "../../types";
 
 interface PaymentsState {
   transactions: Transaction[];
@@ -29,55 +29,61 @@ const initialState: PaymentsState = {
 };
 
 export const fetchTransactions = createAsyncThunk(
-  'payments/fetchTransactions',
-  async (params: { page?: number; limit?: number } = {}, { rejectWithValue }) => {
+  "payments/fetchTransactions",
+  async (
+    params: { page?: number; limit?: number } = {},
+    { rejectWithValue },
+  ) => {
     try {
       const response = await paymentsApi.getPayments(params);
       return response.data as PaginatedResponse<Transaction>;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Failed to fetch transactions');
+      return rejectWithValue(error.message || "Failed to fetch transactions");
     }
-  }
+  },
 );
 
 export const fetchTransactionById = createAsyncThunk(
-  'payments/fetchTransactionById',
+  "payments/fetchTransactionById",
   async (id: string, { rejectWithValue }) => {
     try {
       const response = await paymentsApi.getPayment(id);
       return response.data as Transaction;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Failed to fetch transaction');
+      return rejectWithValue(error.message || "Failed to fetch transaction");
     }
-  }
+  },
 );
 
 export const createPayment = createAsyncThunk(
-  'payments/createPayment',
+  "payments/createPayment",
   async (paymentData: PaymentRequest, { rejectWithValue }) => {
     try {
       const response = await paymentsApi.createPayment(paymentData);
       return response.data as Transaction;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Failed to create payment');
+      return rejectWithValue(error.message || "Failed to create payment");
     }
-  }
+  },
 );
 
 export const refundPayment = createAsyncThunk(
-  'payments/refundPayment',
-  async ({ id, amount }: { id: string; amount?: number }, { rejectWithValue }) => {
+  "payments/refundPayment",
+  async (
+    { id, amount }: { id: string; amount?: number },
+    { rejectWithValue },
+  ) => {
     try {
       const response = await paymentsApi.refundPayment(id, amount);
       return response.data as Transaction;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Failed to refund payment');
+      return rejectWithValue(error.message || "Failed to refund payment");
     }
-  }
+  },
 );
 
 const paymentsSlice = createSlice({
-  name: 'payments',
+  name: "payments",
   initialState,
   reducers: {
     clearError: (state) => {
@@ -104,7 +110,7 @@ const paymentsSlice = createSlice({
           total: action.payload.total,
           totalPages: action.payload.totalPages,
         };
-      }
+      },
     );
     builder.addCase(fetchTransactions.rejected, (state, action) => {
       state.isLoading = false;
@@ -121,7 +127,7 @@ const paymentsSlice = createSlice({
       (state, action: PayloadAction<Transaction>) => {
         state.isLoading = false;
         state.currentTransaction = action.payload;
-      }
+      },
     );
     builder.addCase(fetchTransactionById.rejected, (state, action) => {
       state.isLoading = false;
@@ -139,7 +145,7 @@ const paymentsSlice = createSlice({
         state.isLoading = false;
         state.currentTransaction = action.payload;
         state.transactions = [action.payload, ...state.transactions];
-      }
+      },
     );
     builder.addCase(createPayment.rejected, (state, action) => {
       state.isLoading = false;
@@ -157,9 +163,9 @@ const paymentsSlice = createSlice({
         state.isLoading = false;
         state.currentTransaction = action.payload;
         state.transactions = state.transactions.map((transaction) =>
-          transaction.id === action.payload.id ? action.payload : transaction
+          transaction.id === action.payload.id ? action.payload : transaction,
         );
-      }
+      },
     );
     builder.addCase(refundPayment.rejected, (state, action) => {
       state.isLoading = false;

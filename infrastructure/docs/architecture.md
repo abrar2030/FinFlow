@@ -1,9 +1,11 @@
 # FinFlow Infrastructure Architecture Design
 
 ## Overview
+
 This document outlines the Docker and Kubernetes architecture for the FinFlow application, which consists of multiple microservices, databases, message brokers, and monitoring components.
 
 ## Application Components
+
 - Frontend (React)
 - API Gateway
 - Auth Service
@@ -18,6 +20,7 @@ This document outlines the Docker and Kubernetes architecture for the FinFlow ap
 ## Docker Architecture
 
 ### Container Strategy
+
 1. **Base Images**:
    - Frontend: Node 20-alpine
    - Backend Services: Node 20-alpine for JS/TS services, Python 3.11-slim for Python services
@@ -44,6 +47,7 @@ This document outlines the Docker and Kubernetes architecture for the FinFlow ap
 ## Kubernetes Architecture
 
 ### Cluster Design
+
 1. **Environment Separation**:
    - Development, Staging, Production clusters
    - Namespace strategy: `finflow-{env}-{component}`
@@ -59,6 +63,7 @@ This document outlines the Docker and Kubernetes architecture for the FinFlow ap
    - Auto-scaling node groups
 
 ### Resource Management
+
 1. **Resource Allocation**:
    - CPU/Memory requests and limits for all containers
    - Horizontal Pod Autoscaling (HPA) for all services
@@ -70,6 +75,7 @@ This document outlines the Docker and Kubernetes architecture for the FinFlow ap
    - Backup and restore strategy
 
 ### Networking
+
 1. **Service Mesh**:
    - Istio for advanced traffic management
    - Service-to-service authentication
@@ -86,6 +92,7 @@ This document outlines the Docker and Kubernetes architecture for the FinFlow ap
    - Egress control for external dependencies
 
 ### Security
+
 1. **RBAC**:
    - Role-based access control for all components
    - Service accounts with minimal permissions
@@ -97,6 +104,7 @@ This document outlines the Docker and Kubernetes architecture for the FinFlow ap
    - Secret rotation
 
 ## Deployment Strategy
+
 1. **CI/CD Integration**:
    - GitOps workflow with ArgoCD
    - Progressive delivery with canary deployments
@@ -108,6 +116,7 @@ This document outlines the Docker and Kubernetes architecture for the FinFlow ap
    - Feature flags for controlled rollouts
 
 ## Monitoring and Observability
+
 1. **Metrics**:
    - Prometheus for metrics collection
    - Grafana for visualization
@@ -124,6 +133,7 @@ This document outlines the Docker and Kubernetes architecture for the FinFlow ap
    - End-to-end request tracking
 
 ## Disaster Recovery
+
 1. **Backup Strategy**:
    - Regular database backups
    - Configuration backups
@@ -135,6 +145,7 @@ This document outlines the Docker and Kubernetes architecture for the FinFlow ap
    - Regular DR testing
 
 ## Automation
+
 1. **Infrastructure as Code**:
    - Terraform for cloud resources
    - Kubernetes manifests for application deployment

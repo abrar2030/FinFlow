@@ -1,9 +1,11 @@
 # Credit Engine Service
 
 ## Overview
+
 The Credit Engine Service provides credit scoring, risk assessment, and loan offer generation capabilities for the FinFlow platform. It uses machine learning models to analyze financial data and determine creditworthiness.
 
 ## Features
+
 - Credit score calculation
 - Risk assessment
 - Loan offer generation
@@ -11,6 +13,7 @@ The Credit Engine Service provides credit scoring, risk assessment, and loan off
 - Machine learning model training and inference
 
 ## API Endpoints
+
 - `POST /api/credit/score` - Calculate credit score
 - `GET /api/credit/score/:id` - Get credit score by ID
 - `POST /api/credit/offers` - Generate loan offers
@@ -18,6 +21,7 @@ The Credit Engine Service provides credit scoring, risk assessment, and loan off
 - `GET /api/credit/offers/:id` - Get loan offer details by ID
 
 ## Environment Variables
+
 - `CREDIT_ENGINE_PORT` - Port for the Credit Engine service (default: 3005)
 - `POSTGRES_HOST` - PostgreSQL host
 - `POSTGRES_PORT` - PostgreSQL port
@@ -27,7 +31,9 @@ The Credit Engine Service provides credit scoring, risk assessment, and loan off
 - `MODEL_PATH` - Path to trained machine learning model
 
 ## Getting Started
+
 1. Install dependencies:
+
    ```
    pip install -r requirements.txt
    ```
@@ -40,24 +46,31 @@ The Credit Engine Service provides credit scoring, risk assessment, and loan off
    ```
 
 ## Model Training
+
 Train the credit scoring model with:
+
 ```
 python src/train_credit_model.py
 ```
 
 ## Testing
+
 Run tests with:
+
 ```
 pytest
 ```
 
 ## Docker
+
 Build the Docker image:
+
 ```
 docker build -t finflow-credit-engine .
 ```
 
 Run the container:
+
 ```
 docker run -p 3005:3005 --env-file .env finflow-credit-engine
 ```

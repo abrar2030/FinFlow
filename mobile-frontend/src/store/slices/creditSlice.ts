@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { creditApi } from '../../services/api';
-import { CreditScore, Loan } from '../../types';
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { creditApi } from "../../services/api";
+import { CreditScore, Loan } from "../../types";
 
 interface CreditState {
   creditScore: CreditScore | null;
@@ -19,67 +19,70 @@ const initialState: CreditState = {
 };
 
 export const fetchCreditScore = createAsyncThunk(
-  'credit/fetchCreditScore',
+  "credit/fetchCreditScore",
   async (userId?: string, { rejectWithValue }) => {
     try {
       const response = await creditApi.getCreditScore(userId);
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Failed to fetch credit score');
+      return rejectWithValue(error.message || "Failed to fetch credit score");
     }
-  }
+  },
 );
 
 export const fetchLoans = createAsyncThunk(
-  'credit/fetchLoans',
+  "credit/fetchLoans",
   async (params: any = {}, { rejectWithValue }) => {
     try {
       const response = await creditApi.getLoans(params);
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Failed to fetch loans');
+      return rejectWithValue(error.message || "Failed to fetch loans");
     }
-  }
+  },
 );
 
 export const fetchLoanById = createAsyncThunk(
-  'credit/fetchLoanById',
+  "credit/fetchLoanById",
   async (id: string, { rejectWithValue }) => {
     try {
       const response = await creditApi.getLoan(id);
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Failed to fetch loan');
+      return rejectWithValue(error.message || "Failed to fetch loan");
     }
-  }
+  },
 );
 
 export const applyForLoan = createAsyncThunk(
-  'credit/applyForLoan',
+  "credit/applyForLoan",
   async (loanData: any, { rejectWithValue }) => {
     try {
       const response = await creditApi.applyForLoan(loanData);
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Failed to apply for loan');
+      return rejectWithValue(error.message || "Failed to apply for loan");
     }
-  }
+  },
 );
 
 export const makeLoanPayment = createAsyncThunk(
-  'credit/makeLoanPayment',
-  async ({ loanId, amount }: { loanId: string; amount: number }, { rejectWithValue }) => {
+  "credit/makeLoanPayment",
+  async (
+    { loanId, amount }: { loanId: string; amount: number },
+    { rejectWithValue },
+  ) => {
     try {
       const response = await creditApi.makePayment(loanId, amount);
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Failed to make loan payment');
+      return rejectWithValue(error.message || "Failed to make loan payment");
     }
-  }
+  },
 );
 
 const creditSlice = createSlice({
-  name: 'credit',
+  name: "credit",
   initialState,
   reducers: {
     clearError: (state) => {
@@ -100,7 +103,7 @@ const creditSlice = createSlice({
       (state, action: PayloadAction<CreditScore>) => {
         state.isLoading = false;
         state.creditScore = action.payload;
-      }
+      },
     );
     builder.addCase(fetchCreditScore.rejected, (state, action) => {
       state.isLoading = false;
@@ -117,7 +120,7 @@ const creditSlice = createSlice({
       (state, action: PayloadAction<Loan[]>) => {
         state.isLoading = false;
         state.loans = action.payload;
-      }
+      },
     );
     builder.addCase(fetchLoans.rejected, (state, action) => {
       state.isLoading = false;
@@ -134,7 +137,7 @@ const creditSlice = createSlice({
       (state, action: PayloadAction<Loan>) => {
         state.isLoading = false;
         state.currentLoan = action.payload;
-      }
+      },
     );
     builder.addCase(fetchLoanById.rejected, (state, action) => {
       state.isLoading = false;
@@ -152,7 +155,7 @@ const creditSlice = createSlice({
         state.isLoading = false;
         state.currentLoan = action.payload;
         state.loans = [action.payload, ...state.loans];
-      }
+      },
     );
     builder.addCase(applyForLoan.rejected, (state, action) => {
       state.isLoading = false;
@@ -170,9 +173,9 @@ const creditSlice = createSlice({
         state.isLoading = false;
         state.currentLoan = action.payload;
         state.loans = state.loans.map((loan) =>
-          loan.id === action.payload.id ? action.payload : loan
+          loan.id === action.payload.id ? action.payload : loan,
         );
-      }
+      },
     );
     builder.addCase(makeLoanPayment.rejected, (state, action) => {
       state.isLoading = false;

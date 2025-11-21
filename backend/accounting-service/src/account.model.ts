@@ -1,5 +1,9 @@
-import { PrismaClient, AccountType } from '@prisma/client';
-import { Account, AccountCreateInput, AccountUpdateInput } from '../types/account.types';
+import { PrismaClient, AccountType } from "@prisma/client";
+import {
+  Account,
+  AccountCreateInput,
+  AccountUpdateInput,
+} from "../types/account.types";
 
 class AccountModel {
   private prisma: PrismaClient;
@@ -23,7 +27,7 @@ class AccountModel {
   async findByType(type: AccountType): Promise<Account[]> {
     return this.prisma.account.findMany({
       where: { type },
-      orderBy: { code: 'asc' },
+      orderBy: { code: "asc" },
     });
   }
 
@@ -48,7 +52,7 @@ class AccountModel {
 
   async findAll(): Promise<Account[]> {
     return this.prisma.account.findMany({
-      orderBy: { code: 'asc' },
+      orderBy: { code: "asc" },
     });
   }
 
@@ -69,7 +73,10 @@ class AccountModel {
       if (transaction.isCredit) {
         // For asset and expense accounts, credits decrease the balance
         // For liability, equity, and revenue accounts, credits increase the balance
-        if (account.type === AccountType.ASSET || account.type === AccountType.EXPENSE) {
+        if (
+          account.type === AccountType.ASSET ||
+          account.type === AccountType.EXPENSE
+        ) {
           balance -= transaction.amount;
         } else {
           balance += transaction.amount;
@@ -77,7 +84,10 @@ class AccountModel {
       } else {
         // For asset and expense accounts, debits increase the balance
         // For liability, equity, and revenue accounts, debits decrease the balance
-        if (account.type === AccountType.ASSET || account.type === AccountType.EXPENSE) {
+        if (
+          account.type === AccountType.ASSET ||
+          account.type === AccountType.EXPENSE
+        ) {
           balance += transaction.amount;
         } else {
           balance -= transaction.amount;
@@ -88,18 +98,29 @@ class AccountModel {
     return balance;
   }
 
-  async getTrialBalance(): Promise<{ accountId: string, accountCode: string, accountName: string, debitBalance: number, creditBalance: number }[]> {
+  async getTrialBalance(): Promise<
+    {
+      accountId: string;
+      accountCode: string;
+      accountName: string;
+      debitBalance: number;
+      creditBalance: number;
+    }[]
+  > {
     const accounts = await this.findAll();
     const trialBalance = [];
 
     for (const account of accounts) {
       const balance = await this.getAccountBalance(account.id);
-      
+
       // Determine whether to place the balance in debit or credit column based on account type
       let debitBalance = 0;
       let creditBalance = 0;
-      
-      if (account.type === AccountType.ASSET || account.type === AccountType.EXPENSE) {
+
+      if (
+        account.type === AccountType.ASSET ||
+        account.type === AccountType.EXPENSE
+      ) {
         // Asset and expense accounts normally have debit balances
         if (balance >= 0) {
           debitBalance = balance;
@@ -120,7 +141,7 @@ class AccountModel {
         accountCode: account.code,
         accountName: account.name,
         debitBalance,
-        creditBalance
+        creditBalance,
       });
     }
 

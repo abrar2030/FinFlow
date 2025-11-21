@@ -1,6 +1,12 @@
-import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import React from "react";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 interface EmptyStateProps {
   title: string;
@@ -14,20 +20,25 @@ interface EmptyStateProps {
 const EmptyState: React.FC<EmptyStateProps> = ({
   title,
   message,
-  icon = 'information-circle-outline',
+  icon = "information-circle-outline",
   buttonText,
   onButtonPress,
-  loading = false
+  loading = false,
 }) => {
   return (
     <View style={styles.container}>
-      <Ionicons name={icon as any} size={64} color="#bdc3c7" style={styles.icon} />
+      <Ionicons
+        name={icon as any}
+        size={64}
+        color="#bdc3c7"
+        style={styles.icon}
+      />
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.message}>{message}</Text>
-      
+
       {buttonText && onButtonPress && (
-        <TouchableOpacity 
-          style={styles.button} 
+        <TouchableOpacity
+          style={styles.button}
           onPress={onButtonPress}
           disabled={loading}
         >
@@ -45,8 +56,8 @@ const EmptyState: React.FC<EmptyStateProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 24,
   },
   icon: {
@@ -54,27 +65,27 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#2c3e50',
+    fontWeight: "bold",
+    color: "#2c3e50",
     marginBottom: 8,
-    textAlign: 'center',
+    textAlign: "center",
   },
   message: {
     fontSize: 16,
-    color: '#7f8c8d',
-    textAlign: 'center',
+    color: "#7f8c8d",
+    textAlign: "center",
     marginBottom: 24,
   },
   button: {
-    backgroundColor: '#3498db',
+    backgroundColor: "#3498db",
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
   },
   buttonText: {
-    color: '#ffffff',
+    color: "#ffffff",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });
 

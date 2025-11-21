@@ -1,4 +1,4 @@
-import { InvoiceStatus } from '@prisma/client';
+import { InvoiceStatus } from "@prisma/client";
 
 export interface Invoice {
   id: string;

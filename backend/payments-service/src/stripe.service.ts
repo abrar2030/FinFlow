@@ -1,44 +1,47 @@
-import dotenv from 'dotenv';
-import Stripe from 'stripe';
+import dotenv from "dotenv";
+import Stripe from "stripe";
 
 // Load environment variables
 dotenv.config();
 
 // Initialize Stripe client
-const stripeClient = new Stripe(process.env.STRIPE_SECRET || '', {
-  apiVersion: process.env.STRIPE_API_VERSION as Stripe.LatestApiVersion || '2023-10-16',
+const stripeClient = new Stripe(process.env.STRIPE_SECRET || "", {
+  apiVersion:
+    (process.env.STRIPE_API_VERSION as Stripe.LatestApiVersion) || "2023-10-16",
 });
 
 // Create a payment intent
 export const createPaymentIntent = async (
   amount: number,
-  currency: string = 'usd',
-  metadata: any = {}
+  currency: string = "usd",
+  metadata: any = {},
 ): Promise<Stripe.PaymentIntent> => {
   return stripeClient.paymentIntents.create({
     amount,
     currency,
-    metadata
+    metadata,
   });
 };
 
 // Create a charge
 export const createCharge = async (
   amount: number,
-  currency: string = 'usd',
+  currency: string = "usd",
   source: string,
-  metadata: any = {}
+  metadata: any = {},
 ): Promise<Stripe.Charge> => {
   return stripeClient.charges.create({
     amount,
     currency,
     source,
-    metadata
+    metadata,
   });
 };
 
 // Retrieve a charge
-export const retrieveCharge = async (chargeId: string): Promise<Stripe.Charge> => {
+export const retrieveCharge = async (
+  chargeId: string,
+): Promise<Stripe.Charge> => {
   return stripeClient.charges.retrieve(chargeId);
 };
 
@@ -46,10 +49,10 @@ export const retrieveCharge = async (chargeId: string): Promise<Stripe.Charge> =
 export const createRefund = async (
   chargeId: string,
   amount?: number,
-  reason?: string
+  reason?: string,
 ): Promise<Stripe.Refund> => {
   const refundParams: Stripe.RefundCreateParams = {
-    charge: chargeId
+    charge: chargeId,
   };
 
   if (amount) {
@@ -66,12 +69,12 @@ export const createRefund = async (
 // Verify webhook signature
 export const verifyWebhookSignature = (
   payload: string | Buffer,
-  signature: string
+  signature: string,
 ): Stripe.Event => {
   return stripeClient.webhooks.constructEvent(
     payload,
     signature,
-    process.env.STRIPE_WEBHOOK_SECRET || ''
+    process.env.STRIPE_WEBHOOK_SECRET || "",
   );
 };
 
@@ -81,5 +84,5 @@ export default {
   createCharge,
   retrieveCharge,
   createRefund,
-  verifyWebhookSignature
+  verifyWebhookSignature,
 };

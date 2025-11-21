@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../store';
-import Layout from '../components/common/Layout';
-import { toggleDarkMode } from '../store/uiSlice';
-import { logout } from '../store/authSlice';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../store";
+import Layout from "../components/common/Layout";
+import { toggleDarkMode } from "../store/uiSlice";
+import { logout } from "../store/authSlice";
+import { useNavigate } from "react-router-dom";
 
 const Settings: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -16,7 +16,7 @@ const Settings: React.FC = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate('/login');
+    navigate("/login");
   };
 
   return (
@@ -33,18 +33,24 @@ const Settings: React.FC = () => {
             <h2 className="text-xl font-medium mb-4">Account Settings</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email
+                </label>
                 <input
                   type="email"
                   className="input"
-                  value={user?.email || ''}
+                  value={user?.email || ""}
                   disabled
                 />
-                <p className="mt-1 text-sm text-gray-500">Your email address is used for login and notifications</p>
+                <p className="mt-1 text-sm text-gray-500">
+                  Your email address is used for login and notifications
+                </p>
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Password
+                </label>
                 <button className="btn btn-secondary">Change Password</button>
               </div>
             </div>
@@ -56,8 +62,12 @@ const Settings: React.FC = () => {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-sm font-medium text-gray-700">In-app Notifications</h3>
-                  <p className="text-sm text-gray-500">Receive notifications within the application</p>
+                  <h3 className="text-sm font-medium text-gray-700">
+                    In-app Notifications
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    Receive notifications within the application
+                  </p>
                 </div>
                 <div className="relative inline-block w-10 mr-2 align-middle select-none">
                   <input
@@ -70,22 +80,26 @@ const Settings: React.FC = () => {
                   <label
                     htmlFor="toggle-notifications"
                     className={`block overflow-hidden h-6 rounded-full cursor-pointer ${
-                      notifications ? 'bg-primary-600' : 'bg-gray-300'
+                      notifications ? "bg-primary-600" : "bg-gray-300"
                     }`}
                   >
                     <span
                       className={`block h-6 w-6 rounded-full bg-white transform transition-transform ${
-                        notifications ? 'translate-x-4' : 'translate-x-0'
+                        notifications ? "translate-x-4" : "translate-x-0"
                       }`}
                     ></span>
                   </label>
                 </div>
               </div>
-              
+
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-sm font-medium text-gray-700">Email Updates</h3>
-                  <p className="text-sm text-gray-500">Receive updates and notifications via email</p>
+                  <h3 className="text-sm font-medium text-gray-700">
+                    Email Updates
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    Receive updates and notifications via email
+                  </p>
                 </div>
                 <div className="relative inline-block w-10 mr-2 align-middle select-none">
                   <input
@@ -98,12 +112,12 @@ const Settings: React.FC = () => {
                   <label
                     htmlFor="toggle-email"
                     className={`block overflow-hidden h-6 rounded-full cursor-pointer ${
-                      emailUpdates ? 'bg-primary-600' : 'bg-gray-300'
+                      emailUpdates ? "bg-primary-600" : "bg-gray-300"
                     }`}
                   >
                     <span
                       className={`block h-6 w-6 rounded-full bg-white transform transition-transform ${
-                        emailUpdates ? 'translate-x-4' : 'translate-x-0'
+                        emailUpdates ? "translate-x-4" : "translate-x-0"
                       }`}
                     ></span>
                   </label>
@@ -118,7 +132,9 @@ const Settings: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-medium text-gray-700">Dark Mode</h3>
-                <p className="text-sm text-gray-500">Switch between light and dark theme</p>
+                <p className="text-sm text-gray-500">
+                  Switch between light and dark theme
+                </p>
               </div>
               <div className="relative inline-block w-10 mr-2 align-middle select-none">
                 <input
@@ -131,12 +147,12 @@ const Settings: React.FC = () => {
                 <label
                   htmlFor="toggle-theme"
                   className={`block overflow-hidden h-6 rounded-full cursor-pointer ${
-                    darkMode ? 'bg-primary-600' : 'bg-gray-300'
+                    darkMode ? "bg-primary-600" : "bg-gray-300"
                   }`}
                 >
                   <span
                     className={`block h-6 w-6 rounded-full bg-white transform transition-transform ${
-                      darkMode ? 'translate-x-4' : 'translate-x-0'
+                      darkMode ? "translate-x-4" : "translate-x-0"
                     }`}
                   ></span>
                 </label>
@@ -150,17 +166,12 @@ const Settings: React.FC = () => {
           <div className="card">
             <h2 className="text-xl font-medium mb-4">Account Actions</h2>
             <div className="space-y-4">
-              <button
-                onClick={handleLogout}
-                className="w-full btn btn-danger"
-              >
+              <button onClick={handleLogout} className="w-full btn btn-danger">
                 Log Out
               </button>
-              
-              <button className="w-full btn btn-secondary">
-                Export Data
-              </button>
-              
+
+              <button className="w-full btn btn-secondary">Export Data</button>
+
               <button className="w-full text-red-600 hover:text-red-800">
                 Delete Account
               </button>

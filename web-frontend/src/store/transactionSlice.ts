@@ -1,5 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { TransactionState, Transaction } from '../types';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { TransactionState, Transaction } from "../types";
 
 const initialState: TransactionState = {
   transactions: [],
@@ -9,7 +9,7 @@ const initialState: TransactionState = {
 };
 
 const transactionSlice = createSlice({
-  name: 'transaction',
+  name: "transaction",
   initialState,
   reducers: {
     getTransactionsStart: (state) => {
@@ -56,7 +56,7 @@ const transactionSlice = createSlice({
     updateTransactionSuccess: (state, action: PayloadAction<Transaction>) => {
       state.isLoading = false;
       state.transactions = state.transactions.map((transaction) =>
-        transaction.id === action.payload.id ? action.payload : transaction
+        transaction.id === action.payload.id ? action.payload : transaction,
       );
       state.currentTransaction = action.payload;
     },
@@ -70,7 +70,9 @@ const transactionSlice = createSlice({
     },
     deleteTransactionSuccess: (state, action: PayloadAction<string>) => {
       state.isLoading = false;
-      state.transactions = state.transactions.filter((transaction) => transaction.id !== action.payload);
+      state.transactions = state.transactions.filter(
+        (transaction) => transaction.id !== action.payload,
+      );
       state.currentTransaction = null;
     },
     deleteTransactionFailure: (state, action: PayloadAction<string>) => {
@@ -80,7 +82,10 @@ const transactionSlice = createSlice({
     clearTransactionError: (state) => {
       state.error = null;
     },
-    setCurrentTransaction: (state, action: PayloadAction<Transaction | null>) => {
+    setCurrentTransaction: (
+      state,
+      action: PayloadAction<Transaction | null>,
+    ) => {
       state.currentTransaction = action.payload;
     },
   },

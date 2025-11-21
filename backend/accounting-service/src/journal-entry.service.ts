@@ -1,7 +1,11 @@
-import journalEntryModel from '../models/journal-entry.model';
-import { JournalEntryCreateInput, JournalEntryUpdateInput, JournalEntry } from '../types/journal-entry.types';
-import { sendMessage } from '../config/kafka';
-import { logger } from '../utils/logger';
+import journalEntryModel from "../models/journal-entry.model";
+import {
+  JournalEntryCreateInput,
+  JournalEntryUpdateInput,
+  JournalEntry,
+} from "../types/journal-entry.types";
+import { sendMessage } from "../config/kafka";
+import { logger } from "../utils/logger";
 
 class JournalEntryService {
   // Find journal entry by ID
@@ -28,10 +32,10 @@ class JournalEntryService {
   async create(data: JournalEntryCreateInput): Promise<JournalEntry> {
     try {
       const journalEntry = await journalEntryModel.create(data);
-      
+
       // Publish journal_entry_created event to Kafka
       await this.publishJournalEntryCreatedEvent(journalEntry);
-      
+
       return journalEntry;
     } catch (error) {
       logger.error(`Error creating journal entry: ${error}`);
@@ -40,13 +44,16 @@ class JournalEntryService {
   }
 
   // Update journal entry
-  async update(id: string, data: JournalEntryUpdateInput): Promise<JournalEntry> {
+  async update(
+    id: string,
+    data: JournalEntryUpdateInput,
+  ): Promise<JournalEntry> {
     try {
       // Check if journal entry exists
       const existingJournalEntry = await this.findById(id);
       if (!existingJournalEntry) {
-        const error = new Error('Journal entry not found');
-        error.name = 'NotFoundError';
+        const error = new Error("Journal entry not found");
+        error.name = "NotFoundError";
         throw error;
       }
 
@@ -63,8 +70,8 @@ class JournalEntryService {
       // Check if journal entry exists
       const existingJournalEntry = await this.findById(id);
       if (!existingJournalEntry) {
-        const error = new Error('Journal entry not found');
-        error.name = 'NotFoundError';
+        const error = new Error("Journal entry not found");
+        error.name = "NotFoundError";
         throw error;
       }
 
@@ -86,9 +93,11 @@ class JournalEntryService {
   }
 
   // Publish journal_entry_created event to Kafka
-  private async publishJournalEntryCreatedEvent(journalEntry: JournalEntry): Promise<void> {
+  private async publishJournalEntryCreatedEvent(
+    journalEntry: JournalEntry,
+  ): Promise<void> {
     try {
-      await sendMessage('journal_entry_created', {
+      await sendMessage("journal_entry_created", {
         id: journalEntry.id,
         invoiceId: journalEntry.invoiceId,
         debitAccount: journalEntry.debitAccount,
@@ -96,7 +105,7 @@ class JournalEntryService {
         amount: journalEntry.amount,
         date: journalEntry.date,
         description: journalEntry.description,
-        createdAt: journalEntry.createdAt
+        createdAt: journalEntry.createdAt,
       });
     } catch (error) {
       logger.error(`Error publishing journal_entry_created event: ${error}`);

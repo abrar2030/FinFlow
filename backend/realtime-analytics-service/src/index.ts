@@ -1,25 +1,25 @@
-import express from 'express';
-import cors from 'cors';
-import helmet from 'helmet';
-import compression from 'compression';
-import { createServer } from 'http';
-import { Server as SocketIOServer } from 'socket.io';
-import dotenv from 'dotenv';
-import winston from 'winston';
+import express from "express";
+import cors from "cors";
+import helmet from "helmet";
+import compression from "compression";
+import { createServer } from "http";
+import { Server as SocketIOServer } from "socket.io";
+import dotenv from "dotenv";
+import winston from "winston";
 
-import { config } from './config/config';
-import { logger } from './config/logger';
-import { connectDatabase } from './config/database';
-import { connectRedis } from './config/redis';
-import { initializeKafka } from './config/kafka';
-import { StreamingAnalyticsService } from './streaming/StreamingAnalyticsService';
-import { AnomalyDetectionService } from './anomaly/AnomalyDetectionService';
-import { RealtimeController } from './controllers/RealtimeController';
-import { errorHandler } from './middleware/errorHandler';
-import { authMiddleware } from './middleware/auth';
-import { rateLimitMiddleware } from './middleware/rateLimit';
-import { metricsMiddleware } from './middleware/metrics';
-import { swaggerSetup } from './config/swagger';
+import { config } from "./config/config";
+import { logger } from "./config/logger";
+import { connectDatabase } from "./config/database";
+import { connectRedis } from "./config/redis";
+import { initializeKafka } from "./config/kafka";
+import { StreamingAnalyticsService } from "./streaming/StreamingAnalyticsService";
+import { AnomalyDetectionService } from "./anomaly/AnomalyDetectionService";
+import { RealtimeController } from "./controllers/RealtimeController";
+import { errorHandler } from "./middleware/errorHandler";
+import { authMiddleware } from "./middleware/auth";
+import { rateLimitMiddleware } from "./middleware/rateLimit";
+import { metricsMiddleware } from "./middleware/metrics";
+import { swaggerSetup } from "./config/swagger";
 
 // Load environment variables
 dotenv.config();
@@ -37,10 +37,10 @@ class RealtimeAnalyticsApp {
     this.io = new SocketIOServer(this.server, {
       cors: {
         origin: "*",
-        methods: ["GET", "POST"]
-      }
+        methods: ["GET", "POST"],
+      },
     });
-    
+
     this.initializeMiddleware();
     this.initializeRoutes();
     this.initializeErrorHandling();
@@ -49,34 +49,38 @@ class RealtimeAnalyticsApp {
 
   private initializeMiddleware(): void {
     // Security middleware
-    this.app.use(helmet({
-      contentSecurityPolicy: {
-        directives: {
-          defaultSrc: ["'self'"],
-          styleSrc: ["'self'", "'unsafe-inline'"],
-          scriptSrc: ["'self'"],
-          imgSrc: ["'self'", "data:", "https:"],
+    this.app.use(
+      helmet({
+        contentSecurityPolicy: {
+          directives: {
+            defaultSrc: ["'self'"],
+            styleSrc: ["'self'", "'unsafe-inline'"],
+            scriptSrc: ["'self'"],
+            imgSrc: ["'self'", "data:", "https:"],
+          },
         },
-      },
-      hsts: {
-        maxAge: 31536000,
-        includeSubDomains: true,
-        preload: true
-      }
-    }));
+        hsts: {
+          maxAge: 31536000,
+          includeSubDomains: true,
+          preload: true,
+        },
+      }),
+    );
 
     // CORS configuration
-    this.app.use(cors({
-      origin: process.env.ALLOWED_ORIGINS?.split(',') || '*',
-      credentials: true,
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
-    }));
+    this.app.use(
+      cors({
+        origin: process.env.ALLOWED_ORIGINS?.split(",") || "*",
+        credentials: true,
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+      }),
+    );
 
     // Compression and parsing
     this.app.use(compression());
-    this.app.use(express.json({ limit: '10mb' }));
-    this.app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+    this.app.use(express.json({ limit: "10mb" }));
+    this.app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
     // Rate limiting
     this.app.use(rateLimitMiddleware);
@@ -88,8 +92,8 @@ class RealtimeAnalyticsApp {
     this.app.use((req, res, next) => {
       logger.info(`${req.method} ${req.path}`, {
         ip: req.ip,
-        userAgent: req.get('User-Agent'),
-        timestamp: new Date().toISOString()
+        userAgent: req.get("User-Agent"),
+        timestamp: new Date().toISOString(),
       });
       next();
     });
@@ -97,12 +101,12 @@ class RealtimeAnalyticsApp {
 
   private initializeRoutes(): void {
     // Health check
-    this.app.get('/health', (req, res) => {
+    this.app.get("/health", (req, res) => {
       res.status(200).json({
-        status: 'healthy',
+        status: "healthy",
         timestamp: new Date().toISOString(),
-        service: 'realtime-analytics-service',
-        version: process.env.npm_package_version || '1.0.0'
+        service: "realtime-analytics-service",
+        version: process.env.npm_package_version || "1.0.0",
       });
     });
 
@@ -110,25 +114,25 @@ class RealtimeAnalyticsApp {
     swaggerSetup(this.app);
 
     // Protected routes
-    this.app.use('/api/realtime', authMiddleware);
-    
+    this.app.use("/api/realtime", authMiddleware);
+
     // Realtime analytics routes
     const realtimeController = new RealtimeController(this.io);
-    this.app.use('/api/realtime', realtimeController.getRouter());
+    this.app.use("/api/realtime", realtimeController.getRouter());
 
     // WebSocket connection handling
-    this.io.on('connection', (socket) => {
+    this.io.on("connection", (socket) => {
       logger.info(`Client connected: ${socket.id}`);
-      
-      socket.on('subscribe_analytics', (data) => {
+
+      socket.on("subscribe_analytics", (data) => {
         realtimeController.handleSubscription(socket, data);
       });
 
-      socket.on('unsubscribe_analytics', (data) => {
+      socket.on("unsubscribe_analytics", (data) => {
         realtimeController.handleUnsubscription(socket, data);
       });
 
-      socket.on('disconnect', () => {
+      socket.on("disconnect", () => {
         logger.info(`Client disconnected: ${socket.id}`);
       });
     });
@@ -136,11 +140,11 @@ class RealtimeAnalyticsApp {
 
   private initializeErrorHandling(): void {
     // 404 handler
-    this.app.use('*', (req, res) => {
+    this.app.use("*", (req, res) => {
       res.status(404).json({
-        error: 'Not Found',
+        error: "Not Found",
         message: `Route ${req.originalUrl} not found`,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     });
 
@@ -153,7 +157,7 @@ class RealtimeAnalyticsApp {
       // Initialize database connections
       await connectDatabase();
       await connectRedis();
-      
+
       // Initialize Kafka
       await initializeKafka();
 
@@ -165,54 +169,54 @@ class RealtimeAnalyticsApp {
       this.anomalyService = new AnomalyDetectionService(this.io);
       await this.anomalyService.initialize();
 
-      logger.info('All services initialized successfully');
+      logger.info("All services initialized successfully");
     } catch (error) {
-      logger.error('Failed to initialize services:', error);
+      logger.error("Failed to initialize services:", error);
       process.exit(1);
     }
   }
 
   public async start(): Promise<void> {
     const port = config.port || 3008;
-    
-    this.server.listen(port, '0.0.0.0', () => {
+
+    this.server.listen(port, "0.0.0.0", () => {
       logger.info(`Realtime Analytics Service running on port ${port}`);
       logger.info(`Environment: ${config.nodeEnv}`);
       logger.info(`API Documentation: http://localhost:${port}/api-docs`);
     });
 
     // Graceful shutdown
-    process.on('SIGTERM', () => this.gracefulShutdown());
-    process.on('SIGINT', () => this.gracefulShutdown());
+    process.on("SIGTERM", () => this.gracefulShutdown());
+    process.on("SIGINT", () => this.gracefulShutdown());
   }
 
   private async gracefulShutdown(): Promise<void> {
-    logger.info('Starting graceful shutdown...');
-    
+    logger.info("Starting graceful shutdown...");
+
     try {
       // Close server
       this.server.close(() => {
-        logger.info('HTTP server closed');
+        logger.info("HTTP server closed");
       });
 
       // Close WebSocket connections
       this.io.close(() => {
-        logger.info('WebSocket server closed');
+        logger.info("WebSocket server closed");
       });
 
       // Cleanup services
       if (this.streamingService) {
         await this.streamingService.cleanup();
       }
-      
+
       if (this.anomalyService) {
         await this.anomalyService.cleanup();
       }
 
-      logger.info('Graceful shutdown completed');
+      logger.info("Graceful shutdown completed");
       process.exit(0);
     } catch (error) {
-      logger.error('Error during graceful shutdown:', error);
+      logger.error("Error during graceful shutdown:", error);
       process.exit(1);
     }
   }
@@ -221,9 +225,8 @@ class RealtimeAnalyticsApp {
 // Start the application
 const app = new RealtimeAnalyticsApp();
 app.start().catch((error) => {
-  logger.error('Failed to start application:', error);
+  logger.error("Failed to start application:", error);
   process.exit(1);
 });
 
 export default app;
-

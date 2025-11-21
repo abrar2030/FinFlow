@@ -56,7 +56,7 @@ export interface PaymentEvent {
 // Real-time insights
 export interface RealtimeInsight {
   type: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   message: string;
   data: any;
   timestamp: number;
@@ -89,7 +89,7 @@ export interface StreamingWindow {
 export interface AnomalyScore {
   type: string;
   score: number; // 0-1 scale
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   description: string;
   features: Record<string, any>;
   timestamp: number;
@@ -101,13 +101,13 @@ export interface AnomalyAlert {
   userId: string;
   transactionId?: string;
   anomalyType: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   score: number;
   confidence: number;
   description: string;
   features: Record<string, any>;
   timestamp: number;
-  status: 'active' | 'investigating' | 'resolved' | 'false_positive';
+  status: "active" | "investigating" | "resolved" | "false_positive";
   investigationRequired: boolean;
   metadata?: Record<string, any>;
 }
@@ -190,7 +190,7 @@ export interface HistoricalDataRequest {
   userId?: string;
   startTime: number;
   endTime: number;
-  granularity?: 'minute' | 'hour' | 'day';
+  granularity?: "minute" | "hour" | "day";
   metrics?: string[];
 }
 
@@ -211,7 +211,7 @@ export interface AnomalyAnalysisRequest {
     start: number;
     end: number;
   };
-  severity?: 'low' | 'medium' | 'high' | 'critical';
+  severity?: "low" | "medium" | "high" | "critical";
   types?: string[];
 }
 
@@ -280,7 +280,7 @@ export interface DashboardMetrics {
 
 export interface DashboardWidget {
   id: string;
-  type: 'chart' | 'metric' | 'table' | 'alert';
+  type: "chart" | "metric" | "table" | "alert";
   title: string;
   data: any;
   config: {
@@ -341,7 +341,7 @@ export interface AnalyticsError {
 // Monitoring types
 export interface HealthCheck {
   service: string;
-  status: 'healthy' | 'degraded' | 'unhealthy';
+  status: "healthy" | "degraded" | "unhealthy";
   timestamp: number;
   details: {
     uptime: number;
@@ -376,11 +376,27 @@ export interface ServiceMetrics {
 }
 
 // Export utility types
-export type MetricType = 'transaction' | 'payment' | 'user' | 'system';
-export type TimeGranularity = 'second' | 'minute' | 'hour' | 'day' | 'week' | 'month';
-export type AggregationType = 'sum' | 'avg' | 'min' | 'max' | 'count' | 'distinct';
-export type AlertSeverity = 'low' | 'medium' | 'high' | 'critical';
-export type AlertStatus = 'active' | 'investigating' | 'resolved' | 'false_positive';
+export type MetricType = "transaction" | "payment" | "user" | "system";
+export type TimeGranularity =
+  | "second"
+  | "minute"
+  | "hour"
+  | "day"
+  | "week"
+  | "month";
+export type AggregationType =
+  | "sum"
+  | "avg"
+  | "min"
+  | "max"
+  | "count"
+  | "distinct";
+export type AlertSeverity = "low" | "medium" | "high" | "critical";
+export type AlertStatus =
+  | "active"
+  | "investigating"
+  | "resolved"
+  | "false_positive";
 
 // Utility interfaces
 export interface TimeRange {
@@ -396,7 +412,7 @@ export interface Pagination {
 
 export interface SortOptions {
   field: string;
-  direction: 'asc' | 'desc';
+  direction: "asc" | "desc";
 }
 
 export interface FilterOptions {
@@ -416,7 +432,7 @@ export interface FilterOptions {
 export interface TrendAnalysis {
   metric: string;
   timeRange: TimeRange;
-  trend: 'increasing' | 'decreasing' | 'stable' | 'volatile';
+  trend: "increasing" | "decreasing" | "stable" | "volatile";
   changeRate: number;
   confidence: number;
   dataPoints: Array<{
@@ -452,7 +468,7 @@ export interface ForecastResult {
 export interface MLModel {
   id: string;
   name: string;
-  type: 'classification' | 'regression' | 'clustering' | 'anomaly_detection';
+  type: "classification" | "regression" | "clustering" | "anomaly_detection";
   version: string;
   features: string[];
   target?: string;
@@ -469,7 +485,7 @@ export interface MLModel {
     lastTrained: number;
     dataRange: TimeRange;
   };
-  status: 'training' | 'ready' | 'deprecated' | 'error';
+  status: "training" | "ready" | "deprecated" | "error";
 }
 
 export interface PredictionRequest {
@@ -503,7 +519,7 @@ export interface DataQualityReport {
   byField: Record<string, DataQualityMetrics>;
   issues: Array<{
     type: string;
-    severity: 'low' | 'medium' | 'high';
+    severity: "low" | "medium" | "high";
     description: string;
     affectedRecords: number;
     suggestions: string[];
@@ -511,5 +527,4 @@ export interface DataQualityReport {
 }
 
 // Export all types
-export * from './analytics';
-
+export * from "./analytics";

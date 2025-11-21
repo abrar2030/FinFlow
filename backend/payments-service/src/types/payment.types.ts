@@ -1,9 +1,9 @@
-import { PaymentStatus } from '@prisma/client';
+import { PaymentStatus } from "@prisma/client";
 
 export enum ProcessorType {
-  STRIPE = 'stripe',
-  PAYPAL = 'paypal',
-  SQUARE = 'square'
+  STRIPE = "stripe",
+  PAYPAL = "paypal",
+  SQUARE = "square",
 }
 
 export interface Payment {

@@ -1,7 +1,7 @@
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../store';
-import { toggleSidebar } from '../store/uiSlice';
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../store";
+import { toggleSidebar } from "../store/uiSlice";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -13,9 +13,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { user } = useSelector((state: RootState) => state.auth);
 
   return (
-    <div className={`min-h-screen ${darkMode ? 'dark bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
+    <div
+      className={`min-h-screen ${darkMode ? "dark bg-gray-900 text-white" : "bg-gray-50 text-gray-900"}`}
+    >
       {/* Header */}
-      <header className={`fixed top-0 left-0 right-0 z-10 ${darkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm`}>
+      <header
+        className={`fixed top-0 left-0 right-0 z-10 ${darkMode ? "bg-gray-800" : "bg-white"} shadow-sm`}
+      >
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center">
             <button
@@ -55,8 +59,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       {/* Sidebar */}
       <aside
         className={`fixed top-0 left-0 z-20 h-full pt-16 transition-all duration-300 ${
-          sidebarOpen ? 'w-64' : 'w-0'
-        } ${darkMode ? 'bg-gray-800' : 'bg-white'} shadow-md`}
+          sidebarOpen ? "w-64" : "w-0"
+        } ${darkMode ? "bg-gray-800" : "bg-white"} shadow-md`}
       >
         <nav className="mt-6 px-4">
           <ul>
@@ -64,7 +68,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <a
                 href="/"
                 className={`flex items-center px-4 py-2 rounded-md ${
-                  darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
+                  darkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
                 }`}
               >
                 <svg
@@ -88,7 +92,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <a
                 href="/invoices"
                 className={`flex items-center px-4 py-2 rounded-md ${
-                  darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
+                  darkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
                 }`}
               >
                 <svg
@@ -112,7 +116,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <a
                 href="/payments"
                 className={`flex items-center px-4 py-2 rounded-md ${
-                  darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
+                  darkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
                 }`}
               >
                 <svg
@@ -136,7 +140,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <a
                 href="/analytics"
                 className={`flex items-center px-4 py-2 rounded-md ${
-                  darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
+                  darkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
                 }`}
               >
                 <svg
@@ -160,7 +164,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <a
                 href="/settings"
                 className={`flex items-center px-4 py-2 rounded-md ${
-                  darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
+                  darkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
                 }`}
               >
                 <svg
@@ -191,7 +195,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       </aside>
 
       {/* Main content */}
-      <main className={`pt-16 ${sidebarOpen ? 'ml-64' : 'ml-0'} transition-all duration-300`}>
+      <main
+        className={`pt-16 ${sidebarOpen ? "ml-64" : "ml-0"} transition-all duration-300`}
+      >
         <div className="p-6">{children}</div>
       </main>
     </div>

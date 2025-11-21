@@ -1,6 +1,6 @@
-import fs from 'fs';
-import path from 'path';
-import { logger } from '../utils/logger';
+import fs from "fs";
+import path from "path";
+import { logger } from "../utils/logger";
 
 /**
  * Utility for audit logging
@@ -18,7 +18,8 @@ export interface AuditLogEntry {
 }
 
 // Path to audit log file
-const AUDIT_LOG_PATH = process.env.AUDIT_LOG_PATH || path.join(__dirname, '../../logs/audit.log');
+const AUDIT_LOG_PATH =
+  process.env.AUDIT_LOG_PATH || path.join(__dirname, "../../logs/audit.log");
 
 // Ensure log directory exists
 const logDir = path.dirname(AUDIT_LOG_PATH);
@@ -30,24 +31,24 @@ if (!fs.existsSync(logDir)) {
  * Log an audit event
  * @param entry Audit log entry details
  */
-export const auditLog = async (entry: Omit<AuditLogEntry, 'timestamp'>): Promise<void> => {
+export const auditLog = async (
+  entry: Omit<AuditLogEntry, "timestamp">,
+): Promise<void> => {
   try {
     const timestamp = new Date().toISOString();
-    
+
     const logEntry: AuditLogEntry = {
       timestamp,
-      ...entry
+      ...entry,
     };
-    
+
     // Log to application logger
     logger.info(`AUDIT: ${JSON.stringify(logEntry)}`);
-    
+
     // Write to dedicated audit log file
-    fs.appendFileSync(
-      AUDIT_LOG_PATH,
-      JSON.stringify(logEntry) + '\n',
-      { encoding: 'utf8' }
-    );
+    fs.appendFileSync(AUDIT_LOG_PATH, JSON.stringify(logEntry) + "\n", {
+      encoding: "utf8",
+    });
   } catch (error) {
     logger.error(`Error writing to audit log: ${error}`);
     // Don't throw error, just log it
@@ -64,36 +65,36 @@ export const auditLog = async (entry: Omit<AuditLogEntry, 'timestamp'>): Promise
 export const getUserAuditLogs = (
   userId: string,
   startDate?: Date,
-  endDate?: Date
+  endDate?: Date,
 ): AuditLogEntry[] => {
   try {
     // Read audit log file
-    const logContent = fs.readFileSync(AUDIT_LOG_PATH, 'utf8');
-    
+    const logContent = fs.readFileSync(AUDIT_LOG_PATH, "utf8");
+
     // Parse log entries
     const logEntries: AuditLogEntry[] = logContent
-      .split('\n')
-      .filter(line => line.trim() !== '')
-      .map(line => JSON.parse(line))
-      .filter(entry => entry.userId === userId);
-    
+      .split("\n")
+      .filter((line) => line.trim() !== "")
+      .map((line) => JSON.parse(line))
+      .filter((entry) => entry.userId === userId);
+
     // Apply date filtering if provided
     if (startDate || endDate) {
-      return logEntries.filter(entry => {
+      return logEntries.filter((entry) => {
         const entryDate = new Date(entry.timestamp);
-        
+
         if (startDate && entryDate < startDate) {
           return false;
         }
-        
+
         if (endDate && entryDate > endDate) {
           return false;
         }
-        
+
         return true;
       });
     }
-    
+
     return logEntries;
   } catch (error) {
     logger.error(`Error reading audit logs: ${error}`);
@@ -113,46 +114,46 @@ export const getResourceAuditLogs = (
   resourceType: string,
   resourceId?: string,
   startDate?: Date,
-  endDate?: Date
+  endDate?: Date,
 ): AuditLogEntry[] => {
   try {
     // Read audit log file
-    const logContent = fs.readFileSync(AUDIT_LOG_PATH, 'utf8');
-    
+    const logContent = fs.readFileSync(AUDIT_LOG_PATH, "utf8");
+
     // Parse log entries
     const logEntries: AuditLogEntry[] = logContent
-      .split('\n')
-      .filter(line => line.trim() !== '')
-      .map(line => JSON.parse(line))
-      .filter(entry => {
+      .split("\n")
+      .filter((line) => line.trim() !== "")
+      .map((line) => JSON.parse(line))
+      .filter((entry) => {
         if (entry.resourceType !== resourceType) {
           return false;
         }
-        
+
         if (resourceId && entry.resourceId !== resourceId) {
           return false;
         }
-        
+
         return true;
       });
-    
+
     // Apply date filtering if provided
     if (startDate || endDate) {
-      return logEntries.filter(entry => {
+      return logEntries.filter((entry) => {
         const entryDate = new Date(entry.timestamp);
-        
+
         if (startDate && entryDate < startDate) {
           return false;
         }
-        
+
         if (endDate && entryDate > endDate) {
           return false;
         }
-        
+
         return true;
       });
     }
-    
+
     return logEntries;
   } catch (error) {
     logger.error(`Error reading audit logs: ${error}`);

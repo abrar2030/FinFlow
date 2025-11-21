@@ -1,5 +1,9 @@
-import { PrismaClient } from '@prisma/client';
-import { Category, CategoryCreateInput, CategoryUpdateInput } from '../types/category.types';
+import { PrismaClient } from "@prisma/client";
+import {
+  Category,
+  CategoryCreateInput,
+  CategoryUpdateInput,
+} from "../types/category.types";
 
 class CategoryModel {
   private prisma: PrismaClient;
@@ -41,7 +45,7 @@ class CategoryModel {
 
   async findAll(): Promise<Category[]> {
     return this.prisma.category.findMany({
-      orderBy: { name: 'asc' },
+      orderBy: { name: "asc" },
     });
   }
 }

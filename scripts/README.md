@@ -26,9 +26,11 @@ These scripts address key automation opportunities identified in the FinFlow rep
 ## Scripts Included
 
 ### 1. `finflow-setup.sh`
+
 Comprehensive environment setup script that automates the entire setup process.
 
 **Usage:**
+
 ```
 ./finflow-setup.sh [OPTIONS]
 
@@ -41,9 +43,11 @@ Options:
 ```
 
 ### 2. `finflow-test-runner.sh`
+
 Unified test runner for executing all types of tests across services.
 
 **Usage:**
+
 ```
 ./finflow-test-runner.sh [OPTIONS]
 
@@ -58,9 +62,11 @@ Options:
 ```
 
 ### 3. `finflow-deploy.sh`
+
 Enhanced deployment script with environment-specific configuration and verification.
 
 **Usage:**
+
 ```
 ./finflow-deploy.sh [OPTIONS]
 
@@ -76,9 +82,11 @@ Options:
 ```
 
 ### 4. `finflow-quality.sh`
+
 Advanced code quality automation with pre-commit hooks and reporting.
 
 **Usage:**
+
 ```
 ./finflow-quality.sh [OPTIONS]
 
@@ -93,9 +101,11 @@ Options:
 ```
 
 ### 5. `finflow-monitor.sh`
+
 Monitoring automation for dashboard setup and alert configuration.
 
 **Usage:**
+
 ```
 ./finflow-monitor.sh [OPTIONS]
 
@@ -111,9 +121,11 @@ Options:
 ```
 
 ### 6. `finflow-docs.sh`
+
 Documentation generation automation for API docs and changelogs.
 
 **Usage:**
+
 ```
 ./finflow-docs.sh [OPTIONS]
 
@@ -128,9 +140,11 @@ Options:
 ```
 
 ### 7. `finflow-db.sh`
+
 Database management automation for migrations, seeding, and maintenance.
 
 **Usage:**
+
 ```
 ./finflow-db.sh [OPTIONS]
 
@@ -144,9 +158,11 @@ Options:
 ```
 
 ### 8. `finflow-dev.sh`
+
 Development workflow automation for cross-service coordination.
 
 **Usage:**
+
 ```
 ./finflow-dev.sh [OPTIONS]
 

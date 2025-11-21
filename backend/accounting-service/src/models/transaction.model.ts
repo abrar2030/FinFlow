@@ -1,5 +1,9 @@
-import { PrismaClient } from '@prisma/client';
-import { Transaction, TransactionCreateInput, TransactionUpdateInput } from '../types/transaction.types';
+import { PrismaClient } from "@prisma/client";
+import {
+  Transaction,
+  TransactionCreateInput,
+  TransactionUpdateInput,
+} from "../types/transaction.types";
 
 class TransactionModel {
   private prisma: PrismaClient;
@@ -17,7 +21,7 @@ class TransactionModel {
   async findByUserId(userId: string): Promise<Transaction[]> {
     return this.prisma.transaction.findMany({
       where: { userId },
-      orderBy: { date: 'desc' },
+      orderBy: { date: "desc" },
     });
   }
 
@@ -42,14 +46,14 @@ class TransactionModel {
 
   async findAll(): Promise<Transaction[]> {
     return this.prisma.transaction.findMany({
-      orderBy: { date: 'desc' },
+      orderBy: { date: "desc" },
     });
   }
 
   async findByUserIdAndDateRange(
-    userId: string, 
-    startDate: Date, 
-    endDate: Date
+    userId: string,
+    startDate: Date,
+    endDate: Date,
   ): Promise<Transaction[]> {
     return this.prisma.transaction.findMany({
       where: {
@@ -59,7 +63,7 @@ class TransactionModel {
           lte: endDate,
         },
       },
-      orderBy: { date: 'desc' },
+      orderBy: { date: "desc" },
     });
   }
 }

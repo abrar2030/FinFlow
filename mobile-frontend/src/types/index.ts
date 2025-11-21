@@ -5,7 +5,7 @@ export interface User {
   email: string;
   firstName?: string;
   lastName?: string;
-  role: 'admin' | 'user' | 'manager';
+  role: "admin" | "user" | "manager";
   createdAt: string;
   updatedAt: string;
 }
@@ -21,9 +21,9 @@ export interface Transaction {
   id: string;
   amount: number;
   currency: string;
-  status: 'pending' | 'completed' | 'failed' | 'refunded';
+  status: "pending" | "completed" | "failed" | "refunded";
   processorId: string;
-  processorType: 'stripe' | 'paypal' | 'square';
+  processorType: "stripe" | "paypal" | "square";
   metadata?: Record<string, any>;
   createdAt: string;
   updatedAt: string;
@@ -32,7 +32,7 @@ export interface Transaction {
 export interface PaymentRequest {
   amount: number;
   currency: string;
-  processorType: 'stripe' | 'paypal' | 'square';
+  processorType: "stripe" | "paypal" | "square";
   source: string;
   metadata?: Record<string, any>;
 }
@@ -42,14 +42,14 @@ export interface AccountingEntry {
   transactionId: string;
   accountId: string;
   amount: number;
-  type: 'debit' | 'credit';
+  type: "debit" | "credit";
   description: string;
   createdAt: string;
 }
 
 export interface FinancialReport {
   id: string;
-  type: 'balance_sheet' | 'income_statement' | 'cash_flow';
+  type: "balance_sheet" | "income_statement" | "cash_flow";
   startDate: string;
   endDate: string;
   data: Record<string, any>;
@@ -62,7 +62,7 @@ export interface AnalyticsMetric {
   value: number;
   previousValue?: number;
   changePercentage?: number;
-  period: 'daily' | 'weekly' | 'monthly' | 'yearly';
+  period: "daily" | "weekly" | "monthly" | "yearly";
   date: string;
 }
 
@@ -72,7 +72,7 @@ export interface CreditScore {
   score: number;
   factors: Array<{
     factor: string;
-    impact: 'positive' | 'negative' | 'neutral';
+    impact: "positive" | "negative" | "neutral";
     description: string;
   }>;
   createdAt: string;
@@ -84,7 +84,7 @@ export interface Loan {
   amount: number;
   interestRate: number;
   term: number; // in months
-  status: 'pending' | 'approved' | 'rejected' | 'active' | 'paid';
+  status: "pending" | "approved" | "rejected" | "active" | "paid";
   startDate?: string;
   endDate?: string;
   createdAt: string;

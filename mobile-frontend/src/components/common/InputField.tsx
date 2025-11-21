@@ -1,5 +1,12 @@
-import React from 'react';
-import { StyleSheet, View, Text, TextInput, TextInputProps, ViewStyle } from 'react-native';
+import React from "react";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TextInput,
+  TextInputProps,
+  ViewStyle,
+} from "react-native";
 
 interface InputFieldProps extends TextInputProps {
   label: string;
@@ -37,36 +44,36 @@ export const InputField: React.FC<InputFieldProps> = ({
 const styles = StyleSheet.create({
   container: {
     marginBottom: 16,
-    width: '100%',
+    width: "100%",
   },
   label: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
     marginBottom: 6,
-    color: '#2c3e50',
+    color: "#2c3e50",
   },
   required: {
-    color: '#e74c3c',
+    color: "#e74c3c",
   },
   input: {
     height: 48,
     borderWidth: 1,
-    borderColor: '#bdc3c7',
+    borderColor: "#bdc3c7",
     borderRadius: 8,
     paddingHorizontal: 12,
     fontSize: 16,
-    color: '#2c3e50',
-    backgroundColor: '#ffffff',
+    color: "#2c3e50",
+    backgroundColor: "#ffffff",
   },
   inputError: {
-    borderColor: '#e74c3c',
+    borderColor: "#e74c3c",
   },
   disabledInput: {
-    backgroundColor: '#ecf0f1',
-    color: '#7f8c8d',
+    backgroundColor: "#ecf0f1",
+    color: "#7f8c8d",
   },
   errorText: {
-    color: '#e74c3c',
+    color: "#e74c3c",
     fontSize: 12,
     marginTop: 4,
   },

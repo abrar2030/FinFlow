@@ -5,7 +5,7 @@
   file:
     path: "{{ item }}"
     state: directory
-    mode: '0755'
+    mode: "0755"
   loop:
     - /opt/finflow/deployments
     - /opt/finflow/deployments/manifests
@@ -15,7 +15,7 @@
   copy:
     src: "{{ item }}"
     dest: /opt/finflow/deployments/manifests/
-    mode: '0644'
+    mode: "0644"
   with_fileglob:
     - kubernetes/**/*.yaml
 
@@ -23,7 +23,7 @@
   template:
     src: "{{ item }}"
     dest: /opt/finflow/deployments/scripts/
-    mode: '0755'
+    mode: "0755"
   loop:
     - deploy.sh.j2
     - rollback.sh.j2
@@ -43,25 +43,85 @@
       data:
         "{{ item.key }}": "{{ item.value | b64encode }}"
   loop:
-    - { name: "auth-db-credentials", key: "url", value: "postgresql://postgres:{{ vault_auth_db_password }}@auth-db:5432/auth" }
+    - {
+        name: "auth-db-credentials",
+        key: "url",
+        value: "postgresql://postgres:{{ vault_auth_db_password }}@auth-db:5432/auth",
+      }
     - { name: "auth-db-credentials", key: "username", value: "postgres" }
-    - { name: "auth-db-credentials", key: "password", value: "{{ vault_auth_db_password }}" }
-    - { name: "auth-secrets", key: "jwt-secret", value: "{{ vault_jwt_secret }}" }
-    - { name: "payments-db-credentials", key: "url", value: "postgresql://postgres:{{ vault_payments_db_password }}@payments-db:5432/payments" }
+    - {
+        name: "auth-db-credentials",
+        key: "password",
+        value: "{{ vault_auth_db_password }}",
+      }
+    - {
+        name: "auth-secrets",
+        key: "jwt-secret",
+        value: "{{ vault_jwt_secret }}",
+      }
+    - {
+        name: "payments-db-credentials",
+        key: "url",
+        value: "postgresql://postgres:{{ vault_payments_db_password }}@payments-db:5432/payments",
+      }
     - { name: "payments-db-credentials", key: "username", value: "postgres" }
-    - { name: "payments-db-credentials", key: "password", value: "{{ vault_payments_db_password }}" }
-    - { name: "payments-secrets", key: "jwt-secret", value: "{{ vault_jwt_secret }}" }
-    - { name: "payments-secrets", key: "stripe-secret", value: "{{ vault_stripe_secret }}" }
-    - { name: "payments-secrets", key: "stripe-webhook-secret", value: "{{ vault_stripe_webhook_secret }}" }
-    - { name: "accounting-db-credentials", key: "url", value: "postgresql://postgres:{{ vault_accounting_db_password }}@accounting-db:5432/accounting" }
+    - {
+        name: "payments-db-credentials",
+        key: "password",
+        value: "{{ vault_payments_db_password }}",
+      }
+    - {
+        name: "payments-secrets",
+        key: "jwt-secret",
+        value: "{{ vault_jwt_secret }}",
+      }
+    - {
+        name: "payments-secrets",
+        key: "stripe-secret",
+        value: "{{ vault_stripe_secret }}",
+      }
+    - {
+        name: "payments-secrets",
+        key: "stripe-webhook-secret",
+        value: "{{ vault_stripe_webhook_secret }}",
+      }
+    - {
+        name: "accounting-db-credentials",
+        key: "url",
+        value: "postgresql://postgres:{{ vault_accounting_db_password }}@accounting-db:5432/accounting",
+      }
     - { name: "accounting-db-credentials", key: "username", value: "postgres" }
-    - { name: "accounting-db-credentials", key: "password", value: "{{ vault_accounting_db_password }}" }
-    - { name: "accounting-secrets", key: "jwt-secret", value: "{{ vault_jwt_secret }}" }
-    - { name: "analytics-db-credentials", key: "url", value: "postgresql://postgres:{{ vault_analytics_db_password }}@analytics-db:5432/analytics" }
+    - {
+        name: "accounting-db-credentials",
+        key: "password",
+        value: "{{ vault_accounting_db_password }}",
+      }
+    - {
+        name: "accounting-secrets",
+        key: "jwt-secret",
+        value: "{{ vault_jwt_secret }}",
+      }
+    - {
+        name: "analytics-db-credentials",
+        key: "url",
+        value: "postgresql://postgres:{{ vault_analytics_db_password }}@analytics-db:5432/analytics",
+      }
     - { name: "analytics-db-credentials", key: "username", value: "postgres" }
-    - { name: "analytics-db-credentials", key: "password", value: "{{ vault_analytics_db_password }}" }
-    - { name: "analytics-secrets", key: "jwt-secret", value: "{{ vault_jwt_secret }}" }
-    - { name: "credit-engine-secrets", key: "jwt-secret", value: "{{ vault_jwt_secret }}" }
+    - {
+        name: "analytics-db-credentials",
+        key: "password",
+        value: "{{ vault_analytics_db_password }}",
+      }
+    - {
+        name: "analytics-secrets",
+        key: "jwt-secret",
+        value: "{{ vault_jwt_secret }}",
+      }
+    - {
+        name: "credit-engine-secrets",
+        key: "jwt-secret",
+        value: "{{ vault_jwt_secret }}",
+      }
   when: inventory_hostname == groups['k8s_nodes'][0]
 
 - name: Set up CI/CD integration
@@ -73,14 +133,14 @@
       args:
         creates: /opt/finflow/deployments/.argocd_installed
       when: inventory_hostname == groups['k8s_nodes'][0]
-    
+
     - name: Mark ArgoCD as installed
       file:
         path: /opt/finflow/deployments/.argocd_installed
         state: touch
-        mode: '0644'
+        mode: "0644"
       when: inventory_hostname == groups['k8s_nodes'][0]
-    
+
     - name: Configure ArgoCD application
       k8s:
         state: present
@@ -104,6 +164,6 @@
               automated:
                 prune: true
                 selfHeal: true
-      when: 
+      when:
         - inventory_hostname == groups['k8s_nodes'][0]
         - git_repo_url is defined

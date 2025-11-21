@@ -1,5 +1,9 @@
-import { PrismaClient } from '@prisma/client';
-import { Payment, PaymentCreateInput, PaymentUpdateInput } from '../types/payment.types';
+import { PrismaClient } from "@prisma/client";
+import {
+  Payment,
+  PaymentCreateInput,
+  PaymentUpdateInput,
+} from "../types/payment.types";
 
 class PaymentModel {
   private prisma: PrismaClient;
@@ -17,7 +21,7 @@ class PaymentModel {
   async findByUserId(userId: string): Promise<Payment[]> {
     return this.prisma.payment.findMany({
       where: { userId },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
   }
 
@@ -48,7 +52,7 @@ class PaymentModel {
 
   async findAll(): Promise<Payment[]> {
     return this.prisma.payment.findMany({
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
   }
 }

@@ -1,5 +1,9 @@
-import { PrismaClient } from '@prisma/client';
-import { Forecast, ForecastCreateInput, ForecastUpdateInput } from '../types/forecast.types';
+import { PrismaClient } from "@prisma/client";
+import {
+  Forecast,
+  ForecastCreateInput,
+  ForecastUpdateInput,
+} from "../types/forecast.types";
 
 class ForecastModel {
   private prisma: PrismaClient;
@@ -17,10 +21,7 @@ class ForecastModel {
   async findByUserId(userId: string): Promise<Forecast[]> {
     return this.prisma.forecast.findMany({
       where: { userId },
-      orderBy: [
-        { year: 'asc' },
-        { month: 'asc' }
-      ],
+      orderBy: [{ year: "asc" }, { month: "asc" }],
     });
   }
 
@@ -46,22 +47,22 @@ class ForecastModel {
   async findByUserIdAndPeriod(
     userId: string,
     year: number,
-    month: number
+    month: number,
   ): Promise<Forecast | null> {
     return this.prisma.forecast.findFirst({
       where: {
         userId,
         year,
-        month
-      }
+        month,
+      },
     });
   }
 
   async deleteByUserId(userId: string): Promise<{ count: number }> {
     const result = await this.prisma.forecast.deleteMany({
-      where: { userId }
+      where: { userId },
     });
-    
+
     return { count: result.count };
   }
 }

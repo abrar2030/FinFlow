@@ -1,9 +1,11 @@
 # Payments Service
 
 ## Overview
+
 The Payments Service handles payment processing, tracking, and integration with payment providers like Stripe in the FinFlow platform. It manages payment methods, transactions, and payment status updates.
 
 ## Features
+
 - Payment processing via Stripe integration
 - Payment method management
 - Transaction history and tracking
@@ -11,6 +13,7 @@ The Payments Service handles payment processing, tracking, and integration with 
 - Webhook handling for payment events
 
 ## API Endpoints
+
 - `POST /api/payments/process` - Process a new payment
 - `GET /api/payments` - Get all payments for the current user
 - `GET /api/payments/:id` - Get payment details by ID
@@ -20,6 +23,7 @@ The Payments Service handles payment processing, tracking, and integration with 
 - `POST /api/payments/webhook` - Handle payment provider webhooks
 
 ## Environment Variables
+
 - `PAYMENTS_PORT` - Port for the Payments service (default: 3002)
 - `STRIPE_API_KEY` - Stripe API key for payment processing
 - `STRIPE_WEBHOOK_SECRET` - Secret for validating Stripe webhook events
@@ -31,7 +35,9 @@ The Payments Service handles payment processing, tracking, and integration with 
 - `KAFKA_BROKER` - Kafka broker address for event publishing
 
 ## Getting Started
+
 1. Install dependencies:
+
    ```
    npm install
    ```
@@ -44,18 +50,23 @@ The Payments Service handles payment processing, tracking, and integration with 
    ```
 
 ## Testing
+
 Run tests with:
+
 ```
 npm test
 ```
 
 ## Docker
+
 Build the Docker image:
+
 ```
 docker build -t finflow-payments-service .
 ```
 
 Run the container:
+
 ```
 docker run -p 3002:3002 --env-file .env finflow-payments-service
 ```

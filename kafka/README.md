@@ -9,6 +9,7 @@ The implementation addresses critical concerns including data encryption, audit 
 ## Key Features
 
 ### Security & Encryption
+
 - **End-to-End Encryption**: AES-256-GCM encryption for sensitive message data
 - **Digital Signatures**: HMAC-SHA256 message signing for data integrity verification
 - **Secure Authentication**: SASL/SCRAM-SHA-512 and SSL/TLS support
@@ -16,6 +17,7 @@ The implementation addresses critical concerns including data encryption, audit 
 - **Data Masking**: Automatic masking of sensitive data in logs and non-production environments
 
 ### Compliance & Regulatory Support
+
 - **GDPR Compliance**: Data minimization, purpose limitation, right to erasure, and data portability
 - **PCI DSS**: Secure handling of cardholder data with encryption and access controls
 - **SOX Compliance**: Data integrity controls and audit trails for financial reporting
@@ -23,6 +25,7 @@ The implementation addresses critical concerns including data encryption, audit 
 - **Audit Logging**: Comprehensive audit trails with immutable logging
 
 ### Operational Excellence
+
 - **Dead Letter Queues**: Automatic handling of failed message processing
 - **Retry Mechanisms**: Intelligent retry logic with exponential backoff
 - **Circuit Breakers**: Protection against cascading failures
@@ -30,6 +33,7 @@ The implementation addresses critical concerns including data encryption, audit 
 - **Performance Monitoring**: Real-time performance metrics and alerting
 
 ### Enterprise Integration
+
 - **Structured Logging**: JSON-based structured logging with correlation IDs
 - **Metrics Export**: Prometheus-compatible metrics for monitoring
 - **Distributed Tracing**: Jaeger integration for request tracing
@@ -56,7 +60,9 @@ The enhanced Kafka implementation follows a layered architecture approach:
 ### Core Components
 
 #### SecurityManager
+
 Handles all security-related operations including:
+
 - Message encryption and decryption
 - Digital signature generation and verification
 - Secure key management
@@ -64,7 +70,9 @@ Handles all security-related operations including:
 - Security audit logging
 
 #### ComplianceManager
+
 Ensures regulatory compliance through:
+
 - Message validation against compliance rules
 - Data retention policy enforcement
 - GDPR request handling (access, rectification, erasure, portability)
@@ -72,7 +80,9 @@ Ensures regulatory compliance through:
 - Violation detection and remediation
 
 #### SecureProducer
+
 Enhanced message producer with:
+
 - Automatic encryption for sensitive topics
 - Compliance validation before sending
 - Retry logic with exponential backoff
@@ -80,7 +90,9 @@ Enhanced message producer with:
 - Performance monitoring and metrics
 
 #### SecureConsumer
+
 Enhanced message consumer featuring:
+
 - Automatic decryption of encrypted messages
 - Signature verification for data integrity
 - Dead letter queue handling
@@ -98,11 +110,11 @@ npm install @finflow/kafka-enhanced
 ### Basic Setup
 
 ```typescript
-import { 
-  SecurityManager, 
-  ComplianceManager, 
-  SecureProducer, 
-  SecureConsumer 
+import {
+  SecurityManager,
+  ComplianceManager,
+  SecureProducer,
+  SecureConsumer,
 } from '@finflow/kafka-enhanced';
 import { Kafka } from 'kafkajs';
 
@@ -117,19 +129,11 @@ const kafka = new Kafka(securityManager.getSecureKafkaConfig());
 
 // Create secure producer
 const producer = kafka.producer();
-const secureProducer = new SecureProducer(
-  producer, 
-  securityManager, 
-  complianceManager
-);
+const secureProducer = new SecureProducer(producer, securityManager, complianceManager);
 
 // Create secure consumer
 const consumer = kafka.consumer({ groupId: 'financial-service-group' });
-const secureConsumer = new SecureConsumer(
-  consumer, 
-  securityManager, 
-  complianceManager
-);
+const secureConsumer = new SecureConsumer(consumer, securityManager, complianceManager);
 ```
 
 ### Producing Messages
@@ -138,17 +142,21 @@ const secureConsumer = new SecureConsumer(
 // Connect and send a secure message
 await secureProducer.connect();
 
-const result = await secureProducer.sendMessage('payment_completed', {
-  transactionId: 'txn_123456',
-  amount: 1000.00,
-  currency: 'USD',
-  accountId: 'acc_789012',
-  timestamp: new Date().toISOString()
-}, {
-  userId: 'user_345678',
-  eventType: 'PAYMENT_PROCESSED',
-  forceEncryption: true
-});
+const result = await secureProducer.sendMessage(
+  'payment_completed',
+  {
+    transactionId: 'txn_123456',
+    amount: 1000.0,
+    currency: 'USD',
+    accountId: 'acc_789012',
+    timestamp: new Date().toISOString(),
+  },
+  {
+    userId: 'user_345678',
+    eventType: 'PAYMENT_PROCESSED',
+    forceEncryption: true,
+  }
+);
 
 console.log('Message sent:', result.messageId);
 ```
@@ -161,10 +169,10 @@ await secureConsumer.connect();
 
 await secureConsumer.subscribe('payment_completed', async (message, context) => {
   console.log('Processing payment:', message.transactionId);
-  
+
   // Process the payment
   await processPayment(message);
-  
+
   console.log('Payment processed successfully');
 });
 
@@ -243,8 +251,8 @@ await secureProducer.sendMessage('user_registered', {
   personalData: {
     firstName: 'John',
     lastName: 'Doe',
-    ssn: '123-45-6789'
-  }
+    ssn: '123-45-6789',
+  },
 });
 ```
 
@@ -258,13 +266,13 @@ const accessControl = {
   roles: {
     'financial-analyst': {
       topics: ['transaction_categorized', 'forecast_updated'],
-      permissions: ['READ', 'DESCRIBE']
+      permissions: ['READ', 'DESCRIBE'],
     },
     'payment-processor': {
       topics: ['payment_*', 'invoice_*'],
-      permissions: ['READ', 'WRITE', 'DESCRIBE']
-    }
-  }
+      permissions: ['READ', 'WRITE', 'DESCRIBE'],
+    },
+  },
 };
 ```
 
@@ -294,11 +302,9 @@ The implementation provides comprehensive GDPR support:
 
 ```typescript
 // Handle GDPR data subject requests
-const gdprResult = await complianceManager.handleGDPRRequest(
-  'ERASURE',
-  'user_123',
-  { reason: 'User requested account deletion' }
-);
+const gdprResult = await complianceManager.handleGDPRRequest('ERASURE', 'user_123', {
+  reason: 'User requested account deletion',
+});
 
 console.log('GDPR request processed:', gdprResult.requestId);
 ```
@@ -312,12 +318,12 @@ Automatic data retention based on regulatory requirements:
 const retentionPolicies = {
   'financial-transactions': {
     retentionPeriod: '7 years', // SOX compliance
-    regulation: 'SOX'
+    regulation: 'SOX',
   },
   'user-personal-data': {
     retentionPeriod: '3 years', // GDPR compliance
-    regulation: 'GDPR'
-  }
+    regulation: 'GDPR',
+  },
 };
 ```
 
@@ -358,9 +364,9 @@ app.get('/health', (req, res) => {
     kafka: secureProducer.isConnected(),
     consumer: secureConsumer.isRunning(),
     compliance: complianceManager.isHealthy(),
-    security: securityManager.isHealthy()
+    security: securityManager.isHealthy(),
   };
-  
+
   res.json(health);
 });
 ```
@@ -375,13 +381,13 @@ const alertConfig = {
   'high-error-rate': {
     threshold: 5, // 5% error rate
     window: '5m',
-    severity: 'WARNING'
+    severity: 'WARNING',
   },
   'compliance-violation': {
     threshold: 1,
     window: '1m',
-    severity: 'CRITICAL'
-  }
+    severity: 'CRITICAL',
+  },
 };
 ```
 
@@ -393,12 +399,12 @@ Efficient batch processing for high throughput:
 
 ```typescript
 // Send messages in batches
-const messages = [/* array of messages */];
-const batchResult = await secureProducer.sendBatch(
-  'transaction_events',
-  messages,
-  { concurrency: 10 }
-);
+const messages = [
+  /* array of messages */
+];
+const batchResult = await secureProducer.sendBatch('transaction_events', messages, {
+  concurrency: 10,
+});
 ```
 
 ### Connection Pooling
@@ -414,8 +420,8 @@ const kafkaConfig = {
   retry: {
     initialRetryTime: 100,
     retries: 8,
-    maxRetryTime: 30000
-  }
+    maxRetryTime: 30000,
+  },
 };
 ```
 
@@ -428,7 +434,7 @@ Message compression for bandwidth optimization:
 const producerConfig = {
   compression: 'lz4',
   batchSize: 16384,
-  lingerMs: 5
+  lingerMs: 5,
 };
 ```
 
@@ -442,12 +448,12 @@ Automatic handling of failed messages:
 // Failed messages are automatically sent to DLQ
 secureConsumer.on('deadLetter', (message) => {
   console.log('Message sent to DLQ:', message.messageId);
-  
+
   // Optional: Send alert or trigger manual review
   alertingService.sendAlert({
     type: 'DEAD_LETTER_QUEUE',
     message: `Message ${message.messageId} failed processing`,
-    severity: 'WARNING'
+    severity: 'WARNING',
   });
 });
 ```
@@ -463,7 +469,7 @@ const retryConfig = {
   initialDelay: 100,
   maxDelay: 30000,
   backoffFactor: 2,
-  jitter: true
+  jitter: true,
 };
 ```
 
@@ -476,7 +482,7 @@ Protection against cascading failures:
 const circuitBreakerConfig = {
   failureThreshold: 10,
   resetTimeout: 60000,
-  monitoringPeriod: 10000
+  monitoringPeriod: 10000,
 };
 ```
 
@@ -544,24 +550,24 @@ spec:
         app: finflow-kafka-service
     spec:
       containers:
-      - name: kafka-service
-        image: finflow/kafka-enhanced:latest
-        env:
-        - name: KAFKA_BROKERS
-          valueFrom:
-            secretKeyRef:
-              name: kafka-config
-              key: brokers
-        - name: KAFKA_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: kafka-credentials
-              key: username
-        - name: KAFKA_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: kafka-credentials
-              key: password
+        - name: kafka-service
+          image: finflow/kafka-enhanced:latest
+          env:
+            - name: KAFKA_BROKERS
+              valueFrom:
+                secretKeyRef:
+                  name: kafka-config
+                  key: brokers
+            - name: KAFKA_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: kafka-credentials
+                  key: username
+            - name: KAFKA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: kafka-credentials
+                  key: password
 ```
 
 ## Security Considerations
@@ -709,4 +715,3 @@ See [CHANGELOG.md](CHANGELOG.md) for a detailed history of changes.
 - KafkaJS team for the Node.js client library
 - Financial industry security and compliance experts who provided guidance
 - Open source security tools and libraries that make this implementation possible
-

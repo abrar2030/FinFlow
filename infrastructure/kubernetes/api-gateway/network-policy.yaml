@@ -65,4 +65,3 @@ spec:
         - protocol: TCP
           port: 80 # HTTP
 
-

@@ -1,6 +1,6 @@
-import React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import React from "react";
+import { StyleSheet, View, Text } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 interface MetricCardProps {
   title: string;
@@ -10,16 +10,16 @@ interface MetricCardProps {
   isNegative?: boolean;
 }
 
-const MetricCard: React.FC<MetricCardProps> = ({ 
-  title, 
-  value, 
-  change, 
+const MetricCard: React.FC<MetricCardProps> = ({
+  title,
+  value,
+  change,
   icon,
-  isNegative = false 
+  isNegative = false,
 }) => {
   const isPositiveChange = isNegative ? change < 0 : change > 0;
   const isZeroChange = change === 0;
-  
+
   return (
     <View style={styles.card}>
       <View style={styles.iconContainer}>
@@ -29,20 +29,25 @@ const MetricCard: React.FC<MetricCardProps> = ({
       <Text style={styles.value}>{value}</Text>
       <View style={styles.changeContainer}>
         {!isZeroChange && (
-          <Ionicons 
-            name={isPositiveChange ? 'arrow-up' : 'arrow-down'} 
-            size={16} 
-            color={isPositiveChange ? '#2ecc71' : '#e74c3c'} 
+          <Ionicons
+            name={isPositiveChange ? "arrow-up" : "arrow-down"}
+            size={16}
+            color={isPositiveChange ? "#2ecc71" : "#e74c3c"}
             style={styles.changeIcon}
           />
         )}
-        <Text 
+        <Text
           style={[
-            styles.changeText, 
-            isZeroChange ? styles.neutralChange : (isPositiveChange ? styles.positiveChange : styles.negativeChange)
+            styles.changeText,
+            isZeroChange
+              ? styles.neutralChange
+              : isPositiveChange
+                ? styles.positiveChange
+                : styles.negativeChange,
           ]}
         >
-          {change > 0 ? '+' : ''}{change}%
+          {change > 0 ? "+" : ""}
+          {change}%
         </Text>
       </View>
     </View>
@@ -51,12 +56,12 @@ const MetricCard: React.FC<MetricCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     borderRadius: 8,
     padding: 16,
-    width: '48%',
+    width: "48%",
     marginBottom: 16,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -67,34 +72,34 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 14,
-    color: '#7f8c8d',
+    color: "#7f8c8d",
     marginBottom: 4,
   },
   value: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#2c3e50',
+    fontWeight: "bold",
+    color: "#2c3e50",
     marginBottom: 8,
   },
   changeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   changeIcon: {
     marginRight: 4,
   },
   changeText: {
     fontSize: 12,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   positiveChange: {
-    color: '#2ecc71',
+    color: "#2ecc71",
   },
   negativeChange: {
-    color: '#e74c3c',
+    color: "#e74c3c",
   },
   neutralChange: {
-    color: '#7f8c8d',
+    color: "#7f8c8d",
   },
 });
 

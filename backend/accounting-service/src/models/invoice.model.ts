@@ -1,5 +1,9 @@
-import { PrismaClient } from '@prisma/client';
-import { Invoice, InvoiceCreateInput, InvoiceUpdateInput } from '../types/invoice.types';
+import { PrismaClient } from "@prisma/client";
+import {
+  Invoice,
+  InvoiceCreateInput,
+  InvoiceUpdateInput,
+} from "../types/invoice.types";
 
 class InvoiceModel {
   private prisma: PrismaClient;
@@ -17,7 +21,7 @@ class InvoiceModel {
   async findByUserId(userId: string): Promise<Invoice[]> {
     return this.prisma.invoice.findMany({
       where: { userId },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
   }
 
@@ -42,7 +46,7 @@ class InvoiceModel {
 
   async findAll(): Promise<Invoice[]> {
     return this.prisma.invoice.findMany({
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
   }
 }

@@ -21,7 +21,7 @@ export class SecureConsumer extends EventEmitter {
     totalProcessed: 0,
     successfullyProcessed: 0,
     failed: 0,
-    averageProcessingTime: 0
+    averageProcessingTime: 0,
   };
 
   constructor(
@@ -34,7 +34,7 @@ export class SecureConsumer extends EventEmitter {
     this.securityManager = securityManager;
     this.complianceManager = complianceManager;
     this.logger = new Logger('SecureConsumer');
-    
+
     this.setupEventHandlers();
     this.startMetricsReporting();
   }
@@ -47,23 +47,23 @@ export class SecureConsumer extends EventEmitter {
       this.logger.info('Connecting consumer to Kafka cluster');
       await this.consumer.connect();
       this.isConnected = true;
-      
+
       this.logger.audit({
         eventType: 'KAFKA_CONSUMER_CONNECTED',
         resource: 'kafka-cluster',
         action: 'CONNECT',
-        result: 'SUCCESS'
+        result: 'SUCCESS',
       });
 
       this.emit('connected');
     } catch (error) {
       this.logger.error('Failed to connect consumer to Kafka cluster', error);
-      
+
       this.logger.security({
         eventType: 'KAFKA_CONNECTION_FAILED',
         severity: 'HIGH',
         description: 'Consumer failed to connect to Kafka cluster',
-        details: { error: error.message }
+        details: { error: error.message },
       });
 
       throw error;
@@ -76,19 +76,19 @@ export class SecureConsumer extends EventEmitter {
   public async disconnect(): Promise<void> {
     try {
       this.logger.info('Disconnecting consumer from Kafka cluster');
-      
+
       if (this.isRunning) {
         await this.stop();
       }
-      
+
       await this.consumer.disconnect();
       this.isConnected = false;
-      
+
       this.logger.audit({
         eventType: 'KAFKA_CONSUMER_DISCONNECTED',
         resource: 'kafka-cluster',
         action: 'DISCONNECT',
-        result: 'SUCCESS'
+        result: 'SUCCESS',
       });
 
       this.emit('disconnected');
@@ -112,29 +112,28 @@ export class SecureConsumer extends EventEmitter {
       }
 
       const topicList = Array.isArray(topics) ? topics : [topics];
-      
+
       // Register message handlers
-      topicList.forEach(topic => {
+      topicList.forEach((topic) => {
         this.messageHandlers.set(topic, handler);
       });
 
       const subscribeTopics: ConsumerSubscribeTopics = {
         topics: topicList,
-        fromBeginning: options.fromBeginning || false
+        fromBeginning: options.fromBeginning || false,
       };
 
       await this.consumer.subscribe(subscribeTopics);
-      
+
       this.logger.info('Subscribed to topics', { topics: topicList });
-      
+
       this.logger.audit({
         eventType: 'KAFKA_TOPIC_SUBSCRIPTION',
         resource: 'kafka-topics',
         action: 'SUBSCRIBE',
         result: 'SUCCESS',
-        details: { topics: topicList }
+        details: { topics: topicList },
       });
-
     } catch (error) {
       this.logger.error('Failed to subscribe to topics', error, { topics });
       throw error;
@@ -162,20 +161,19 @@ export class SecureConsumer extends EventEmitter {
         autoCommitInterval: options.autoCommitInterval || 5000,
         autoCommitThreshold: options.autoCommitThreshold || 100,
         eachMessage: this.createMessageProcessor(options),
-        eachBatch: options.eachBatch
+        eachBatch: options.eachBatch,
       };
 
       await this.consumer.run(runConfig);
-      
+
       this.logger.audit({
         eventType: 'KAFKA_CONSUMER_STARTED',
         resource: 'kafka-consumer',
         action: 'START',
-        result: 'SUCCESS'
+        result: 'SUCCESS',
       });
 
       this.emit('started');
-
     } catch (error) {
       this.isRunning = false;
       this.logger.error('Failed to start consumer', error);
@@ -195,16 +193,15 @@ export class SecureConsumer extends EventEmitter {
       this.logger.info('Stopping message consumption');
       await this.consumer.stop();
       this.isRunning = false;
-      
+
       this.logger.audit({
         eventType: 'KAFKA_CONSUMER_STOPPED',
         resource: 'kafka-consumer',
         action: 'STOP',
-        result: 'SUCCESS'
+        result: 'SUCCESS',
       });
 
       this.emit('stopped');
-
     } catch (error) {
       this.logger.error('Failed to stop consumer', error);
       throw error;
@@ -233,7 +230,7 @@ export class SecureConsumer extends EventEmitter {
       isRunning: this.isRunning,
       subscribedTopics: Array.from(this.messageHandlers.keys()),
       processing: { ...this.processingMetrics },
-      deadLetterQueueSize: this.deadLetterQueue.length
+      deadLetterQueueSize: this.deadLetterQueue.length,
     };
   }
 
@@ -248,7 +245,7 @@ export class SecureConsumer extends EventEmitter {
    * Retry dead letter queue message
    */
   public async retryDeadLetterMessage(messageId: string): Promise<void> {
-    const dlqMessage = this.deadLetterQueue.find(msg => msg.messageId === messageId);
+    const dlqMessage = this.deadLetterQueue.find((msg) => msg.messageId === messageId);
     if (!dlqMessage) {
       throw new Error(`Dead letter message not found: ${messageId}`);
     }
@@ -260,7 +257,7 @@ export class SecureConsumer extends EventEmitter {
       }
 
       await this.processMessage(dlqMessage.payload, handler, { isRetry: true });
-      
+
       // Remove from dead letter queue on success
       const index = this.deadLetterQueue.indexOf(dlqMessage);
       if (index > -1) {
@@ -268,12 +265,11 @@ export class SecureConsumer extends EventEmitter {
       }
 
       this.logger.info('Dead letter message processed successfully', { messageId });
-
     } catch (error) {
       dlqMessage.retryCount++;
       dlqMessage.lastRetryAt = new Date().toISOString();
       dlqMessage.lastError = error.message;
-      
+
       this.logger.error('Dead letter message retry failed', error, { messageId });
       throw error;
     }
@@ -299,12 +295,12 @@ export class SecureConsumer extends EventEmitter {
     this.consumer.on('consumer.crash', (payload) => {
       this.logger.error('Consumer crashed', payload.error);
       this.isRunning = false;
-      
+
       this.logger.security({
         eventType: 'KAFKA_CONSUMER_CRASH',
         severity: 'CRITICAL',
         description: 'Consumer crashed unexpectedly',
-        details: payload
+        details: payload,
       });
 
       this.emit('crashed', payload);
@@ -331,7 +327,7 @@ export class SecureConsumer extends EventEmitter {
           messageId,
           topic,
           partition,
-          offset
+          offset,
         });
 
         // Get message handler
@@ -351,9 +347,8 @@ export class SecureConsumer extends EventEmitter {
           name: 'message_processing_duration',
           value: processingTime,
           unit: 'milliseconds',
-          tags: { topic, messageId, partition: partition.toString() }
+          tags: { topic, messageId, partition: partition.toString() },
         });
-
       } catch (error) {
         const processingTime = Date.now() - startTime;
         this.updateProcessingMetrics(false, processingTime);
@@ -362,7 +357,7 @@ export class SecureConsumer extends EventEmitter {
           messageId,
           topic: payload.topic,
           partition: payload.partition,
-          offset: payload.message.offset
+          offset: payload.message.offset,
         });
 
         // Add to dead letter queue
@@ -394,21 +389,21 @@ export class SecureConsumer extends EventEmitter {
       // Decrypt if encrypted
       if (parsedMessage.encrypted) {
         decryptedMessage = this.securityManager.decryptMessage(parsedMessage.data);
-        
+
         // Verify signature
         if (parsedMessage.signature) {
           const signatureValid = this.securityManager.verifyMessageSignature(
             decryptedMessage,
             parsedMessage.signature
           );
-          
+
           if (!signatureValid) {
             throw new Error('Message signature verification failed');
           }
         }
       } else {
         decryptedMessage = parsedMessage;
-        
+
         // Verify signature for non-encrypted messages
         if (parsedMessage.signature) {
           const { signature, ...messageData } = parsedMessage;
@@ -416,11 +411,11 @@ export class SecureConsumer extends EventEmitter {
             messageData,
             signature
           );
-          
+
           if (!signatureValid) {
             throw new Error('Message signature verification failed');
           }
-          
+
           decryptedMessage = messageData;
         }
       }
@@ -440,8 +435,8 @@ export class SecureConsumer extends EventEmitter {
             details: {
               messageId: decryptedMessage.messageId,
               topic: payload.topic,
-              violations: complianceResult.violations
-            }
+              violations: complianceResult.violations,
+            },
           });
 
           throw new ComplianceError(
@@ -462,7 +457,7 @@ export class SecureConsumer extends EventEmitter {
         correlationId: decryptedMessage.correlationId,
         sessionId: decryptedMessage.sessionId,
         userId: decryptedMessage.userId,
-        isRetry: options.isRetry || false
+        isRetry: options.isRetry || false,
       };
 
       // Call message handler
@@ -478,15 +473,14 @@ export class SecureConsumer extends EventEmitter {
           topic: payload.topic,
           partition: payload.partition,
           offset: payload.message.offset,
-          isRetry: options.isRetry
-        }
+          isRetry: options.isRetry,
+        },
       });
-
     } catch (error) {
       // Log processing error
       this.logger.error('Message processing error', error, {
         messageId: parsedMessage?.messageId || 'unknown',
-        topic: payload.topic
+        topic: payload.topic,
       });
 
       throw error;
@@ -508,11 +502,11 @@ export class SecureConsumer extends EventEmitter {
       timestamp: new Date().toISOString(),
       retryCount: 0,
       lastRetryAt: null,
-      lastError: error
+      lastError: error,
     };
 
     this.deadLetterQueue.push(dlqMessage);
-    
+
     // Limit DLQ size to prevent memory issues
     if (this.deadLetterQueue.length > 10000) {
       this.deadLetterQueue.shift(); // Remove oldest message
@@ -521,7 +515,7 @@ export class SecureConsumer extends EventEmitter {
     this.logger.warn('Message added to dead letter queue', {
       messageId,
       topic: payload.topic,
-      error
+      error,
     });
 
     this.emit('deadLetter', dlqMessage);
@@ -529,7 +523,7 @@ export class SecureConsumer extends EventEmitter {
 
   private updateProcessingMetrics(success: boolean, processingTime: number): void {
     this.processingMetrics.totalProcessed++;
-    
+
     if (success) {
       this.processingMetrics.successfullyProcessed++;
     } else {
@@ -537,8 +531,10 @@ export class SecureConsumer extends EventEmitter {
     }
 
     // Update average processing time (simple moving average)
-    const totalTime = this.processingMetrics.averageProcessingTime * (this.processingMetrics.totalProcessed - 1);
-    this.processingMetrics.averageProcessingTime = (totalTime + processingTime) / this.processingMetrics.totalProcessed;
+    const totalTime =
+      this.processingMetrics.averageProcessingTime * (this.processingMetrics.totalProcessed - 1);
+    this.processingMetrics.averageProcessingTime =
+      (totalTime + processingTime) / this.processingMetrics.totalProcessed;
   }
 
   private startMetricsReporting(): void {
@@ -548,20 +544,27 @@ export class SecureConsumer extends EventEmitter {
           name: 'consumer_processing_rate',
           value: this.processingMetrics.successfullyProcessed,
           unit: 'messages',
-          tags: { 
+          tags: {
             consumer_group: this.consumer.groupId,
-            success_rate: (this.processingMetrics.successfullyProcessed / this.processingMetrics.totalProcessed * 100).toFixed(2)
-          }
+            success_rate: (
+              (this.processingMetrics.successfullyProcessed /
+                this.processingMetrics.totalProcessed) *
+              100
+            ).toFixed(2),
+          },
         });
 
         this.logger.performance({
           name: 'consumer_error_rate',
           value: this.processingMetrics.failed,
           unit: 'messages',
-          tags: { 
+          tags: {
             consumer_group: this.consumer.groupId,
-            error_rate: (this.processingMetrics.failed / this.processingMetrics.totalProcessed * 100).toFixed(2)
-          }
+            error_rate: (
+              (this.processingMetrics.failed / this.processingMetrics.totalProcessed) *
+              100
+            ).toFixed(2),
+          },
         });
       }
     }, 60000); // Report every minute
@@ -636,4 +639,3 @@ export class ComplianceError extends Error {
     this.violations = violations;
   }
 }
-

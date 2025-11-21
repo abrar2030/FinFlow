@@ -540,7 +540,7 @@ class ForecastType(enum.Enum):
 
 class Forecast(Base):
     __tablename__ = "forecasts"
-    
+
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(String, nullable=False)
     forecast_type = Column(Enum(ForecastType), nullable=False)
@@ -552,7 +552,7 @@ class Forecast(Base):
 
 class TransactionCategory(Base):
     __tablename__ = "transaction_categories"
-    
+
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False, unique=True)
     description = Column(String, nullable=True)
@@ -561,7 +561,7 @@ class TransactionCategory(Base):
 
 class CategorizedTransaction(Base):
     __tablename__ = "categorized_transactions"
-    
+
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(String, nullable=False)
     description = Column(String, nullable=False)
@@ -605,7 +605,7 @@ paths:
                 - email
                 - password
       responses:
-        '201':
+        "201":
           description: User created successfully
           content:
             application/json:
@@ -616,11 +616,11 @@ paths:
                     type: string
                   email:
                     type: string
-        '400':
+        "400":
           description: Invalid input
-        '409':
+        "409":
           description: Email already exists
-  
+
   /auth/login:
     post:
       summary: User login
@@ -640,7 +640,7 @@ paths:
                 - email
                 - password
       responses:
-        '200':
+        "200":
           description: Login successful
           content:
             application/json:
@@ -651,16 +651,16 @@ paths:
                     type: string
                   refreshToken:
                     type: string
-        '401':
+        "401":
           description: Invalid credentials
-  
+
   /auth/me:
     get:
       summary: Get current user information
       security:
         - bearerAuth: []
       responses:
-        '200':
+        "200":
           description: User information
           content:
             application/json:
@@ -673,9 +673,9 @@ paths:
                     type: string
                   role:
                     type: string
-        '401':
+        "401":
           description: Unauthorized
-  
+
   /auth/refresh:
     post:
       summary: Refresh access token
@@ -691,7 +691,7 @@ paths:
               required:
                 - refreshToken
       responses:
-        '200':
+        "200":
           description: New access token
           content:
             application/json:
@@ -700,7 +700,7 @@ paths:
                 properties:
                   accessToken:
                     type: string
-        '401':
+        "401":
           description: Invalid refresh token
 
 components:
@@ -749,19 +749,19 @@ paths:
                 - amount
                 - source
       responses:
-        '201':
+        "201":
           description: Payment created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Payment'
-        '400':
+                $ref: "#/components/schemas/Payment"
+        "400":
           description: Invalid input
-        '401':
+        "401":
           description: Unauthorized
-        '500':
+        "500":
           description: Payment processing error
-  
+
   /payments/{id}:
     get:
       summary: Get payment details
@@ -774,17 +774,17 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Payment details
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Payment'
-        '401':
+                $ref: "#/components/schemas/Payment"
+        "401":
           description: Unauthorized
-        '404':
+        "404":
           description: Payment not found
-  
+
   /payments/webhook:
     post:
       summary: Webhook endpoint for payment processor callbacks
@@ -795,7 +795,7 @@ paths:
             schema:
               type: object
       responses:
-        '200':
+        "200":
           description: Webhook processed successfully
 
 components:
@@ -819,7 +819,7 @@ components:
         createdAt:
           type: string
           format: date-time
-  
+
   securitySchemes:
     bearerAuth:
       type: http
@@ -862,33 +862,33 @@ paths:
                 - amount
                 - dueDate
       responses:
-        '201':
+        "201":
           description: Invoice created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Invoice'
-        '400':
+                $ref: "#/components/schemas/Invoice"
+        "400":
           description: Invalid input
-        '401':
+        "401":
           description: Unauthorized
-    
+
     get:
       summary: Get all invoices for current user
       security:
         - bearerAuth: []
       responses:
-        '200':
+        "200":
           description: List of invoices
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Invoice'
-        '401':
+                  $ref: "#/components/schemas/Invoice"
+        "401":
           description: Unauthorized
-  
+
   /accounting/invoices/{id}:
     get:
       summary: Get invoice details
@@ -901,17 +901,17 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Invoice details
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Invoice'
-        '401':
+                $ref: "#/components/schemas/Invoice"
+        "401":
           description: Unauthorized
-        '404':
+        "404":
           description: Invoice not found
-  
+
   /accounting/ledger-entry:
     post:
       summary: Create a new ledger entry
@@ -943,15 +943,15 @@ paths:
                 - creditAccount
                 - amount
       responses:
-        '201':
+        "201":
           description: Ledger entry created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/JournalEntry'
-        '400':
+                $ref: "#/components/schemas/JournalEntry"
+        "400":
           description: Invalid input
-        '401':
+        "401":
           description: Unauthorized
 
 components:
@@ -976,7 +976,7 @@ components:
         createdAt:
           type: string
           format: date-time
-    
+
     JournalEntry:
       type: object
       properties:
@@ -998,7 +998,7 @@ components:
         createdAt:
           type: string
           format: date-time
-  
+
   securitySchemes:
     bearerAuth:
       type: http
@@ -1054,7 +1054,7 @@ paths:
                 - startDate
                 - historicalData
       responses:
-        '200':
+        "200":
           description: Forecast generated successfully
           content:
             application/json:
@@ -1083,11 +1083,11 @@ paths:
                           type: number
                         upperBound:
                           type: number
-        '400':
+        "400":
           description: Invalid input
-        '401':
+        "401":
           description: Unauthorized
-  
+
   /analytics/categorize:
     post:
       summary: Categorize transaction
@@ -1107,7 +1107,7 @@ paths:
               required:
                 - description
       responses:
-        '200':
+        "200":
           description: Transaction categorized successfully
           content:
             application/json:
@@ -1120,9 +1120,9 @@ paths:
                     type: number
                     minimum: 0
                     maximum: 1
-        '400':
+        "400":
           description: Invalid input
-        '401':
+        "401":
           description: Unauthorized
 
 components:
@@ -1236,7 +1236,7 @@ interface PaymentFailedEvent {
 
 ```yaml
 # docker-compose.yml
-version: '3.8'
+version: "3.8"
 
 services:
   frontend:

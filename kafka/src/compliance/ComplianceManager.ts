@@ -20,7 +20,7 @@ export class ComplianceManager extends EventEmitter {
     this.complianceRules = new Map();
     this.dataRetentionPolicies = new Map();
     this.auditTrail = [];
-    
+
     this.initializeComplianceRules();
     this.initializeRetentionPolicies();
   }
@@ -36,7 +36,7 @@ export class ComplianceManager extends EventEmitter {
       article: 'Article 5(1)(c)',
       description: 'Data minimization - collect only necessary data',
       validator: this.validateDataMinimization.bind(this),
-      severity: 'HIGH'
+      severity: 'HIGH',
     });
 
     this.complianceRules.set('gdpr-purpose-limitation', {
@@ -45,7 +45,7 @@ export class ComplianceManager extends EventEmitter {
       article: 'Article 5(1)(b)',
       description: 'Purpose limitation - use data only for specified purposes',
       validator: this.validatePurposeLimitation.bind(this),
-      severity: 'HIGH'
+      severity: 'HIGH',
     });
 
     // PCI DSS Rules
@@ -55,7 +55,7 @@ export class ComplianceManager extends EventEmitter {
       requirement: 'Requirement 4',
       description: 'Encrypt transmission of cardholder data',
       validator: this.validatePCIEncryption.bind(this),
-      severity: 'CRITICAL'
+      severity: 'CRITICAL',
     });
 
     // SOX Rules
@@ -65,7 +65,7 @@ export class ComplianceManager extends EventEmitter {
       section: 'Section 404',
       description: 'Maintain data integrity for financial reporting',
       validator: this.validateDataIntegrity.bind(this),
-      severity: 'HIGH'
+      severity: 'HIGH',
     });
   }
 
@@ -79,7 +79,7 @@ export class ComplianceManager extends EventEmitter {
       retentionPeriodMs: 7 * 365 * 24 * 60 * 60 * 1000, // 7 years
       regulation: 'SOX',
       description: 'Financial transaction records',
-      topics: ['payment_completed', 'invoice_paid', 'transaction_categorized']
+      topics: ['payment_completed', 'invoice_paid', 'transaction_categorized'],
     });
 
     // User personal data (GDPR - 3 years after account closure)
@@ -88,7 +88,7 @@ export class ComplianceManager extends EventEmitter {
       retentionPeriodMs: 3 * 365 * 24 * 60 * 60 * 1000, // 3 years
       regulation: 'GDPR',
       description: 'User personal information',
-      topics: ['user_registered', 'user_profile_updated']
+      topics: ['user_registered', 'user_profile_updated'],
     });
 
     // Audit logs (10 years for financial compliance)
@@ -97,7 +97,7 @@ export class ComplianceManager extends EventEmitter {
       retentionPeriodMs: 10 * 365 * 24 * 60 * 60 * 1000, // 10 years
       regulation: 'Multiple',
       description: 'System audit logs',
-      topics: ['audit_log', 'security_events']
+      topics: ['audit_log', 'security_events'],
     });
   }
 
@@ -105,7 +105,7 @@ export class ComplianceManager extends EventEmitter {
    * Validate message compliance before processing
    */
   public async validateMessageCompliance(
-    topic: string, 
+    topic: string,
     message: any
   ): Promise<ComplianceValidationResult> {
     const violations: ComplianceViolation[] = [];
@@ -123,7 +123,7 @@ export class ComplianceManager extends EventEmitter {
               description: rule.description,
               severity: rule.severity,
               details: result.details,
-              remediation: result.remediation
+              remediation: result.remediation,
             });
           }
           if (result.warnings) {
@@ -137,7 +137,7 @@ export class ComplianceManager extends EventEmitter {
             description: 'Rule validation failed',
             severity: 'HIGH',
             details: `Validation error: ${error.message}`,
-            remediation: 'Contact compliance team'
+            remediation: 'Contact compliance team',
           });
         }
       }
@@ -157,7 +157,7 @@ export class ComplianceManager extends EventEmitter {
         messageId: message.messageId || 'unknown',
         violations: violations.length,
         warnings: warnings.length,
-        result: violations.length === 0 ? 'COMPLIANT' : 'NON_COMPLIANT'
+        result: violations.length === 0 ? 'COMPLIANT' : 'NON_COMPLIANT',
       };
 
       this.auditTrail.push(auditEntry);
@@ -167,9 +167,8 @@ export class ComplianceManager extends EventEmitter {
         compliant: violations.length === 0,
         violations,
         warnings,
-        auditId: auditEntry.id
+        auditId: auditEntry.id,
       };
-
     } catch (error) {
       this.logger.error('Compliance validation failed', error);
       throw new Error('Compliance validation system error');
@@ -185,10 +184,10 @@ export class ComplianceManager extends EventEmitter {
     requestDetails?: any
   ): Promise<GDPRRequestResult> {
     const requestId = this.securityManager.generateSecureMessageId();
-    
-    this.logger.info(`Processing GDPR ${requestType} request`, { 
-      requestId, 
-      subjectId: this.securityManager.maskSensitiveData({ subjectId }).subjectId 
+
+    this.logger.info(`Processing GDPR ${requestType} request`, {
+      requestId,
+      subjectId: this.securityManager.maskSensitiveData({ subjectId }).subjectId,
     });
 
     try {
@@ -218,7 +217,7 @@ export class ComplianceManager extends EventEmitter {
     endDate: Date,
     regulations?: string[]
   ): ComplianceReport {
-    const filteredAuditTrail = this.auditTrail.filter(entry => {
+    const filteredAuditTrail = this.auditTrail.filter((entry) => {
       const entryDate = new Date(entry.timestamp);
       return entryDate >= startDate && entryDate <= endDate;
     });
@@ -226,7 +225,7 @@ export class ComplianceManager extends EventEmitter {
     const violationsByRegulation = new Map<string, number>();
     const violationsBySeverity = new Map<string, number>();
 
-    filteredAuditTrail.forEach(entry => {
+    filteredAuditTrail.forEach((entry) => {
       // This would be expanded to include actual violation data
       // For now, we'll simulate based on the audit trail
     });
@@ -236,18 +235,18 @@ export class ComplianceManager extends EventEmitter {
       generatedAt: new Date().toISOString(),
       period: {
         startDate: startDate.toISOString(),
-        endDate: endDate.toISOString()
+        endDate: endDate.toISOString(),
       },
       summary: {
         totalEvents: filteredAuditTrail.length,
-        compliantEvents: filteredAuditTrail.filter(e => e.result === 'COMPLIANT').length,
-        nonCompliantEvents: filteredAuditTrail.filter(e => e.result === 'NON_COMPLIANT').length,
+        compliantEvents: filteredAuditTrail.filter((e) => e.result === 'COMPLIANT').length,
+        nonCompliantEvents: filteredAuditTrail.filter((e) => e.result === 'NON_COMPLIANT').length,
         totalViolations: filteredAuditTrail.reduce((sum, e) => sum + e.violations, 0),
-        totalWarnings: filteredAuditTrail.reduce((sum, e) => sum + e.warnings, 0)
+        totalWarnings: filteredAuditTrail.reduce((sum, e) => sum + e.warnings, 0),
       },
       violationsByRegulation: Object.fromEntries(violationsByRegulation),
       violationsBySeverity: Object.fromEntries(violationsBySeverity),
-      recommendations: this.generateComplianceRecommendations(filteredAuditTrail)
+      recommendations: this.generateComplianceRecommendations(filteredAuditTrail),
     };
   }
 
@@ -255,15 +254,15 @@ export class ComplianceManager extends EventEmitter {
   private async validateDataMinimization(topic: string, message: any): Promise<ValidationResult> {
     // Implement GDPR data minimization validation
     const unnecessaryFields = this.identifyUnnecessaryFields(message);
-    
+
     return {
       compliant: unnecessaryFields.length === 0,
-      details: unnecessaryFields.length > 0 ? 
-        `Unnecessary fields detected: ${unnecessaryFields.join(', ')}` : 
-        'Data minimization compliant',
-      remediation: unnecessaryFields.length > 0 ? 
-        'Remove unnecessary personal data fields' : 
-        undefined
+      details:
+        unnecessaryFields.length > 0
+          ? `Unnecessary fields detected: ${unnecessaryFields.join(', ')}`
+          : 'Data minimization compliant',
+      remediation:
+        unnecessaryFields.length > 0 ? 'Remove unnecessary personal data fields' : undefined,
     };
   }
 
@@ -271,13 +270,13 @@ export class ComplianceManager extends EventEmitter {
     // Implement GDPR purpose limitation validation
     const allowedPurposes = this.getAllowedPurposes(topic);
     const messagePurpose = message.purpose || 'unspecified';
-    
+
     return {
       compliant: allowedPurposes.includes(messagePurpose),
       details: `Message purpose: ${messagePurpose}, Allowed: ${allowedPurposes.join(', ')}`,
-      remediation: !allowedPurposes.includes(messagePurpose) ? 
-        'Specify valid purpose or update consent' : 
-        undefined
+      remediation: !allowedPurposes.includes(messagePurpose)
+        ? 'Specify valid purpose or update consent'
+        : undefined,
     };
   }
 
@@ -285,33 +284,38 @@ export class ComplianceManager extends EventEmitter {
     // Implement PCI DSS encryption validation
     const hasCardData = this.containsCardholderData(message);
     const isEncrypted = this.isMessageEncrypted(message);
-    
+
     return {
       compliant: !hasCardData || isEncrypted,
-      details: hasCardData ? 
-        (isEncrypted ? 'Cardholder data properly encrypted' : 'Cardholder data not encrypted') :
-        'No cardholder data detected',
-      remediation: hasCardData && !isEncrypted ? 
-        'Encrypt cardholder data before transmission' : 
-        undefined
+      details: hasCardData
+        ? isEncrypted
+          ? 'Cardholder data properly encrypted'
+          : 'Cardholder data not encrypted'
+        : 'No cardholder data detected',
+      remediation:
+        hasCardData && !isEncrypted ? 'Encrypt cardholder data before transmission' : undefined,
     };
   }
 
   private async validateDataIntegrity(topic: string, message: any): Promise<ValidationResult> {
     // Implement SOX data integrity validation
     const hasSignature = message.signature !== undefined;
-    const signatureValid = hasSignature ? 
-      this.securityManager.verifyMessageSignature(message.data, message.signature) : 
-      false;
-    
+    const signatureValid = hasSignature
+      ? this.securityManager.verifyMessageSignature(message.data, message.signature)
+      : false;
+
     return {
       compliant: hasSignature && signatureValid,
-      details: hasSignature ? 
-        (signatureValid ? 'Message signature valid' : 'Message signature invalid') :
-        'Message not signed',
-      remediation: !hasSignature ? 
-        'Add digital signature to ensure data integrity' :
-        (!signatureValid ? 'Fix signature generation process' : undefined)
+      details: hasSignature
+        ? signatureValid
+          ? 'Message signature valid'
+          : 'Message signature invalid'
+        : 'Message not signed',
+      remediation: !hasSignature
+        ? 'Add digital signature to ensure data integrity'
+        : !signatureValid
+          ? 'Fix signature generation process'
+          : undefined,
     };
   }
 
@@ -323,17 +327,17 @@ export class ComplianceManager extends EventEmitter {
 
   private getAllowedPurposes(topic: string): string[] {
     const purposeMap: Record<string, string[]> = {
-      'payment_completed': ['payment_processing', 'accounting', 'fraud_detection'],
-      'user_registered': ['account_management', 'service_provision'],
-      'invoice_paid': ['accounting', 'analytics']
+      payment_completed: ['payment_processing', 'accounting', 'fraud_detection'],
+      user_registered: ['account_management', 'service_provision'],
+      invoice_paid: ['accounting', 'analytics'],
     };
-    
+
     return purposeMap[topic] || [];
   }
 
   private containsCardholderData(message: any): boolean {
     const cardDataFields = ['creditCardNumber', 'cardNumber', 'cvv', 'expiryDate'];
-    return cardDataFields.some(field => message[field] !== undefined);
+    return cardDataFields.some((field) => message[field] !== undefined);
   }
 
   private isMessageEncrypted(message: any): boolean {
@@ -342,7 +346,7 @@ export class ComplianceManager extends EventEmitter {
 
   private checkDataRetention(topic: string, message: any): { warnings?: string[] } {
     const warnings: string[] = [];
-    
+
     for (const [category, policy] of this.dataRetentionPolicies) {
       if (policy.topics.includes(topic)) {
         const messageAge = Date.now() - new Date(message.timestamp).getTime();
@@ -351,66 +355,80 @@ export class ComplianceManager extends EventEmitter {
         }
       }
     }
-    
+
     return { warnings: warnings.length > 0 ? warnings : undefined };
   }
 
-  private async handleDataAccessRequest(requestId: string, subjectId: string): Promise<GDPRRequestResult> {
+  private async handleDataAccessRequest(
+    requestId: string,
+    subjectId: string
+  ): Promise<GDPRRequestResult> {
     // Implementation for GDPR Article 15 - Right of access
     return {
       requestId,
       requestType: 'ACCESS',
       status: 'COMPLETED',
       completedAt: new Date().toISOString(),
-      data: 'Data access implementation would go here'
+      data: 'Data access implementation would go here',
     };
   }
 
-  private async handleDataRectificationRequest(requestId: string, subjectId: string, details: any): Promise<GDPRRequestResult> {
+  private async handleDataRectificationRequest(
+    requestId: string,
+    subjectId: string,
+    details: any
+  ): Promise<GDPRRequestResult> {
     // Implementation for GDPR Article 16 - Right to rectification
     return {
       requestId,
       requestType: 'RECTIFICATION',
       status: 'COMPLETED',
-      completedAt: new Date().toISOString()
+      completedAt: new Date().toISOString(),
     };
   }
 
-  private async handleDataErasureRequest(requestId: string, subjectId: string): Promise<GDPRRequestResult> {
+  private async handleDataErasureRequest(
+    requestId: string,
+    subjectId: string
+  ): Promise<GDPRRequestResult> {
     // Implementation for GDPR Article 17 - Right to erasure
     return {
       requestId,
       requestType: 'ERASURE',
       status: 'COMPLETED',
-      completedAt: new Date().toISOString()
+      completedAt: new Date().toISOString(),
     };
   }
 
-  private async handleDataPortabilityRequest(requestId: string, subjectId: string): Promise<GDPRRequestResult> {
+  private async handleDataPortabilityRequest(
+    requestId: string,
+    subjectId: string
+  ): Promise<GDPRRequestResult> {
     // Implementation for GDPR Article 20 - Right to data portability
     return {
       requestId,
       requestType: 'PORTABILITY',
       status: 'COMPLETED',
       completedAt: new Date().toISOString(),
-      data: 'Portable data would be provided here'
+      data: 'Portable data would be provided here',
     };
   }
 
   private generateComplianceRecommendations(auditTrail: AuditEntry[]): string[] {
     const recommendations: string[] = [];
-    
+
     // Analyze audit trail and generate recommendations
-    const nonCompliantRatio = auditTrail.filter(e => e.result === 'NON_COMPLIANT').length / auditTrail.length;
-    
+    const nonCompliantRatio =
+      auditTrail.filter((e) => e.result === 'NON_COMPLIANT').length / auditTrail.length;
+
     if (nonCompliantRatio > 0.05) {
       recommendations.push('Review and strengthen compliance validation processes');
     }
-    
-    if (auditTrail.some(e => e.violations > 0)) {
+
+    if (auditTrail.some((e) => e.violations > 0)) {
       recommendations.push('Implement automated compliance remediation workflows');
     }
-    
+
     return recommendations;
   }
 }
@@ -495,4 +513,3 @@ interface ComplianceReport {
   violationsBySeverity: Record<string, number>;
   recommendations: string[];
 }
-

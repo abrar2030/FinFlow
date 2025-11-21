@@ -1,5 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { InvoiceState, Invoice } from '../types';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { InvoiceState, Invoice } from "../types";
 
 const initialState: InvoiceState = {
   invoices: [],
@@ -9,7 +9,7 @@ const initialState: InvoiceState = {
 };
 
 const invoiceSlice = createSlice({
-  name: 'invoice',
+  name: "invoice",
   initialState,
   reducers: {
     getInvoicesStart: (state) => {
@@ -56,7 +56,7 @@ const invoiceSlice = createSlice({
     updateInvoiceSuccess: (state, action: PayloadAction<Invoice>) => {
       state.isLoading = false;
       state.invoices = state.invoices.map((invoice) =>
-        invoice.id === action.payload.id ? action.payload : invoice
+        invoice.id === action.payload.id ? action.payload : invoice,
       );
       state.currentInvoice = action.payload;
     },
@@ -70,7 +70,9 @@ const invoiceSlice = createSlice({
     },
     deleteInvoiceSuccess: (state, action: PayloadAction<string>) => {
       state.isLoading = false;
-      state.invoices = state.invoices.filter((invoice) => invoice.id !== action.payload);
+      state.invoices = state.invoices.filter(
+        (invoice) => invoice.id !== action.payload,
+      );
       state.currentInvoice = null;
     },
     deleteInvoiceFailure: (state, action: PayloadAction<string>) => {

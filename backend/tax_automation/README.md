@@ -7,6 +7,7 @@ The Tax Automation Module for Finflow provides comprehensive tax calculation and
 ## Features
 
 ### Tax Calculation Engine
+
 - **Multi-jurisdiction Support**: Calculate taxes for various jurisdictions worldwide
 - **Multiple Tax Types**: Support for VAT, Sales Tax, Income Tax, Withholding Tax, Capital Gains Tax, and Corporate Tax
 - **Flexible Calculation Methods**: Percentage-based, fixed amount, tiered, and progressive tax calculations
@@ -14,6 +15,7 @@ The Tax Automation Module for Finflow provides comprehensive tax calculation and
 - **Historical Data Support**: Apply historical tax rates for past transactions and amendments
 
 ### Tax Rule Management System
+
 - **Database-backed Storage**: SQLite database for tax rule persistence
 - **Rule Versioning**: Complete audit trail of rule changes
 - **Import/Export Capabilities**: JSON-based rule import and export
@@ -21,6 +23,7 @@ The Tax Automation Module for Finflow provides comprehensive tax calculation and
 - **Jurisdiction Management**: Organize rules by geographic regions
 
 ### International Compliance Module
+
 - **KYC (Know Your Customer)**: Identity verification and document validation
 - **AML (Anti-Money Laundering)**: Transaction monitoring and risk assessment
 - **FATCA Compliance**: US person identification and reporting requirements
@@ -28,6 +31,7 @@ The Tax Automation Module for Finflow provides comprehensive tax calculation and
 - **Risk Assessment**: Automated risk scoring and flagging
 
 ### API Services
+
 - **RESTful APIs**: Complete REST API for all tax and compliance operations
 - **CORS Support**: Cross-origin resource sharing for web applications
 - **JSON Responses**: Standardized JSON response format
@@ -36,11 +40,13 @@ The Tax Automation Module for Finflow provides comprehensive tax calculation and
 ## Installation
 
 1. Install required dependencies:
+
 ```bash
 pip install -r requirements.txt
 ```
 
 2. Initialize the tax system:
+
 ```python
 from tax_automation import init_tax_system
 init_tax_system()
@@ -146,6 +152,7 @@ results = compliance.perform_comprehensive_compliance_check('user_001')
 ### Database Configuration
 
 The module uses SQLite databases by default:
+
 - Tax rules: `tax_rules.db`
 - Compliance data: `compliance.db`
 
@@ -185,6 +192,7 @@ python -m tax_automation.tests
 ```
 
 The test suite includes:
+
 - Unit tests for all core components
 - Integration tests for end-to-end workflows
 - Compliance validation tests
@@ -239,9 +247,9 @@ When contributing to this module:
 ## Changelog
 
 ### Version 1.0.0
+
 - Initial release with core tax calculation engine
 - Tax rule management system
 - International compliance module
 - RESTful API services
 - Comprehensive test suite
-

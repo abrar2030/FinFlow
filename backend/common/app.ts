@@ -1,15 +1,15 @@
-import dotenv from 'dotenv';
-import logger from './logger';
-import express from 'express';
-import cors from 'cors';
-import helmet from 'helmet';
-import passport from 'passport';
-import routes from './routes';
-import { initializeDatabase } from './config/database';
-import { initializeKafka } from './config/kafka';
-import { initializePassport } from './config/passport';
-import errorMiddleware from './error.middleware';
-import loggerMiddleware from './middlewares/logger.middleware';
+import dotenv from "dotenv";
+import logger from "./logger";
+import express from "express";
+import cors from "cors";
+import helmet from "helmet";
+import passport from "passport";
+import routes from "./routes";
+import { initializeDatabase } from "./config/database";
+import { initializeKafka } from "./config/kafka";
+import { initializePassport } from "./config/passport";
+import errorMiddleware from "./error.middleware";
+import loggerMiddleware from "./middlewares/logger.middleware";
 
 // Load environment variables
 dotenv.config();
@@ -29,11 +29,11 @@ initializePassport();
 app.use(passport.initialize());
 
 // Routes
-app.use('/api', routes);
+app.use("/api", routes);
 
 // Health check endpoint
-app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok', service: 'auth-service' });
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok", service: "auth-service" });
 });
 
 // Error handling middleware
@@ -44,13 +44,13 @@ const initializeApp = async () => {
   try {
     // Connect to database
     await initializeDatabase();
-    
+
     // Connect to Kafka
     await initializeKafka();
-    
-    logger.info('All services initialized successfully');
+
+    logger.info("All services initialized successfully");
   } catch (error) {
-    logger.error('Failed to initialize services:', error);
+    logger.error("Failed to initialize services:", error);
     process.exit(1);
   }
 };

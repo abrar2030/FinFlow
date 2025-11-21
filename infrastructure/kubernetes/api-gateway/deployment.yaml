@@ -26,69 +26,69 @@ spec:
         prometheus.io/path: "/metrics"
     spec:
       containers:
-      - name: api-gateway
-        image: ${REGISTRY}/finflow/api-gateway:${TAG}
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 8000
-          name: http
-        env:
-        - name: NODE_ENV
-          value: "production"
-        - name: PORT
-          value: "8000"
-        - name: AUTH_SERVICE_URL
-          value: "http://auth-service:3001"
-        - name: PAYMENTS_SERVICE_URL
-          value: "http://payments-service:3002"
-        - name: ACCOUNTING_SERVICE_URL
-          value: "http://accounting-service:3003"
-        - name: ANALYTICS_SERVICE_URL
-          value: "http://analytics-service:3004"
-        - name: CREDIT_SERVICE_URL
-          value: "http://credit-engine:8000"
-        resources:
-          requests:
-            cpu: 200m
-            memory: 256Mi
-          limits:
-            cpu: 500m
-            memory: 512Mi
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 8000
-          initialDelaySeconds: 30
-          periodSeconds: 10
-          timeoutSeconds: 3
-          failureThreshold: 3
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 8000
-          initialDelaySeconds: 5
-          periodSeconds: 5
-          timeoutSeconds: 2
-          failureThreshold: 2
-        securityContext:
-          allowPrivilegeEscalation: false
-          runAsNonRoot: true
-          runAsUser: 1000
-          runAsGroup: 1000
-          capabilities:
-            drop:
-            - ALL
+        - name: api-gateway
+          image: ${REGISTRY}/finflow/api-gateway:${TAG}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+              name: http
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: PORT
+              value: "8000"
+            - name: AUTH_SERVICE_URL
+              value: "http://auth-service:3001"
+            - name: PAYMENTS_SERVICE_URL
+              value: "http://payments-service:3002"
+            - name: ACCOUNTING_SERVICE_URL
+              value: "http://accounting-service:3003"
+            - name: ANALYTICS_SERVICE_URL
+              value: "http://analytics-service:3004"
+            - name: CREDIT_SERVICE_URL
+              value: "http://credit-engine:8000"
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 2
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            capabilities:
+              drop:
+                - ALL
       securityContext:
         fsGroup: 1000
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 100
-            podAffinityTerm:
-              labelSelector:
-                matchExpressions:
-                - key: app
-                  operator: In
-                  values:
-                  - api-gateway
-              topologyKey: "kubernetes.io/hostname"
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - api-gateway
+                topologyKey: "kubernetes.io/hostname"

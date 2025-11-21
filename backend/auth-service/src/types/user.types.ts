@@ -1,4 +1,4 @@
-import { OAuthProviderType } from './auth.types';
+import { OAuthProviderType } from "./auth.types";
 
 export interface User {
   id: string;

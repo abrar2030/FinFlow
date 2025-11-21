@@ -4,7 +4,7 @@
   file:
     path: "{{ item }}"
     state: directory
-    mode: '0755'
+    mode: "0755"
   loop:
     - /opt/finflow
     - /opt/finflow/scripts
@@ -42,15 +42,15 @@
 
 - name: Set up security limits
   pam_limits:
-    domain: '*'
+    domain: "*"
     limit_type: "{{ item.type }}"
     limit_item: "{{ item.item }}"
     value: "{{ item.value }}"
   loop:
-    - { type: 'soft', item: 'nofile', value: '65536' }
-    - { type: 'hard', item: 'nofile', value: '65536' }
-    - { type: 'soft', item: 'nproc', value: '4096' }
-    - { type: 'hard', item: 'nproc', value: '4096' }
+    - { type: "soft", item: "nofile", value: "65536" }
+    - { type: "hard", item: "nofile", value: "65536" }
+    - { type: "soft", item: "nproc", value: "4096" }
+    - { type: "hard", item: "nproc", value: "4096" }
 
 - name: Install common Python packages
   pip:
@@ -83,7 +83,7 @@
     dest: /opt/finflow/scripts/backup.sh
     owner: finflow
     group: finflow
-    mode: '0755'
+    mode: "0755"
 
 - name: Set up backup cron job
   cron:

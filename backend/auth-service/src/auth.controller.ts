@@ -1,10 +1,15 @@
-import { Request, Response, NextFunction } from 'express';
-import config from '../../../common/config';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import userModel from '../models/user.model';
-import { LoginDTO, RegisterDTO, RefreshTokenDTO, TokenPayload } from '../types/auth.types';
-import { sendMessage } from '../config/kafka';
+import { Request, Response, NextFunction } from "express";
+import config from "../../../common/config";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import userModel from "../models/user.model";
+import {
+  LoginDTO,
+  RegisterDTO,
+  RefreshTokenDTO,
+  TokenPayload,
+} from "../types/auth.types";
+import { sendMessage } from "../config/kafka";
 
 class AuthController {
   /**
@@ -25,14 +30,20 @@ class AuthController {
    *       409:
    *         description: User already exists
    */
-  async register(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async register(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       const { email, password }: RegisterDTO = req.body;
 
       // Check if user already exists
       const existingUser = await userModel.findByEmail(email);
       if (existingUser) {
-        res.status(409).json({ message: 'User already exists with this email' });
+        res
+          .status(409)
+          .json({ message: "User already exists with this email" });
         return;
       }
 
@@ -56,11 +67,11 @@ class AuthController {
       await userModel.updateRefreshToken(user.id, refreshToken);
 
       // Publish user_created event to Kafka
-      await sendMessage('user_created', {
+      await sendMessage("user_created", {
         id: user.id,
         email: user.email,
         role: user.role,
-        createdAt: user.createdAt
+        createdAt: user.createdAt,
       });
 
       // Return user data and tokens
@@ -69,7 +80,7 @@ class AuthController {
         email: user.email,
         role: user.role,
         accessToken,
-        refreshToken
+        refreshToken,
       });
     } catch (error) {
       next(error);
@@ -101,14 +112,17 @@ class AuthController {
       // Find user by email
       const user = await userModel.findByEmail(email);
       if (!user) {
-        res.status(401).json({ message: 'Invalid credentials' });
+        res.status(401).json({ message: "Invalid credentials" });
         return;
       }
 
       // Verify password
-      const isPasswordValid = await bcrypt.compare(password, user.hashedPassword);
+      const isPasswordValid = await bcrypt.compare(
+        password,
+        user.hashedPassword,
+      );
       if (!isPasswordValid) {
-        res.status(401).json({ message: 'Invalid credentials' });
+        res.status(401).json({ message: "Invalid credentials" });
         return;
       }
 
@@ -127,7 +141,7 @@ class AuthController {
         email: user.email,
         role: user.role,
         accessToken,
-        refreshToken
+        refreshToken,
       });
     } catch (error) {
       next(error);
@@ -152,16 +166,16 @@ class AuthController {
     try {
       // User is attached to request by auth middleware
       const user = req.user;
-      
+
       if (!user) {
-        res.status(401).json({ message: 'Unauthorized' });
+        res.status(401).json({ message: "Unauthorized" });
         return;
       }
 
       res.status(200).json({
         id: user.id,
         email: user.email,
-        role: user.role
+        role: user.role,
       });
     } catch (error) {
       next(error);
@@ -188,25 +202,29 @@ class AuthController {
    *       401:
    *         description: Invalid refresh token
    */
-  async refreshToken(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async refreshToken(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       const { refreshToken }: RefreshTokenDTO = req.body;
 
       if (!refreshToken) {
-        res.status(400).json({ message: 'Refresh token is required' });
+        res.status(400).json({ message: "Refresh token is required" });
         return;
       }
 
       // Verify refresh token
       const decoded = jwt.verify(
         refreshToken,
-        config.jwt.secret
+        config.jwt.secret,
       ) as TokenPayload;
 
       // Find user by ID
       const user = await userModel.findById(decoded.sub);
       if (!user || user.refreshToken !== refreshToken) {
-        res.status(401).json({ message: 'Invalid refresh token' });
+        res.status(401).json({ message: "Invalid refresh token" });
         return;
       }
 
@@ -217,7 +235,7 @@ class AuthController {
       res.status(200).json({ accessToken });
     } catch (error) {
       if (error instanceof jwt.JsonWebTokenError) {
-        res.status(401).json({ message: 'Invalid refresh token' });
+        res.status(401).json({ message: "Invalid refresh token" });
         return;
       }
       next(error);
@@ -242,16 +260,16 @@ class AuthController {
     try {
       // User is attached to request by auth middleware
       const user = req.user;
-      
+
       if (!user) {
-        res.status(401).json({ message: 'Unauthorized' });
+        res.status(401).json({ message: "Unauthorized" });
         return;
       }
 
       // Clear refresh token in database
       await userModel.updateRefreshToken(user.id, null);
 
-      res.status(200).json({ message: 'Logged out successfully' });
+      res.status(200).json({ message: "Logged out successfully" });
     } catch (error) {
       next(error);
     }
@@ -264,11 +282,9 @@ class AuthController {
    * @returns The generated JWT access token.
    */
   private generateAccessToken(userId: string, role: string): string {
-    return jwt.sign(
-      { sub: userId, role },
-      config.jwt.secret,
-      { expiresIn: config.jwt.expiresIn }
-    );
+    return jwt.sign({ sub: userId, role }, config.jwt.secret, {
+      expiresIn: config.jwt.expiresIn,
+    });
   }
 
   /**
@@ -278,11 +294,9 @@ class AuthController {
    * @returns The generated JWT refresh token.
    */
   private generateRefreshToken(userId: string, role: string): string {
-    return jwt.sign(
-      { sub: userId, role },
-      config.jwt.secret,
-      { expiresIn: config.jwt.refreshExpiresIn }
-    );
+    return jwt.sign({ sub: userId, role }, config.jwt.secret, {
+      expiresIn: config.jwt.refreshExpiresIn,
+    });
   }
 }
 

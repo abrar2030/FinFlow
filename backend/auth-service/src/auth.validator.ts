@@ -1,56 +1,52 @@
-import { body } from 'express-validator';
+import { body } from "express-validator";
 
 // Validation rules for user registration
 export const registerValidation = [
-  body('email')
+  body("email")
     .isEmail()
-    .withMessage('Please provide a valid email address')
+    .withMessage("Please provide a valid email address")
     .normalizeEmail(),
-  body('password')
+  body("password")
     .isLength({ min: 8 })
-    .withMessage('Password must be at least 8 characters long')
+    .withMessage("Password must be at least 8 characters long")
     .matches(/[a-z]/)
-    .withMessage('Password must contain at least one lowercase letter')
+    .withMessage("Password must contain at least one lowercase letter")
     .matches(/[A-Z]/)
-    .withMessage('Password must contain at least one uppercase letter')
+    .withMessage("Password must contain at least one uppercase letter")
     .matches(/[0-9]/)
-    .withMessage('Password must contain at least one number')
+    .withMessage("Password must contain at least one number"),
 ];
 
 // Validation rules for user login
 export const loginValidation = [
-  body('email')
+  body("email")
     .isEmail()
-    .withMessage('Please provide a valid email address')
+    .withMessage("Please provide a valid email address")
     .normalizeEmail(),
-  body('password')
-    .notEmpty()
-    .withMessage('Password is required')
+  body("password").notEmpty().withMessage("Password is required"),
 ];
 
 // Validation rules for refresh token
 export const refreshTokenValidation = [
-  body('refreshToken')
-    .notEmpty()
-    .withMessage('Refresh token is required')
+  body("refreshToken").notEmpty().withMessage("Refresh token is required"),
 ];
 
 // Validation rules for user update
 export const updateUserValidation = [
-  body('email')
+  body("email")
     .optional()
     .isEmail()
-    .withMessage('Please provide a valid email address')
+    .withMessage("Please provide a valid email address")
     .normalizeEmail(),
-  body('role')
+  body("role")
     .optional()
-    .isIn(['USER', 'ADMIN'])
-    .withMessage('Role must be either USER or ADMIN')
+    .isIn(["USER", "ADMIN"])
+    .withMessage("Role must be either USER or ADMIN"),
 ];
 
 export default {
   registerValidation,
   loginValidation,
   refreshTokenValidation,
-  updateUserValidation
+  updateUserValidation,
 };

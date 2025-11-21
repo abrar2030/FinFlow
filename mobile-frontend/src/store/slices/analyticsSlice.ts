@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { analyticsApi } from '../../services/api';
-import { AnalyticsMetric } from '../../types';
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { analyticsApi } from "../../services/api";
+import { AnalyticsMetric } from "../../types";
 
 interface AnalyticsState {
   dashboardMetrics: Record<string, any>;
@@ -21,64 +21,73 @@ const initialState: AnalyticsState = {
 };
 
 export const fetchDashboardMetrics = createAsyncThunk(
-  'analytics/fetchDashboardMetrics',
+  "analytics/fetchDashboardMetrics",
   async (_, { rejectWithValue }) => {
     try {
       const response = await analyticsApi.getDashboardMetrics();
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Failed to fetch dashboard metrics');
+      return rejectWithValue(
+        error.message || "Failed to fetch dashboard metrics",
+      );
     }
-  }
+  },
 );
 
 export const fetchTransactionAnalytics = createAsyncThunk(
-  'analytics/fetchTransactionAnalytics',
+  "analytics/fetchTransactionAnalytics",
   async (
     { startDate, endDate }: { startDate?: string; endDate?: string } = {},
-    { rejectWithValue }
+    { rejectWithValue },
   ) => {
     try {
-      const response = await analyticsApi.getTransactionAnalytics(startDate, endDate);
+      const response = await analyticsApi.getTransactionAnalytics(
+        startDate,
+        endDate,
+      );
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Failed to fetch transaction analytics');
+      return rejectWithValue(
+        error.message || "Failed to fetch transaction analytics",
+      );
     }
-  }
+  },
 );
 
 export const fetchRevenueAnalytics = createAsyncThunk(
-  'analytics/fetchRevenueAnalytics',
+  "analytics/fetchRevenueAnalytics",
   async (
-    period: 'daily' | 'weekly' | 'monthly' | 'yearly' = 'monthly',
-    { rejectWithValue }
+    period: "daily" | "weekly" | "monthly" | "yearly" = "monthly",
+    { rejectWithValue },
   ) => {
     try {
       const response = await analyticsApi.getRevenueAnalytics(period);
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Failed to fetch revenue analytics');
+      return rejectWithValue(
+        error.message || "Failed to fetch revenue analytics",
+      );
     }
-  }
+  },
 );
 
 export const fetchCustomMetric = createAsyncThunk(
-  'analytics/fetchCustomMetric',
+  "analytics/fetchCustomMetric",
   async (
     { metricId, params }: { metricId: string; params?: any },
-    { rejectWithValue }
+    { rejectWithValue },
   ) => {
     try {
       const response = await analyticsApi.getCustomMetric(metricId, params);
       return { id: metricId, data: response.data };
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Failed to fetch custom metric');
+      return rejectWithValue(error.message || "Failed to fetch custom metric");
     }
-  }
+  },
 );
 
 const analyticsSlice = createSlice({
-  name: 'analytics',
+  name: "analytics",
   initialState,
   reducers: {
     clearError: (state) => {
@@ -96,7 +105,7 @@ const analyticsSlice = createSlice({
       (state, action: PayloadAction<Record<string, any>>) => {
         state.isLoading = false;
         state.dashboardMetrics = action.payload;
-      }
+      },
     );
     builder.addCase(fetchDashboardMetrics.rejected, (state, action) => {
       state.isLoading = false;
@@ -113,7 +122,7 @@ const analyticsSlice = createSlice({
       (state, action: PayloadAction<Record<string, any>>) => {
         state.isLoading = false;
         state.transactionAnalytics = action.payload;
-      }
+      },
     );
     builder.addCase(fetchTransactionAnalytics.rejected, (state, action) => {
       state.isLoading = false;
@@ -130,7 +139,7 @@ const analyticsSlice = createSlice({
       (state, action: PayloadAction<Record<string, any>>) => {
         state.isLoading = false;
         state.revenueAnalytics = action.payload;
-      }
+      },
     );
     builder.addCase(fetchRevenueAnalytics.rejected, (state, action) => {
       state.isLoading = false;
@@ -150,7 +159,7 @@ const analyticsSlice = createSlice({
           ...state.customMetrics,
           [action.payload.id]: action.payload.data,
         };
-      }
+      },
     );
     builder.addCase(fetchCustomMetric.rejected, (state, action) => {
       state.isLoading = false;

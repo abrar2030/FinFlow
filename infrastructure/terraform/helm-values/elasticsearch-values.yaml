@@ -21,7 +21,7 @@ master:
     enabled: true
     storageClass: standard
     size: 50Gi
-  
+
 # Data node configuration
 data:
   replicas: 3
@@ -49,12 +49,12 @@ client:
     requests:
       cpu: 250m
       memory: 512Mi
-  
+
 # Security settings
 security:
   enabled: true
   elasticPassword: "${elasticsearch_password}"
-  
+
 # Ingress configuration
 ingress:
   enabled: false

@@ -1,5 +1,9 @@
-import { PrismaClient } from '@prisma/client';
-import { JournalEntry, JournalEntryCreateInput, JournalEntryUpdateInput } from '../types/journal-entry.types';
+import { PrismaClient } from "@prisma/client";
+import {
+  JournalEntry,
+  JournalEntryCreateInput,
+  JournalEntryUpdateInput,
+} from "../types/journal-entry.types";
 
 class JournalEntryModel {
   private prisma: PrismaClient;
@@ -17,7 +21,7 @@ class JournalEntryModel {
   async findByInvoiceId(invoiceId: string): Promise<JournalEntry[]> {
     return this.prisma.journalEntry.findMany({
       where: { invoiceId },
-      orderBy: { date: 'desc' },
+      orderBy: { date: "desc" },
     });
   }
 
@@ -27,7 +31,10 @@ class JournalEntryModel {
     });
   }
 
-  async update(id: string, data: JournalEntryUpdateInput): Promise<JournalEntry> {
+  async update(
+    id: string,
+    data: JournalEntryUpdateInput,
+  ): Promise<JournalEntry> {
     return this.prisma.journalEntry.update({
       where: { id },
       data,
@@ -42,7 +49,7 @@ class JournalEntryModel {
 
   async findAll(): Promise<JournalEntry[]> {
     return this.prisma.journalEntry.findMany({
-      orderBy: { date: 'desc' },
+      orderBy: { date: "desc" },
     });
   }
 }

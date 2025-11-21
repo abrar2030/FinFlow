@@ -26,7 +26,7 @@
   file:
     path: /etc/systemd/system/docker.service.d
     state: directory
-    mode: '0755'
+    mode: "0755"
 
 - name: Configure Docker daemon
   copy:
@@ -46,7 +46,7 @@
         "experimental": true
       }
     dest: /etc/docker/daemon.json
-    mode: '0644'
+    mode: "0644"
   notify: Restart Docker
 
 - name: Ensure Docker service is enabled and started
@@ -67,11 +67,11 @@
   get_url:
     url: "https://github.com/docker/compose/releases/download/v2.20.3/docker-compose-linux-x86_64"
     dest: /usr/local/bin/docker-compose
-    mode: '0755'
+    mode: "0755"
 
 - name: Create Docker registry authentication
   template:
     src: docker-config.json.j2
     dest: /root/.docker/config.json
-    mode: '0600'
+    mode: "0600"
   when: registry_username is defined and registry_password is defined

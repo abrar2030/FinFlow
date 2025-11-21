@@ -44,11 +44,11 @@ export class SecurityManager {
    */
   public getSecureKafkaConfig(): KafkaConfig {
     const brokers = (process.env.KAFKA_BROKERS || 'localhost:9094').split(',');
-    
+
     const saslConfig: SASLOptions = {
       mechanism: 'scram-sha-512',
       username: process.env.KAFKA_USERNAME || '',
-      password: process.env.KAFKA_PASSWORD || ''
+      password: process.env.KAFKA_PASSWORD || '',
     };
 
     const sslConfig = {
@@ -56,7 +56,7 @@ export class SecurityManager {
       ca: process.env.KAFKA_SSL_CA ? [process.env.KAFKA_SSL_CA] : undefined,
       cert: process.env.KAFKA_SSL_CERT,
       key: process.env.KAFKA_SSL_KEY,
-      passphrase: process.env.KAFKA_SSL_PASSPHRASE
+      passphrase: process.env.KAFKA_SSL_PASSPHRASE,
     };
 
     return {
@@ -76,8 +76,8 @@ export class SecurityManager {
         restartOnFailure: async (e) => {
           this.logger.error('Kafka connection failed, restarting', e);
           return true;
-        }
-      }
+        },
+      },
     };
   }
 
@@ -93,14 +93,14 @@ export class SecurityManager {
 
       let encrypted = cipher.update(plaintext, 'utf8', 'hex');
       encrypted += cipher.final('hex');
-      
+
       const authTag = cipher.getAuthTag();
-      
+
       const result = {
         iv: iv.toString('hex'),
         encrypted,
         authTag: authTag.toString('hex'),
-        algorithm: 'aes-256-gcm'
+        algorithm: 'aes-256-gcm',
       };
 
       return Buffer.from(JSON.stringify(result)).toString('base64');
@@ -162,14 +162,21 @@ export class SecurityManager {
    */
   public maskSensitiveData(data: any): any {
     const sensitiveFields = [
-      'ssn', 'socialSecurityNumber',
-      'creditCardNumber', 'cardNumber',
-      'bankAccountNumber', 'accountNumber',
+      'ssn',
+      'socialSecurityNumber',
+      'creditCardNumber',
+      'cardNumber',
+      'bankAccountNumber',
+      'accountNumber',
       'routingNumber',
-      'email', 'emailAddress',
-      'phoneNumber', 'phone',
-      'password', 'pin',
-      'taxId', 'ein'
+      'email',
+      'emailAddress',
+      'phoneNumber',
+      'phone',
+      'password',
+      'pin',
+      'taxId',
+      'ein',
     ];
 
     const masked = JSON.parse(JSON.stringify(data));
@@ -178,10 +185,8 @@ export class SecurityManager {
       for (const key in obj) {
         if (obj.hasOwnProperty(key)) {
           const currentPath = [...path, key];
-          
-          if (sensitiveFields.some(field => 
-            key.toLowerCase().includes(field.toLowerCase())
-          )) {
+
+          if (sensitiveFields.some((field) => key.toLowerCase().includes(field.toLowerCase()))) {
             obj[key] = this.maskString(String(obj[key]));
           } else if (typeof obj[key] === 'object' && obj[key] !== null) {
             maskValue(obj[key], currentPath);
@@ -201,13 +206,15 @@ export class SecurityManager {
     if (value.length <= 4) {
       return '*'.repeat(value.length);
     }
-    
+
     const visibleChars = 2;
-    const maskedLength = value.length - (visibleChars * 2);
-    
-    return value.substring(0, visibleChars) + 
-           '*'.repeat(maskedLength) + 
-           value.substring(value.length - visibleChars);
+    const maskedLength = value.length - visibleChars * 2;
+
+    return (
+      value.substring(0, visibleChars) +
+      '*'.repeat(maskedLength) +
+      value.substring(value.length - visibleChars)
+    );
   }
 
   /**
@@ -216,11 +223,12 @@ export class SecurityManager {
   public generateSecureMessageId(): string {
     const timestamp = Date.now().toString();
     const randomBytes = crypto.randomBytes(8).toString('hex');
-    const hash = crypto.createHash('sha256')
+    const hash = crypto
+      .createHash('sha256')
       .update(timestamp + randomBytes)
       .digest('hex')
       .substring(0, 16);
-    
+
     return `${timestamp}-${hash}`;
   }
 
@@ -248,7 +256,7 @@ export class SecurityManager {
       const messageTime = new Date(message.timestamp).getTime();
       const currentTime = Date.now();
       const timeDiff = Math.abs(currentTime - messageTime);
-      
+
       // Message should not be older than 1 hour or in the future
       if (timeDiff > 3600000 || messageTime > currentTime + 60000) {
         errors.push('Message timestamp is invalid');
@@ -263,7 +271,7 @@ export class SecurityManager {
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -289,8 +297,7 @@ export class SecurityManager {
       details: event.details ? this.maskSensitiveData(event.details) : undefined,
       sourceIp: process.env.NODE_ENV === 'production' ? 'masked' : '127.0.0.1',
       userAgent: 'kafka-client',
-      sessionId: crypto.randomBytes(16).toString('hex')
+      sessionId: crypto.randomBytes(16).toString('hex'),
     };
   }
 }
-

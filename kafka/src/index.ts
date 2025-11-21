@@ -1,10 +1,10 @@
 /**
  * Enhanced Kafka Implementation for Financial Services
- * 
+ *
  * This module provides a comprehensive, enterprise-grade Kafka implementation
  * specifically designed for financial services organizations with robust
  * security, compliance, and operational excellence features.
- * 
+ *
  * @author FinFlow Development Team
  * @version 1.0.0
  * @license MIT
@@ -16,14 +16,14 @@ export { ComplianceManager } from './compliance/ComplianceManager';
 export { Logger } from './utils/Logger';
 
 // Producer exports
-export { 
+export {
   SecureProducer,
   SendMessageOptions,
   SendMessageResult,
   BatchSendOptions,
   BatchSendResult,
   BatchError,
-  ComplianceError as ProducerComplianceError
+  ComplianceError as ProducerComplianceError,
 } from './producers/SecureProducer';
 
 // Consumer exports
@@ -37,16 +37,11 @@ export {
   ProcessingMetrics,
   ConsumerMetrics,
   DeadLetterMessage,
-  ComplianceError as ConsumerComplianceError
+  ComplianceError as ConsumerComplianceError,
 } from './consumers/SecureConsumer';
 
 // Utility exports
-export {
-  AuditEvent,
-  SecurityEvent,
-  PerformanceMetric,
-  BusinessEvent
-} from './utils/Logger';
+export { AuditEvent, SecurityEvent, PerformanceMetric, BusinessEvent } from './utils/Logger';
 
 // Type definitions
 export interface KafkaConfig {
@@ -115,7 +110,7 @@ export interface EnhancedKafkaOptions {
 
 /**
  * Enhanced Kafka Client Factory
- * 
+ *
  * Creates configured instances of SecureProducer and SecureConsumer
  * with all security, compliance, and monitoring features enabled.
  */
@@ -128,18 +123,18 @@ export class EnhancedKafkaClient {
   constructor(options: EnhancedKafkaOptions) {
     this.kafkaConfig = options.kafkaConfig;
     this.logger = new Logger('EnhancedKafkaClient');
-    
+
     // Initialize security manager
     this.securityManager = new SecurityManager();
-    
+
     // Initialize compliance manager
     this.complianceManager = new ComplianceManager(this.securityManager);
-    
+
     this.logger.info('Enhanced Kafka client initialized', {
       clientId: options.kafkaConfig.clientId,
       brokers: options.kafkaConfig.brokers.length,
       securityEnabled: !!options.securityConfig,
-      complianceEnabled: !!options.complianceConfig
+      complianceEnabled: !!options.complianceConfig,
     });
   }
 
@@ -150,12 +145,8 @@ export class EnhancedKafkaClient {
     const { Kafka } = require('kafkajs');
     const kafka = new Kafka(this.kafkaConfig);
     const producer = kafka.producer(producerConfig);
-    
-    return new SecureProducer(
-      producer,
-      this.securityManager,
-      this.complianceManager
-    );
+
+    return new SecureProducer(producer, this.securityManager, this.complianceManager);
   }
 
   /**
@@ -165,12 +156,8 @@ export class EnhancedKafkaClient {
     const { Kafka } = require('kafkajs');
     const kafka = new Kafka(this.kafkaConfig);
     const consumer = kafka.consumer({ groupId, ...consumerConfig });
-    
-    return new SecureConsumer(
-      consumer,
-      this.securityManager,
-      this.complianceManager
-    );
+
+    return new SecureConsumer(consumer, this.securityManager, this.complianceManager);
   }
 
   /**
@@ -213,27 +200,27 @@ export class EnhancedKafkaClient {
     try {
       const admin = this.createAdmin();
       await admin.connect();
-      
+
       const metadata = await admin.fetchTopicMetadata();
       await admin.disconnect();
-      
+
       return {
         status: 'healthy',
         details: {
           brokers: this.kafkaConfig.brokers.length,
           topics: metadata.topics.length,
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       };
     } catch (error) {
       this.logger.error('Health check failed', error);
-      
+
       return {
         status: 'unhealthy',
         details: {
           error: error.message,
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       };
     }
   }
@@ -243,4 +230,3 @@ export class EnhancedKafkaClient {
  * Default export for convenience
  */
 export default EnhancedKafkaClient;
-

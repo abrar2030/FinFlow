@@ -58,51 +58,51 @@ dashboardProviders:
   dashboardproviders.yaml:
     apiVersion: 1
     providers:
-    - name: 'finflow'
-      orgId: 1
-      folder: 'FinFlow'
-      type: file
-      disableDeletion: false
-      editable: true
-      options:
-        path: /var/lib/grafana/dashboards/finflow
-    - name: 'kubernetes'
-      orgId: 1
-      folder: 'Kubernetes'
-      type: file
-      disableDeletion: false
-      editable: true
-      options:
-        path: /var/lib/grafana/dashboards/kubernetes
-    - name: 'infrastructure'
-      orgId: 1
-      folder: 'Infrastructure'
-      type: file
-      disableDeletion: false
-      editable: true
-      options:
-        path: /var/lib/grafana/dashboards/infrastructure
+      - name: "finflow"
+        orgId: 1
+        folder: "FinFlow"
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/finflow
+      - name: "kubernetes"
+        orgId: 1
+        folder: "Kubernetes"
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/kubernetes
+      - name: "infrastructure"
+        orgId: 1
+        folder: "Infrastructure"
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/infrastructure
 
 # Datasources configuration
 datasources:
   datasources.yaml:
     apiVersion: 1
     datasources:
-    - name: Prometheus
-      type: prometheus
-      url: http://prometheus-server.monitoring.svc.cluster.local
-      access: proxy
-      isDefault: true
-    - name: Elasticsearch
-      type: elasticsearch
-      url: http://elasticsearch-client.monitoring.svc.cluster.local:9200
-      access: proxy
-      database: "[finflow-]YYYY.MM.DD"
-      jsonData:
-        esVersion: 7
-        timeField: "@timestamp"
-        logMessageField: message
-        logLevelField: level
+      - name: Prometheus
+        type: prometheus
+        url: http://prometheus-server.monitoring.svc.cluster.local
+        access: proxy
+        isDefault: true
+      - name: Elasticsearch
+        type: elasticsearch
+        url: http://elasticsearch-client.monitoring.svc.cluster.local:9200
+        access: proxy
+        database: "[finflow-]YYYY.MM.DD"
+        jsonData:
+          esVersion: 7
+          timeField: "@timestamp"
+          logMessageField: message
+          logLevelField: level
 
 # Plugins to install
 plugins:

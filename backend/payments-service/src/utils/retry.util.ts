@@ -1,4 +1,4 @@
-import { logger } from '../utils/logger';
+import { logger } from "../utils/logger";
 
 /**
  * Utility for handling retries with exponential backoff
@@ -18,16 +18,16 @@ export const defaultRetryOptions: RetryOptions = {
   maxDelayMs: 3000,
   backoffFactor: 2,
   retryableErrors: [
-    'ECONNRESET',
-    'ETIMEDOUT',
-    'ECONNREFUSED',
-    'NETWORK_ERROR',
-    'GATEWAY_ERROR',
-    'RATE_LIMIT_ERROR',
-    'TIMEOUT_ERROR',
-    'CONNECTION_ERROR',
-    'SERVER_ERROR'
-  ]
+    "ECONNRESET",
+    "ETIMEDOUT",
+    "ECONNREFUSED",
+    "NETWORK_ERROR",
+    "GATEWAY_ERROR",
+    "RATE_LIMIT_ERROR",
+    "TIMEOUT_ERROR",
+    "CONNECTION_ERROR",
+    "SERVER_ERROR",
+  ],
 };
 
 /**
@@ -35,7 +35,7 @@ export const defaultRetryOptions: RetryOptions = {
  * @param ms Milliseconds to sleep
  */
 const sleep = (ms: number): Promise<void> => {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
 /**
@@ -48,13 +48,14 @@ const isRetryableError = (error: any, options: RetryOptions): boolean => {
     return true; // If no specific errors defined, retry all
   }
 
-  const errorCode = error.code || error.type || error.name || '';
-  const errorMessage = error.message || '';
-  
+  const errorCode = error.code || error.type || error.name || "";
+  const errorMessage = error.message || "";
+
   // Check if error code or message contains any of the retryable errors
-  return options.retryableErrors.some(retryableError => 
-    errorCode.includes(retryableError) || 
-    errorMessage.toUpperCase().includes(retryableError)
+  return options.retryableErrors.some(
+    (retryableError) =>
+      errorCode.includes(retryableError) ||
+      errorMessage.toUpperCase().includes(retryableError),
   );
 };
 
@@ -64,7 +65,8 @@ const isRetryableError = (error: any, options: RetryOptions): boolean => {
  * @param options Retry options
  */
 const calculateDelay = (attempt: number, options: RetryOptions): number => {
-  const delay = options.initialDelayMs * Math.pow(options.backoffFactor, attempt);
+  const delay =
+    options.initialDelayMs * Math.pow(options.backoffFactor, attempt);
   return Math.min(delay, options.maxDelayMs);
 };
 
@@ -75,7 +77,7 @@ const calculateDelay = (attempt: number, options: RetryOptions): number => {
  */
 export async function withRetry<T>(
   fn: () => Promise<T>,
-  options: Partial<RetryOptions> = {}
+  options: Partial<RetryOptions> = {},
 ): Promise<T> {
   const retryOptions: RetryOptions = { ...defaultRetryOptions, ...options };
   let lastError: any;
@@ -85,21 +87,23 @@ export async function withRetry<T>(
       return await fn();
     } catch (error) {
       lastError = error;
-      
+
       // Check if we've reached max retries or if error is not retryable
       if (
-        attempt >= retryOptions.maxRetries || 
+        attempt >= retryOptions.maxRetries ||
         !isRetryableError(error, retryOptions)
       ) {
         throw error;
       }
-      
+
       // Calculate delay for next retry
       const delay = calculateDelay(attempt, retryOptions);
-      
+
       // Log retry attempt
-      logger.info(`Retry attempt ${attempt + 1}/${retryOptions.maxRetries} after ${delay}ms due to: ${error.message}`);
-      
+      logger.info(
+        `Retry attempt ${attempt + 1}/${retryOptions.maxRetries} after ${delay}ms due to: ${error.message}`,
+      );
+
       // Wait before next retry
       await sleep(delay);
     }

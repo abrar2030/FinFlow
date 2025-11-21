@@ -1,8 +1,8 @@
-import api from './api';
-import { Payment } from '../types';
+import api from "./api";
+import { Payment } from "../types";
 
 export const getPayments = async (): Promise<Payment[]> => {
-  const response = await api.get('/payments');
+  const response = await api.get("/payments");
   return response.data;
 };
 
@@ -11,12 +11,25 @@ export const getPayment = async (id: string): Promise<Payment> => {
   return response.data;
 };
 
-export const createPayment = async (paymentData: Omit<Payment, 'id' | 'status' | 'processorId' | 'processorData' | 'createdAt' | 'updatedAt'>): Promise<Payment> => {
-  const response = await api.post('/payments/charge', paymentData);
+export const createPayment = async (
+  paymentData: Omit<
+    Payment,
+    | "id"
+    | "status"
+    | "processorId"
+    | "processorData"
+    | "createdAt"
+    | "updatedAt"
+  >,
+): Promise<Payment> => {
+  const response = await api.post("/payments/charge", paymentData);
   return response.data;
 };
 
-export const updatePayment = async (id: string, paymentData: Partial<Payment>): Promise<Payment> => {
+export const updatePayment = async (
+  id: string,
+  paymentData: Partial<Payment>,
+): Promise<Payment> => {
   const response = await api.put(`/payments/${id}`, paymentData);
   return response.data;
 };

@@ -5,7 +5,7 @@
   file:
     path: "{{ item }}"
     state: directory
-    mode: '0755'
+    mode: "0755"
   loop:
     - /opt/finflow/monitoring
     - /opt/finflow/monitoring/prometheus
@@ -29,8 +29,8 @@
   file:
     path: /opt/finflow/monitoring/.prometheus_installed
     state: touch
-    mode: '0644'
-  when: 
+    mode: "0644"
+  when:
     - inventory_hostname == groups['k8s_nodes'][0]
     - prometheus_install.changed
 
@@ -38,14 +38,14 @@
   template:
     src: prometheus.yml.j2
     dest: /opt/finflow/monitoring/prometheus/prometheus.yml
-    mode: '0644'
+    mode: "0644"
   when: inventory_hostname == groups['k8s_nodes'][0]
 
 - name: Copy custom Grafana dashboards
   copy:
     src: "{{ item }}"
     dest: /opt/finflow/monitoring/dashboards/
-    mode: '0644'
+    mode: "0644"
   loop:
     - dashboards/finflow-overview.json
     - dashboards/microservices-dashboard.json
@@ -74,28 +74,28 @@
       get_url:
         url: "https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_version }}/node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz"
         dest: /tmp/node_exporter.tar.gz
-        mode: '0644'
-    
+        mode: "0644"
+
     - name: Extract Node Exporter
       unarchive:
         src: /tmp/node_exporter.tar.gz
         dest: /tmp
         remote_src: yes
-    
+
     - name: Move Node Exporter binary
       copy:
         src: "/tmp/node_exporter-{{ node_exporter_version }}.linux-amd64/node_exporter"
         dest: /usr/local/bin/node_exporter
-        mode: '0755'
+        mode: "0755"
         remote_src: yes
-    
+
     - name: Create Node Exporter systemd service
       template:
         src: node_exporter.service.j2
         dest: /etc/systemd/system/node_exporter.service
-        mode: '0644'
+        mode: "0644"
       notify: Restart Node Exporter
-    
+
     - name: Enable and start Node Exporter
       systemd:
         name: node_exporter
@@ -110,26 +110,26 @@
         repo: "deb https://packages.treasuredata.com/4/ubuntu/{{ ansible_distribution_release }}/ {{ ansible_distribution_release }} contrib"
         state: present
       when: ansible_os_family == "Debian"
-    
+
     - name: Add Fluentd GPG key
       apt_key:
         url: https://packages.treasuredata.com/GPG-KEY-treasure-data
         state: present
       when: ansible_os_family == "Debian"
-    
+
     - name: Install Fluentd
       package:
         name: td-agent
         state: present
         update_cache: yes
-    
+
     - name: Configure Fluentd
       template:
         src: fluentd.conf.j2
         dest: /etc/td-agent/td-agent.conf
-        mode: '0644'
+        mode: "0644"
       notify: Restart Fluentd
-    
+
     - name: Enable and start Fluentd
       systemd:
         name: td-agent

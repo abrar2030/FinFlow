@@ -1,8 +1,8 @@
-import app from './app';
-import logger from './logger';
-import dotenv from 'dotenv';
-import { disconnectDatabase } from './config/database';
-import { disconnectKafka } from './config/kafka';
+import app from "./app";
+import logger from "./logger";
+import dotenv from "dotenv";
+import { disconnectDatabase } from "./config/database";
+import { disconnectKafka } from "./config/kafka";
 
 // Load environment variables
 dotenv.config();
@@ -17,30 +17,30 @@ const server = app.listen(PORT, () => {
 
 // Handle graceful shutdown
 const gracefulShutdown = async () => {
-  logger.info('Shutting down auth service...');
-  
+  logger.info("Shutting down auth service...");
+
   // Close server
   server.close(() => {
-    logger.info('HTTP server closed');
+    logger.info("HTTP server closed");
   });
-  
+
   try {
     // Disconnect from database
     await disconnectDatabase();
-    
+
     // Disconnect from Kafka
     await disconnectKafka();
-    
-    logger.info('All connections closed successfully');
+
+    logger.info("All connections closed successfully");
     process.exit(0);
   } catch (error) {
-    logger.error('Error during shutdown:', error);
+    logger.error("Error during shutdown:", error);
     process.exit(1);
   }
 };
 
 // Listen for termination signals
-process.on('SIGTERM', gracefulShutdown);
-process.on('SIGINT', gracefulShutdown);
+process.on("SIGTERM", gracefulShutdown);
+process.on("SIGINT", gracefulShutdown);
 
 export default server;

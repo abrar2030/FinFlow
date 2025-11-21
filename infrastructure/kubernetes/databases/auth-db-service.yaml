@@ -9,9 +9,9 @@ metadata:
 spec:
   clusterIP: None
   ports:
-  - port: 5432
-    targetPort: 5432
-    protocol: TCP
-    name: postgres
+    - port: 5432
+      targetPort: 5432
+      protocol: TCP
+      name: postgres
   selector:
     app: auth-db

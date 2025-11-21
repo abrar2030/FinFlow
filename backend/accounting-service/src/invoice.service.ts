@@ -1,8 +1,12 @@
-import invoiceModel from '../models/invoice.model';
-import { InvoiceCreateInput, InvoiceUpdateInput, Invoice } from '../types/invoice.types';
-import { sendMessage } from '../config/kafka';
-import { logger } from '../utils/logger';
-import { InvoiceStatus } from '@prisma/client';
+import invoiceModel from "../models/invoice.model";
+import {
+  InvoiceCreateInput,
+  InvoiceUpdateInput,
+  Invoice,
+} from "../types/invoice.types";
+import { sendMessage } from "../config/kafka";
+import { logger } from "../utils/logger";
+import { InvoiceStatus } from "@prisma/client";
 
 class InvoiceService {
   // Find invoice by ID
@@ -29,10 +33,10 @@ class InvoiceService {
   async create(data: InvoiceCreateInput): Promise<Invoice> {
     try {
       const invoice = await invoiceModel.create(data);
-      
+
       // Publish invoice_created event to Kafka
       await this.publishInvoiceCreatedEvent(invoice);
-      
+
       return invoice;
     } catch (error) {
       logger.error(`Error creating invoice: ${error}`);
@@ -46,18 +50,21 @@ class InvoiceService {
       // Check if invoice exists
       const existingInvoice = await this.findById(id);
       if (!existingInvoice) {
-        const error = new Error('Invoice not found');
-        error.name = 'NotFoundError';
+        const error = new Error("Invoice not found");
+        error.name = "NotFoundError";
         throw error;
       }
 
       const invoice = await invoiceModel.update(id, data);
-      
+
       // If status changed to PAID, publish invoice_paid event
-      if (data.status === InvoiceStatus.PAID && existingInvoice.status !== InvoiceStatus.PAID) {
+      if (
+        data.status === InvoiceStatus.PAID &&
+        existingInvoice.status !== InvoiceStatus.PAID
+      ) {
         await this.publishInvoicePaidEvent(invoice);
       }
-      
+
       return invoice;
     } catch (error) {
       logger.error(`Error updating invoice: ${error}`);
@@ -71,8 +78,8 @@ class InvoiceService {
       // Check if invoice exists
       const existingInvoice = await this.findById(id);
       if (!existingInvoice) {
-        const error = new Error('Invoice not found');
-        error.name = 'NotFoundError';
+        const error = new Error("Invoice not found");
+        error.name = "NotFoundError";
         throw error;
       }
 
@@ -98,15 +105,15 @@ class InvoiceService {
     try {
       const invoices = await invoiceModel.findAll();
       const now = new Date();
-      
+
       for (const invoice of invoices) {
         if (invoice.status === InvoiceStatus.PENDING && invoice.dueDate < now) {
           await this.update(invoice.id, { status: InvoiceStatus.OVERDUE });
-          
+
           // Publish invoice_overdue event
           await this.publishInvoiceOverdueEvent({
             ...invoice,
-            status: InvoiceStatus.OVERDUE
+            status: InvoiceStatus.OVERDUE,
           });
         }
       }
@@ -119,14 +126,14 @@ class InvoiceService {
   // Publish invoice_created event to Kafka
   private async publishInvoiceCreatedEvent(invoice: Invoice): Promise<void> {
     try {
-      await sendMessage('invoice_created', {
+      await sendMessage("invoice_created", {
         id: invoice.id,
         userId: invoice.userId,
         client: invoice.client,
         amount: invoice.amount,
         dueDate: invoice.dueDate,
         status: invoice.status,
-        createdAt: invoice.createdAt
+        createdAt: invoice.createdAt,
       });
     } catch (error) {
       logger.error(`Error publishing invoice_created event: ${error}`);
@@ -137,13 +144,13 @@ class InvoiceService {
   // Publish invoice_paid event to Kafka
   private async publishInvoicePaidEvent(invoice: Invoice): Promise<void> {
     try {
-      await sendMessage('invoice_paid', {
+      await sendMessage("invoice_paid", {
         id: invoice.id,
         userId: invoice.userId,
         client: invoice.client,
         amount: invoice.amount,
         paidDate: new Date(),
-        createdAt: invoice.createdAt
+        createdAt: invoice.createdAt,
       });
     } catch (error) {
       logger.error(`Error publishing invoice_paid event: ${error}`);
@@ -154,13 +161,13 @@ class InvoiceService {
   // Publish invoice_overdue event to Kafka
   private async publishInvoiceOverdueEvent(invoice: Invoice): Promise<void> {
     try {
-      await sendMessage('invoice_overdue', {
+      await sendMessage("invoice_overdue", {
         id: invoice.id,
         userId: invoice.userId,
         client: invoice.client,
         amount: invoice.amount,
         dueDate: invoice.dueDate,
-        createdAt: invoice.createdAt
+        createdAt: invoice.createdAt,
       });
     } catch (error) {
       logger.error(`Error publishing invoice_overdue event: ${error}`);

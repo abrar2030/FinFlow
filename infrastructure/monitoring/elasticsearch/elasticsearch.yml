@@ -1,6 +1,6 @@
 cluster:
   name: "finflow-elasticsearch"
-  
+
 node:
   master: true
   data: true

@@ -1,10 +1,10 @@
-import { configureStore } from '@reduxjs/toolkit';
-import authReducer from './slices/authSlice';
-import transactionReducer from './slices/transactionSlice';
-import invoiceReducer from './slices/invoiceSlice';
-import paymentReducer from './slices/paymentSlice';
-import analyticsReducer from './slices/analyticsSlice';
-import uiReducer from './slices/uiSlice';
+import { configureStore } from "@reduxjs/toolkit";
+import authReducer from "./slices/authSlice";
+import transactionReducer from "./slices/transactionSlice";
+import invoiceReducer from "./slices/invoiceSlice";
+import paymentReducer from "./slices/paymentSlice";
+import analyticsReducer from "./slices/analyticsSlice";
+import uiReducer from "./slices/uiSlice";
 
 export const store = configureStore({
   reducer: {

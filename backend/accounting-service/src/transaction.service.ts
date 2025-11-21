@@ -1,8 +1,12 @@
-import transactionModel from '../models/transaction.model';
-import { TransactionCreateInput, TransactionUpdateInput, Transaction } from '../types/transaction.types';
-import { sendMessage } from '../config/kafka';
-import { logger } from '../utils/logger';
-import categoryService from './category.service';
+import transactionModel from "../models/transaction.model";
+import {
+  TransactionCreateInput,
+  TransactionUpdateInput,
+  Transaction,
+} from "../types/transaction.types";
+import { sendMessage } from "../config/kafka";
+import { logger } from "../utils/logger";
+import categoryService from "./category.service";
 
 class TransactionService {
   // Find transaction by ID
@@ -30,14 +34,16 @@ class TransactionService {
     try {
       // Auto-categorize transaction if no category provided
       if (!data.category && data.description) {
-        data.category = await categoryService.categorizeTransaction(data.description);
+        data.category = await categoryService.categorizeTransaction(
+          data.description,
+        );
       }
-      
+
       const transaction = await transactionModel.create(data);
-      
+
       // Publish transaction_created event to Kafka
       await this.publishTransactionCreatedEvent(transaction);
-      
+
       return transaction;
     } catch (error) {
       logger.error(`Error creating transaction: ${error}`);
@@ -51,18 +57,20 @@ class TransactionService {
       // Check if transaction exists
       const existingTransaction = await this.findById(id);
       if (!existingTransaction) {
-        const error = new Error('Transaction not found');
-        error.name = 'NotFoundError';
+        const error = new Error("Transaction not found");
+        error.name = "NotFoundError";
         throw error;
       }
 
       // Auto-categorize transaction if description changed but no category provided
       if (data.description && !data.category) {
-        data.category = await categoryService.categorizeTransaction(data.description);
+        data.category = await categoryService.categorizeTransaction(
+          data.description,
+        );
       }
-      
+
       const transaction = await transactionModel.update(id, data);
-      
+
       return transaction;
     } catch (error) {
       logger.error(`Error updating transaction: ${error}`);
@@ -76,8 +84,8 @@ class TransactionService {
       // Check if transaction exists
       const existingTransaction = await this.findById(id);
       if (!existingTransaction) {
-        const error = new Error('Transaction not found');
-        error.name = 'NotFoundError';
+        const error = new Error("Transaction not found");
+        error.name = "NotFoundError";
         throw error;
       }
 
@@ -102,27 +110,35 @@ class TransactionService {
   async findByUserIdAndDateRange(
     userId: string,
     startDate: Date,
-    endDate: Date
+    endDate: Date,
   ): Promise<Transaction[]> {
     try {
-      return await transactionModel.findByUserIdAndDateRange(userId, startDate, endDate);
+      return await transactionModel.findByUserIdAndDateRange(
+        userId,
+        startDate,
+        endDate,
+      );
     } catch (error) {
-      logger.error(`Error finding transactions by user ID and date range: ${error}`);
+      logger.error(
+        `Error finding transactions by user ID and date range: ${error}`,
+      );
       throw error;
     }
   }
 
   // Publish transaction_created event to Kafka
-  private async publishTransactionCreatedEvent(transaction: Transaction): Promise<void> {
+  private async publishTransactionCreatedEvent(
+    transaction: Transaction,
+  ): Promise<void> {
     try {
-      await sendMessage('transaction_created', {
+      await sendMessage("transaction_created", {
         id: transaction.id,
         userId: transaction.userId,
         amount: transaction.amount,
         category: transaction.category,
         description: transaction.description,
         date: transaction.date,
-        createdAt: transaction.createdAt
+        createdAt: transaction.createdAt,
       });
     } catch (error) {
       logger.error(`Error publishing transaction_created event: ${error}`);

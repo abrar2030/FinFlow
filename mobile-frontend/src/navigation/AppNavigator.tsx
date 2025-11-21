@@ -1,10 +1,10 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import { useSelector } from 'react-redux';
-import { RootState } from '../store';
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
 
 // Import screens (to be created)
 // Auth screens
@@ -83,24 +83,48 @@ const Drawer = createDrawerNavigator<DrawerParamList>();
 // Stack navigators for each tab
 const PaymentsNavigator = () => (
   <PaymentsStack.Navigator>
-    <PaymentsStack.Screen name="PaymentsList" component={PaymentsScreen} options={{ headerShown: false }} />
-    <PaymentsStack.Screen name="PaymentDetails" component={PaymentDetailsScreen} />
-    <PaymentsStack.Screen name="CreatePayment" component={CreatePaymentScreen} />
+    <PaymentsStack.Screen
+      name="PaymentsList"
+      component={PaymentsScreen}
+      options={{ headerShown: false }}
+    />
+    <PaymentsStack.Screen
+      name="PaymentDetails"
+      component={PaymentDetailsScreen}
+    />
+    <PaymentsStack.Screen
+      name="CreatePayment"
+      component={CreatePaymentScreen}
+    />
   </PaymentsStack.Navigator>
 );
 
 const AccountingNavigator = () => (
   <AccountingStack.Navigator>
-    <AccountingStack.Screen name="AccountingHome" component={AccountingScreen} options={{ headerShown: false }} />
-    <AccountingStack.Screen name="BalanceSheet" component={BalanceSheetScreen} />
-    <AccountingStack.Screen name="IncomeStatement" component={IncomeStatementScreen} />
+    <AccountingStack.Screen
+      name="AccountingHome"
+      component={AccountingScreen}
+      options={{ headerShown: false }}
+    />
+    <AccountingStack.Screen
+      name="BalanceSheet"
+      component={BalanceSheetScreen}
+    />
+    <AccountingStack.Screen
+      name="IncomeStatement"
+      component={IncomeStatementScreen}
+    />
     <AccountingStack.Screen name="CashFlow" component={CashFlowScreen} />
   </AccountingStack.Navigator>
 );
 
 const CreditNavigator = () => (
   <CreditStack.Navigator>
-    <CreditStack.Screen name="CreditHome" component={CreditScreen} options={{ headerShown: false }} />
+    <CreditStack.Screen
+      name="CreditHome"
+      component={CreditScreen}
+      options={{ headerShown: false }}
+    />
     <CreditStack.Screen name="CreditScore" component={CreditScoreScreen} />
     <CreditStack.Screen name="Loans" component={LoansScreen} />
     <CreditStack.Screen name="LoanDetails" component={LoanDetailsScreen} />
@@ -122,7 +146,11 @@ const MainTabNavigator = () => (
 // Drawer navigator wrapping the main tab navigator
 const DrawerNavigator = () => (
   <Drawer.Navigator>
-    <Drawer.Screen name="MainTabs" component={MainTabNavigator} options={{ headerShown: false }} />
+    <Drawer.Screen
+      name="MainTabs"
+      component={MainTabNavigator}
+      options={{ headerShown: false }}
+    />
     <Drawer.Screen name="Profile" component={ProfileScreen} />
     <Drawer.Screen name="Settings" component={SettingsScreen} />
   </Drawer.Navigator>
@@ -140,7 +168,7 @@ const AuthNavigator = () => (
 // Root navigator
 export const AppNavigator = () => {
   const { token } = useSelector((state: RootState) => state.auth);
-  
+
   return (
     <NavigationContainer>
       {token ? <DrawerNavigator /> : <AuthNavigator />}

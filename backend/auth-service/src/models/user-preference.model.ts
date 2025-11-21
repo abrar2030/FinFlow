@@ -1,5 +1,9 @@
-import { PrismaClient } from '@prisma/client';
-import { UserPreference, UserPreferenceCreateInput, UserPreferenceUpdateInput } from '../types/user-preference.types';
+import { PrismaClient } from "@prisma/client";
+import {
+  UserPreference,
+  UserPreferenceCreateInput,
+  UserPreferenceUpdateInput,
+} from "../types/user-preference.types";
 
 class UserPreferenceModel {
   private prisma: PrismaClient;
@@ -26,21 +30,27 @@ class UserPreferenceModel {
     });
   }
 
-  async update(id: string, data: UserPreferenceUpdateInput): Promise<UserPreference> {
+  async update(
+    id: string,
+    data: UserPreferenceUpdateInput,
+  ): Promise<UserPreference> {
     return this.prisma.userPreference.update({
       where: { id },
       data,
     });
   }
 
-  async upsert(userId: string, data: UserPreferenceUpdateInput): Promise<UserPreference> {
+  async upsert(
+    userId: string,
+    data: UserPreferenceUpdateInput,
+  ): Promise<UserPreference> {
     return this.prisma.userPreference.upsert({
       where: { userId },
       update: data,
       create: {
         userId,
-        ...data
-      }
+        ...data,
+      },
     });
   }
 

@@ -11,17 +11,17 @@ metadata:
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
 spec:
   tls:
-  - hosts:
-    - finflow.example.com
-    secretName: finflow-tls
+    - hosts:
+        - finflow.example.com
+      secretName: finflow-tls
   rules:
-  - host: finflow.example.com
-    http:
-      paths:
-      - path: /(.*)
-        pathType: Prefix
-        backend:
-          service:
-            name: frontend
-            port:
-              number: 80
+    - host: finflow.example.com
+      http:
+        paths:
+          - path: /(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80

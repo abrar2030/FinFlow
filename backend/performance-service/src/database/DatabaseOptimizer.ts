@@ -1,11 +1,11 @@
-import { EventEmitter } from 'events';
-import { Pool, PoolClient } from 'pg';
-import { QueryStream } from 'pg-query-stream';
-import winston from 'winston';
-import { Readable } from 'stream';
+import { EventEmitter } from "events";
+import { Pool, PoolClient } from "pg";
+import { QueryStream } from "pg-query-stream";
+import winston from "winston";
+import { Readable } from "stream";
 
-import { logger } from '../config/logger';
-import { getDatabase } from '../config/database';
+import { logger } from "../config/logger";
+import { getDatabase } from "../config/database";
 import {
   QueryOptimization,
   IndexRecommendation,
@@ -13,24 +13,24 @@ import {
   DatabaseStats,
   QueryPerformance,
   ConnectionPoolStats,
-  OptimizationResult
-} from '../types/database';
+  OptimizationResult,
+} from "../types/database";
 
 export class DatabaseOptimizer extends EventEmitter {
   private db: Pool;
   private isInitialized: boolean = false;
-  
+
   // Query performance tracking
   private queryStats: Map<string, QueryPerformance> = new Map();
   private slowQueries: QueryPerformance[] = [];
-  
+
   // Connection pool monitoring
   private poolStats: ConnectionPoolStats = {
     totalConnections: 0,
     idleConnections: 0,
     activeConnections: 0,
     waitingClients: 0,
-    maxConnections: 0
+    maxConnections: 0,
   };
 
   constructor() {
@@ -39,27 +39,26 @@ export class DatabaseOptimizer extends EventEmitter {
 
   async initialize(): Promise<void> {
     try {
-      logger.info('Initializing Database Optimizer...');
-      
+      logger.info("Initializing Database Optimizer...");
+
       this.db = await getDatabase();
-      
+
       // Setup query monitoring
       await this.setupQueryMonitoring();
-      
+
       // Setup connection pool monitoring
       this.setupConnectionPoolMonitoring();
-      
+
       // Setup automatic optimization
       this.setupAutomaticOptimization();
-      
+
       // Create optimization tables
       await this.createOptimizationTables();
-      
+
       this.isInitialized = true;
-      logger.info('Database Optimizer initialized successfully');
-      
+      logger.info("Database Optimizer initialized successfully");
     } catch (error) {
-      logger.error('Failed to initialize Database Optimizer:', error);
+      logger.error("Failed to initialize Database Optimizer:", error);
       throw error;
     }
   }
@@ -139,10 +138,9 @@ export class DatabaseOptimizer extends EventEmitter {
         CREATE INDEX IF NOT EXISTS idx_database_statistics_metric ON database_statistics(metric_name, timestamp);
       `);
 
-      logger.info('Database optimization tables created successfully');
-
+      logger.info("Database optimization tables created successfully");
     } catch (error) {
-      logger.error('Error creating optimization tables:', error);
+      logger.error("Error creating optimization tables:", error);
       throw error;
     }
   }
@@ -164,16 +162,18 @@ export class DatabaseOptimizer extends EventEmitter {
         CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
       `);
 
-      logger.info('Query monitoring setup completed');
-
+      logger.info("Query monitoring setup completed");
     } catch (error) {
-      logger.warning('Could not setup query monitoring (may require superuser privileges):', error);
+      logger.warning(
+        "Could not setup query monitoring (may require superuser privileges):",
+        error,
+      );
     }
   }
 
   async analyzeQueryPerformance(): Promise<QueryPerformance[]> {
     if (!this.isInitialized) {
-      throw new Error('Database Optimizer not initialized');
+      throw new Error("Database Optimizer not initialized");
     }
 
     try {
@@ -195,7 +195,7 @@ export class DatabaseOptimizer extends EventEmitter {
         LIMIT 50
       `);
 
-      const queryPerformances: QueryPerformance[] = result.rows.map(row => ({
+      const queryPerformances: QueryPerformance[] = result.rows.map((row) => ({
         queryHash: this.hashQuery(row.query),
         queryText: row.query,
         executionCount: row.calls,
@@ -207,29 +207,32 @@ export class DatabaseOptimizer extends EventEmitter {
         rowsAffected: row.rows,
         cacheHitRatio: row.hit_percent || 0,
         lastExecuted: new Date(),
-        optimizationApplied: false
+        optimizationApplied: false,
       }));
 
       // Store slow queries
-      this.slowQueries = queryPerformances.filter(q => q.averageExecutionTime > 1000);
+      this.slowQueries = queryPerformances.filter(
+        (q) => q.averageExecutionTime > 1000,
+      );
 
       // Log performance data
       for (const perf of queryPerformances) {
         await this.logQueryPerformance(perf);
       }
 
-      logger.info(`Analyzed ${queryPerformances.length} queries, found ${this.slowQueries.length} slow queries`);
+      logger.info(
+        `Analyzed ${queryPerformances.length} queries, found ${this.slowQueries.length} slow queries`,
+      );
       return queryPerformances;
-
     } catch (error) {
-      logger.error('Error analyzing query performance:', error);
+      logger.error("Error analyzing query performance:", error);
       throw error;
     }
   }
 
   async generateIndexRecommendations(): Promise<IndexRecommendation[]> {
     if (!this.isInitialized) {
-      throw new Error('Database Optimizer not initialized');
+      throw new Error("Database Optimizer not initialized");
     }
 
     try {
@@ -241,7 +244,7 @@ export class DatabaseOptimizer extends EventEmitter {
 
       // Analyze unused indexes
       const unusedIndexes = await this.analyzeUnusedIndexes();
-      
+
       // Analyze duplicate indexes
       const duplicateIndexes = await this.analyzeDuplicateIndexes();
 
@@ -252,9 +255,8 @@ export class DatabaseOptimizer extends EventEmitter {
 
       logger.info(`Generated ${recommendations.length} index recommendations`);
       return recommendations;
-
     } catch (error) {
-      logger.error('Error generating index recommendations:', error);
+      logger.error("Error generating index recommendations:", error);
       throw error;
     }
   }
@@ -274,47 +276,50 @@ export class DatabaseOptimizer extends EventEmitter {
       recommendations.push(...commonPatterns);
 
       return recommendations;
-
     } catch (error) {
-      logger.error('Error analyzing missing indexes:', error);
+      logger.error("Error analyzing missing indexes:", error);
       return [];
     }
   }
 
-  private async analyzeQueryForIndexes(query: QueryPerformance): Promise<IndexRecommendation[]> {
+  private async analyzeQueryForIndexes(
+    query: QueryPerformance,
+  ): Promise<IndexRecommendation[]> {
     try {
       const recommendations: IndexRecommendation[] = [];
 
       // Get query execution plan
-      const planResult = await this.db.query(`EXPLAIN (FORMAT JSON, ANALYZE, BUFFERS) ${query.queryText}`);
-      const plan = planResult.rows[0]['QUERY PLAN'][0];
+      const planResult = await this.db.query(
+        `EXPLAIN (FORMAT JSON, ANALYZE, BUFFERS) ${query.queryText}`,
+      );
+      const plan = planResult.rows[0]["QUERY PLAN"][0];
 
       // Analyze plan for sequential scans
       const seqScans = this.findSequentialScans(plan);
-      
+
       for (const scan of seqScans) {
-        if (scan.rowsExamined > 1000) { // Only recommend for tables with significant rows
+        if (scan.rowsExamined > 1000) {
+          // Only recommend for tables with significant rows
           recommendations.push({
             tableName: scan.tableName,
             columnNames: scan.filterColumns,
-            indexType: 'btree',
+            indexType: "btree",
             estimatedBenefit: this.calculateIndexBenefit(scan),
             queryPatterns: [query.queryText],
-            status: 'pending',
+            status: "pending",
             impactAnalysis: {
               currentCost: scan.cost,
               estimatedCost: scan.cost * 0.1, // Assume 90% improvement
               affectedQueries: 1,
-              storageOverhead: scan.filterColumns.length * 8 // Rough estimate
-            }
+              storageOverhead: scan.filterColumns.length * 8, // Rough estimate
+            },
           });
         }
       }
 
       return recommendations;
-
     } catch (error) {
-      logger.error('Error analyzing query for indexes:', error);
+      logger.error("Error analyzing query for indexes:", error);
       return [];
     }
   }
@@ -343,16 +348,16 @@ export class DatabaseOptimizer extends EventEmitter {
           recommendations.push({
             tableName: pattern.tablename,
             columnNames: [pattern.attname],
-            indexType: 'btree',
+            indexType: "btree",
             estimatedBenefit: Math.log(pattern.n_distinct) * 10,
             queryPatterns: [`WHERE ${pattern.attname} = ?`],
-            status: 'pending',
+            status: "pending",
             impactAnalysis: {
               currentCost: 1000,
               estimatedCost: Math.log(pattern.n_distinct),
               affectedQueries: 0,
-              storageOverhead: pattern.n_distinct * 8
-            }
+              storageOverhead: pattern.n_distinct * 8,
+            },
           });
         }
       }
@@ -376,23 +381,24 @@ export class DatabaseOptimizer extends EventEmitter {
         recommendations.push({
           tableName: fk.table_name,
           columnNames: [fk.column_name],
-          indexType: 'btree',
+          indexType: "btree",
           estimatedBenefit: 50, // Foreign keys typically benefit from indexes
-          queryPatterns: [`JOIN ON ${fk.table_name}.${fk.column_name} = ${fk.foreign_table_name}.${fk.foreign_column_name}`],
-          status: 'pending',
+          queryPatterns: [
+            `JOIN ON ${fk.table_name}.${fk.column_name} = ${fk.foreign_table_name}.${fk.foreign_column_name}`,
+          ],
+          status: "pending",
           impactAnalysis: {
             currentCost: 1000,
             estimatedCost: 100,
             affectedQueries: 0,
-            storageOverhead: 1000
-          }
+            storageOverhead: 1000,
+          },
         });
       }
 
       return recommendations;
-
     } catch (error) {
-      logger.error('Error analyzing common query patterns:', error);
+      logger.error("Error analyzing common query patterns:", error);
       return [];
     }
   }
@@ -412,18 +418,20 @@ export class DatabaseOptimizer extends EventEmitter {
         ORDER BY schemaname, tablename, indexname
       `);
 
-      const unusedIndexes = result.rows.map(row => 
-        `${row.schemaname}.${row.tablename}.${row.indexname}`
+      const unusedIndexes = result.rows.map(
+        (row) => `${row.schemaname}.${row.tablename}.${row.indexname}`,
       );
 
       if (unusedIndexes.length > 0) {
-        logger.info(`Found ${unusedIndexes.length} unused indexes:`, unusedIndexes);
+        logger.info(
+          `Found ${unusedIndexes.length} unused indexes:`,
+          unusedIndexes,
+        );
       }
 
       return unusedIndexes;
-
     } catch (error) {
-      logger.error('Error analyzing unused indexes:', error);
+      logger.error("Error analyzing unused indexes:", error);
       return [];
     }
   }
@@ -458,20 +466,22 @@ export class DatabaseOptimizer extends EventEmitter {
       }
 
       if (duplicateIndexes.length > 0) {
-        logger.info(`Found ${duplicateIndexes.length} duplicate indexes:`, duplicateIndexes);
+        logger.info(
+          `Found ${duplicateIndexes.length} duplicate indexes:`,
+          duplicateIndexes,
+        );
       }
 
       return duplicateIndexes;
-
     } catch (error) {
-      logger.error('Error analyzing duplicate indexes:', error);
+      logger.error("Error analyzing duplicate indexes:", error);
       return [];
     }
   }
 
   async optimizeQueries(): Promise<OptimizationResult[]> {
     if (!this.isInitialized) {
-      throw new Error('Database Optimizer not initialized');
+      throw new Error("Database Optimizer not initialized");
     }
 
     try {
@@ -480,7 +490,8 @@ export class DatabaseOptimizer extends EventEmitter {
       // Apply index recommendations
       const indexRecommendations = await this.getIndexRecommendations();
       for (const recommendation of indexRecommendations) {
-        if (recommendation.estimatedBenefit > 50) { // Only apply high-benefit indexes
+        if (recommendation.estimatedBenefit > 50) {
+          // Only apply high-benefit indexes
           const result = await this.applyIndexRecommendation(recommendation);
           results.push(result);
         }
@@ -496,20 +507,21 @@ export class DatabaseOptimizer extends EventEmitter {
 
       logger.info(`Applied ${results.length} optimizations`);
       return results;
-
     } catch (error) {
-      logger.error('Error optimizing queries:', error);
+      logger.error("Error optimizing queries:", error);
       throw error;
     }
   }
 
-  private async applyIndexRecommendation(recommendation: IndexRecommendation): Promise<OptimizationResult> {
+  private async applyIndexRecommendation(
+    recommendation: IndexRecommendation,
+  ): Promise<OptimizationResult> {
     try {
-      const indexName = `idx_${recommendation.tableName}_${recommendation.columnNames.join('_')}`;
+      const indexName = `idx_${recommendation.tableName}_${recommendation.columnNames.join("_")}`;
       const createIndexSQL = `
         CREATE INDEX CONCURRENTLY ${indexName} 
         ON ${recommendation.tableName} 
-        USING ${recommendation.indexType} (${recommendation.columnNames.join(', ')})
+        USING ${recommendation.indexType} (${recommendation.columnNames.join(", ")})
       `;
 
       const startTime = Date.now();
@@ -517,33 +529,35 @@ export class DatabaseOptimizer extends EventEmitter {
       const duration = Date.now() - startTime;
 
       // Update recommendation status
-      await this.db.query(`
+      await this.db.query(
+        `
         UPDATE index_recommendations 
         SET status = 'applied', applied_at = NOW()
         WHERE table_name = $1 AND column_names = $2
-      `, [recommendation.tableName, recommendation.columnNames]);
+      `,
+        [recommendation.tableName, recommendation.columnNames],
+      );
 
       logger.info(`Applied index recommendation: ${indexName}`);
 
       return {
-        type: 'index_creation',
+        type: "index_creation",
         description: `Created index ${indexName}`,
         estimatedBenefit: recommendation.estimatedBenefit,
         actualBenefit: 0, // Will be measured over time
         duration,
-        success: true
+        success: true,
       };
-
     } catch (error) {
-      logger.error('Error applying index recommendation:', error);
+      logger.error("Error applying index recommendation:", error);
       return {
-        type: 'index_creation',
+        type: "index_creation",
         description: `Failed to create index for ${recommendation.tableName}`,
         estimatedBenefit: recommendation.estimatedBenefit,
         actualBenefit: 0,
         duration: 0,
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -551,7 +565,7 @@ export class DatabaseOptimizer extends EventEmitter {
   private async updateTableStatistics(): Promise<OptimizationResult> {
     try {
       const startTime = Date.now();
-      
+
       // Get all user tables
       const tablesResult = await this.db.query(`
         SELECT schemaname, tablename 
@@ -569,24 +583,23 @@ export class DatabaseOptimizer extends EventEmitter {
       logger.info(`Updated statistics for ${tablesResult.rows.length} tables`);
 
       return {
-        type: 'statistics_update',
+        type: "statistics_update",
         description: `Updated statistics for ${tablesResult.rows.length} tables`,
         estimatedBenefit: 20,
         actualBenefit: 0,
         duration,
-        success: true
+        success: true,
       };
-
     } catch (error) {
-      logger.error('Error updating table statistics:', error);
+      logger.error("Error updating table statistics:", error);
       return {
-        type: 'statistics_update',
-        description: 'Failed to update table statistics',
+        type: "statistics_update",
+        description: "Failed to update table statistics",
         estimatedBenefit: 20,
         actualBenefit: 0,
         duration: 0,
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -594,43 +607,44 @@ export class DatabaseOptimizer extends EventEmitter {
   private async optimizeConnectionPool(): Promise<OptimizationResult> {
     try {
       const stats = await this.getConnectionPoolStats();
-      
+
       // Calculate optimal pool size based on usage patterns
       const optimalSize = Math.max(
         Math.ceil(stats.activeConnections * 1.2), // 20% buffer
-        10 // Minimum pool size
+        10, // Minimum pool size
       );
 
       // This would typically involve reconfiguring the pool
       // For now, we'll just log the recommendation
-      logger.info(`Connection pool optimization: current=${stats.totalConnections}, recommended=${optimalSize}`);
+      logger.info(
+        `Connection pool optimization: current=${stats.totalConnections}, recommended=${optimalSize}`,
+      );
 
       return {
-        type: 'connection_pool',
+        type: "connection_pool",
         description: `Recommended pool size: ${optimalSize}`,
         estimatedBenefit: 10,
         actualBenefit: 0,
         duration: 0,
-        success: true
+        success: true,
       };
-
     } catch (error) {
-      logger.error('Error optimizing connection pool:', error);
+      logger.error("Error optimizing connection pool:", error);
       return {
-        type: 'connection_pool',
-        description: 'Failed to optimize connection pool',
+        type: "connection_pool",
+        description: "Failed to optimize connection pool",
         estimatedBenefit: 10,
         actualBenefit: 0,
         duration: 0,
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
 
   async getDatabaseStats(): Promise<DatabaseStats> {
     if (!this.isInitialized) {
-      throw new Error('Database Optimizer not initialized');
+      throw new Error("Database Optimizer not initialized");
     }
 
     try {
@@ -673,17 +687,20 @@ export class DatabaseOptimizer extends EventEmitter {
         databaseSize: sizeResult.rows[0].size,
         databaseSizeBytes: sizeResult.rows[0].size_bytes,
         totalConnections: parseInt(connectionResult.rows[0].total_connections),
-        activeConnections: parseInt(connectionResult.rows[0].active_connections),
+        activeConnections: parseInt(
+          connectionResult.rows[0].active_connections,
+        ),
         idleConnections: parseInt(connectionResult.rows[0].idle_connections),
         cacheHitRatio: parseFloat(cacheResult.rows[0].ratio) || 0,
         slowQueryCount,
         totalIndexes: parseInt(indexResult.rows[0].total_indexes),
         usedIndexes: parseInt(indexResult.rows[0].used_indexes),
-        indexUsageRatio: parseInt(indexResult.rows[0].used_indexes) / parseInt(indexResult.rows[0].total_indexes) || 0
+        indexUsageRatio:
+          parseInt(indexResult.rows[0].used_indexes) /
+            parseInt(indexResult.rows[0].total_indexes) || 0,
       };
-
     } catch (error) {
-      logger.error('Error getting database stats:', error);
+      logger.error("Error getting database stats:", error);
       throw error;
     }
   }
@@ -695,11 +712,10 @@ export class DatabaseOptimizer extends EventEmitter {
         idleConnections: this.db.idleCount,
         activeConnections: this.db.totalCount - this.db.idleCount,
         waitingClients: this.db.waitingCount,
-        maxConnections: this.db.options.max || 10
+        maxConnections: this.db.options.max || 10,
       };
-
     } catch (error) {
-      logger.error('Error getting connection pool stats:', error);
+      logger.error("Error getting connection pool stats:", error);
       return this.poolStats;
     }
   }
@@ -712,25 +728,27 @@ export class DatabaseOptimizer extends EventEmitter {
         ORDER BY estimated_benefit DESC
       `);
 
-      return result.rows.map(row => ({
+      return result.rows.map((row) => ({
         tableName: row.table_name,
         columnNames: row.column_names,
         indexType: row.index_type,
         estimatedBenefit: row.estimated_benefit,
         queryPatterns: row.query_patterns,
         status: row.status,
-        impactAnalysis: row.impact_analysis
+        impactAnalysis: row.impact_analysis,
       }));
-
     } catch (error) {
-      logger.error('Error getting index recommendations:', error);
+      logger.error("Error getting index recommendations:", error);
       return [];
     }
   }
 
-  private async storeIndexRecommendation(recommendation: IndexRecommendation): Promise<void> {
+  private async storeIndexRecommendation(
+    recommendation: IndexRecommendation,
+  ): Promise<void> {
     try {
-      await this.db.query(`
+      await this.db.query(
+        `
         INSERT INTO index_recommendations (
           table_name, column_names, index_type, estimated_benefit,
           query_patterns, impact_analysis
@@ -739,70 +757,78 @@ export class DatabaseOptimizer extends EventEmitter {
           estimated_benefit = EXCLUDED.estimated_benefit,
           query_patterns = EXCLUDED.query_patterns,
           impact_analysis = EXCLUDED.impact_analysis
-      `, [
-        recommendation.tableName,
-        recommendation.columnNames,
-        recommendation.indexType,
-        recommendation.estimatedBenefit,
-        recommendation.queryPatterns,
-        JSON.stringify(recommendation.impactAnalysis)
-      ]);
-
+      `,
+        [
+          recommendation.tableName,
+          recommendation.columnNames,
+          recommendation.indexType,
+          recommendation.estimatedBenefit,
+          recommendation.queryPatterns,
+          JSON.stringify(recommendation.impactAnalysis),
+        ],
+      );
     } catch (error) {
-      logger.error('Error storing index recommendation:', error);
+      logger.error("Error storing index recommendation:", error);
     }
   }
 
-  private async logQueryPerformance(performance: QueryPerformance): Promise<void> {
+  private async logQueryPerformance(
+    performance: QueryPerformance,
+  ): Promise<void> {
     try {
-      await this.db.query(`
+      await this.db.query(
+        `
         INSERT INTO query_performance_log (
           query_hash, query_text, execution_time_ms, rows_examined, rows_returned
         ) VALUES ($1, $2, $3, $4, $5)
-      `, [
-        performance.queryHash,
-        performance.queryText,
-        performance.averageExecutionTime,
-        performance.rowsAffected,
-        performance.rowsAffected
-      ]);
-
+      `,
+        [
+          performance.queryHash,
+          performance.queryText,
+          performance.averageExecutionTime,
+          performance.rowsAffected,
+          performance.rowsAffected,
+        ],
+      );
     } catch (error) {
-      logger.error('Error logging query performance:', error);
+      logger.error("Error logging query performance:", error);
     }
   }
 
   private hashQuery(query: string): string {
     // Simple hash function for query identification
-    const crypto = require('crypto');
-    return crypto.createHash('md5').update(query.replace(/\s+/g, ' ').trim()).digest('hex');
+    const crypto = require("crypto");
+    return crypto
+      .createHash("md5")
+      .update(query.replace(/\s+/g, " ").trim())
+      .digest("hex");
   }
 
   private findSequentialScans(plan: any): any[] {
     const scans: any[] = [];
-    
+
     function traverse(node: any) {
-      if (node['Node Type'] === 'Seq Scan') {
+      if (node["Node Type"] === "Seq Scan") {
         scans.push({
-          tableName: node['Relation Name'],
-          cost: node['Total Cost'],
-          rowsExamined: node['Actual Rows'],
-          filterColumns: this.extractFilterColumns(node['Filter'])
+          tableName: node["Relation Name"],
+          cost: node["Total Cost"],
+          rowsExamined: node["Actual Rows"],
+          filterColumns: this.extractFilterColumns(node["Filter"]),
         });
       }
-      
-      if (node['Plans']) {
-        node['Plans'].forEach(traverse);
+
+      if (node["Plans"]) {
+        node["Plans"].forEach(traverse);
       }
     }
-    
-    traverse(plan['Plan']);
+
+    traverse(plan["Plan"]);
     return scans;
   }
 
   private extractFilterColumns(filter: string): string[] {
     if (!filter) return [];
-    
+
     // Simple regex to extract column names from filter conditions
     const matches = filter.match(/\b\w+\b(?=\s*[=<>!])/g);
     return matches || [];
@@ -810,29 +836,29 @@ export class DatabaseOptimizer extends EventEmitter {
 
   private calculateIndexBenefit(scan: any): number {
     // Simple benefit calculation based on cost and rows
-    return Math.log(scan.rowsExamined) * scan.cost / 1000;
+    return (Math.log(scan.rowsExamined) * scan.cost) / 1000;
   }
 
   private setupConnectionPoolMonitoring(): void {
     setInterval(async () => {
       try {
         this.poolStats = await this.getConnectionPoolStats();
-        
+
         // Emit pool stats
-        this.emit('pool_stats', this.poolStats);
-        
+        this.emit("pool_stats", this.poolStats);
+
         // Alert on high connection usage
-        const usageRatio = this.poolStats.activeConnections / this.poolStats.maxConnections;
+        const usageRatio =
+          this.poolStats.activeConnections / this.poolStats.maxConnections;
         if (usageRatio > 0.8) {
-          this.emit('alert', {
-            type: 'high_connection_usage',
+          this.emit("alert", {
+            type: "high_connection_usage",
             message: `Connection pool usage is high: ${(usageRatio * 100).toFixed(1)}%`,
-            stats: this.poolStats
+            stats: this.poolStats,
           });
         }
-
       } catch (error) {
-        logger.error('Error in connection pool monitoring:', error);
+        logger.error("Error in connection pool monitoring:", error);
       }
     }, 30000); // Every 30 seconds
   }
@@ -841,36 +867,33 @@ export class DatabaseOptimizer extends EventEmitter {
     // Run optimization checks every hour
     setInterval(async () => {
       try {
-        logger.info('Running automatic optimization checks...');
-        
+        logger.info("Running automatic optimization checks...");
+
         // Analyze query performance
         await this.analyzeQueryPerformance();
-        
+
         // Generate new recommendations
         await this.generateIndexRecommendations();
-        
+
         // Apply low-risk optimizations automatically
         const stats = await this.getDatabaseStats();
-        
+
         // Update statistics if cache hit ratio is low
         if (stats.cacheHitRatio < 0.9) {
           await this.updateTableStatistics();
         }
-
       } catch (error) {
-        logger.error('Error in automatic optimization:', error);
+        logger.error("Error in automatic optimization:", error);
       }
     }, 3600000); // Every hour
   }
 
   async cleanup(): Promise<void> {
     try {
-      logger.info('Cleaning up Database Optimizer...');
+      logger.info("Cleaning up Database Optimizer...");
       // Cleanup any resources if needed
-      
     } catch (error) {
-      logger.error('Error during cleanup:', error);
+      logger.error("Error during cleanup:", error);
     }
   }
 }
-

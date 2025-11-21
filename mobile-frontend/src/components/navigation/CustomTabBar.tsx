@@ -1,6 +1,6 @@
-import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import React from "react";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 interface TabBarIconProps {
   name: string;
@@ -8,7 +8,11 @@ interface TabBarIconProps {
   size?: number;
 }
 
-export const TabBarIcon: React.FC<TabBarIconProps> = ({ name, color, size = 24 }) => {
+export const TabBarIcon: React.FC<TabBarIconProps> = ({
+  name,
+  color,
+  size = 24,
+}) => {
   return <Ionicons name={name as any} size={size} color={color} />;
 };
 
@@ -18,7 +22,11 @@ interface BottomTabBarProps {
   navigation: any;
 }
 
-const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigation }) => {
+const CustomTabBar: React.FC<BottomTabBarProps> = ({
+  state,
+  descriptors,
+  navigation,
+}) => {
   return (
     <View style={styles.container}>
       {state.routes.map((route: any, index: number) => {
@@ -27,14 +35,14 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigat
           options.tabBarLabel !== undefined
             ? options.tabBarLabel
             : options.title !== undefined
-            ? options.title
-            : route.name;
+              ? options.title
+              : route.name;
 
         const isFocused = state.index === index;
 
         const onPress = () => {
           const event = navigation.emit({
-            type: 'tabPress',
+            type: "tabPress",
             target: route.key,
             canPreventDefault: true,
           });
@@ -46,17 +54,19 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigat
 
         const onLongPress = () => {
           navigation.emit({
-            type: 'tabLongPress',
+            type: "tabLongPress",
             target: route.key,
           });
         };
 
         // Get icon name from options
-        const iconName = options.tabBarIcon ? options.tabBarIcon({ 
-          focused: isFocused, 
-          color: isFocused ? '#3498db' : '#bdc3c7', 
-          size: 24 
-        }) : null;
+        const iconName = options.tabBarIcon
+          ? options.tabBarIcon({
+              focused: isFocused,
+              color: isFocused ? "#3498db" : "#bdc3c7",
+              size: 24,
+            })
+          : null;
 
         return (
           <TouchableOpacity
@@ -70,10 +80,12 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigat
             style={styles.tabButton}
           >
             {iconName}
-            <Text style={[
-              styles.tabLabel,
-              { color: isFocused ? '#3498db' : '#bdc3c7' }
-            ]}>
+            <Text
+              style={[
+                styles.tabLabel,
+                { color: isFocused ? "#3498db" : "#bdc3c7" },
+              ]}
+            >
               {label}
             </Text>
           </TouchableOpacity>
@@ -85,22 +97,22 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigat
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    backgroundColor: '#ffffff',
+    flexDirection: "row",
+    backgroundColor: "#ffffff",
     borderTopWidth: 1,
-    borderTopColor: '#ecf0f1',
+    borderTopColor: "#ecf0f1",
     paddingBottom: 4,
     paddingTop: 8,
     elevation: 8,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
   tabButton: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: 4,
   },
   tabLabel: {

@@ -23,6 +23,7 @@ The workflow architecture is designed to ensure code quality, security, and reli
 This is the primary workflow that handles the continuous integration and continuous deployment pipeline for all components of the FinFlow application.
 
 **Triggers:**
+
 - Push to `main` or `develop` branches
 - Pull requests targeting `main` or `develop` branches
 - Manual trigger via workflow dispatch
@@ -70,12 +71,14 @@ This is the primary workflow that handles the continuous integration and continu
    - Verifies successful deployment
 
 **Environment Variables and Secrets:**
+
 - `DOCKERHUB_USERNAME`: Username for DockerHub authentication
 - `DOCKERHUB_TOKEN`: Token for DockerHub authentication
 - `AWS_ACCESS_KEY_ID`: AWS access key for EKS access
 - `AWS_SECRET_ACCESS_KEY`: AWS secret key for EKS access
 
 **Deployment Process:**
+
 - Uses Kubernetes for container orchestration
 - Implements a blue-green deployment strategy
 - Verifies deployment success with rollout status checks
@@ -85,6 +88,7 @@ This is the primary workflow that handles the continuous integration and continu
 This workflow automates the management of dependencies across all services to ensure they remain up-to-date and secure.
 
 **Triggers:**
+
 - Scheduled run weekly on Mondays at midnight UTC
 - Manual trigger via workflow dispatch
 
@@ -104,9 +108,11 @@ This workflow automates the management of dependencies across all services to en
    - Creates pull requests with security fixes
 
 **Environment Variables and Secrets:**
+
 - `GITHUB_TOKEN`: Used for creating pull requests
 
 **Automation Process:**
+
 - Automatically creates separate branches for updates
 - Generates detailed PR descriptions with update information
 - Applies labels for easier PR categorization
@@ -116,6 +122,7 @@ This workflow automates the management of dependencies across all services to en
 This workflow performs comprehensive security scanning across the codebase, dependencies, and container images.
 
 **Triggers:**
+
 - Push to `main` or `develop` branches
 - Pull requests targeting `main` or `develop` branches
 - Scheduled run weekly on Sundays at midnight UTC
@@ -150,10 +157,12 @@ This workflow performs comprehensive security scanning across the codebase, depe
    - Uploads report as an artifact
 
 **Environment Variables and Secrets:**
+
 - `SNYK_TOKEN`: Authentication token for Snyk
 - `GITHUB_TOKEN`: Used for GitHub Security tab integration
 
 **Security Practices:**
+
 - Comprehensive scanning across multiple layers
 - Integration with GitHub's security features
 - Regular scheduled scans for proactive security
@@ -175,6 +184,7 @@ The workflows in this project are designed with the following dependencies:
    - Generates reports that inform dependency updates
 
 This architecture ensures that:
+
 - Code quality is verified before testing
 - Tests must pass before building
 - Building must succeed before deployment
