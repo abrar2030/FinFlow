@@ -15,16 +15,14 @@ test.describe("Payment Processing Flow", () => {
 
   test.beforeEach(async ({ page }) => {
     // Use saved authentication state
-    await page
-      .context()
-      .addCookies([
-        {
-          name: "accessToken",
-          value: "mock_access_token",
-          domain: "localhost",
-          path: "/",
-        },
-      ]);
+    await page.context().addCookies([
+      {
+        name: "accessToken",
+        value: "mock_access_token",
+        domain: "localhost",
+        path: "/",
+      },
+    ]);
     await page.goto("http://localhost:3000/payments");
   });
 

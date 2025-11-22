@@ -190,11 +190,9 @@ class PaymentController {
           paymentOwner: payment.userId,
           requestId,
         });
-        res
-          .status(403)
-          .json({
-            message: "Forbidden: You do not have access to this payment",
-          });
+        res.status(403).json({
+          message: "Forbidden: You do not have access to this payment",
+        });
         return;
       }
 
@@ -311,11 +309,9 @@ class PaymentController {
           paymentOwner: payment.userId,
           requestId,
         });
-        res
-          .status(403)
-          .json({
-            message: "Forbidden: You do not have access to this payment",
-          });
+        res.status(403).json({
+          message: "Forbidden: You do not have access to this payment",
+        });
         return;
       }
 

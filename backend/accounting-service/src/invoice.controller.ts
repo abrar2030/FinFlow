@@ -51,11 +51,9 @@ class InvoiceController {
 
       // Check if user owns the invoice
       if (invoice.userId !== userId) {
-        res
-          .status(403)
-          .json({
-            message: "Forbidden: You do not have access to this invoice",
-          });
+        res.status(403).json({
+          message: "Forbidden: You do not have access to this invoice",
+        });
         return;
       }
 
@@ -104,11 +102,9 @@ class InvoiceController {
 
       // Check if user owns the invoice
       if (invoice.userId !== userId) {
-        res
-          .status(403)
-          .json({
-            message: "Forbidden: You do not have access to this invoice",
-          });
+        res.status(403).json({
+          message: "Forbidden: You do not have access to this invoice",
+        });
         return;
       }
 
@@ -149,11 +145,9 @@ class InvoiceController {
 
       // Check if user owns the invoice
       if (invoice.userId !== userId) {
-        res
-          .status(403)
-          .json({
-            message: "Forbidden: You do not have access to this invoice",
-          });
+        res.status(403).json({
+          message: "Forbidden: You do not have access to this invoice",
+        });
         return;
       }
 

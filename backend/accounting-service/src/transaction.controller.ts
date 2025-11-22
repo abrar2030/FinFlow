@@ -54,11 +54,9 @@ class TransactionController {
 
       // Check if user owns the transaction
       if (transaction.userId !== userId) {
-        res
-          .status(403)
-          .json({
-            message: "Forbidden: You do not have access to this transaction",
-          });
+        res.status(403).json({
+          message: "Forbidden: You do not have access to this transaction",
+        });
         return;
       }
 
@@ -107,11 +105,9 @@ class TransactionController {
 
       // Check if user owns the transaction
       if (transaction.userId !== userId) {
-        res
-          .status(403)
-          .json({
-            message: "Forbidden: You do not have access to this transaction",
-          });
+        res.status(403).json({
+          message: "Forbidden: You do not have access to this transaction",
+        });
         return;
       }
 
@@ -155,11 +151,9 @@ class TransactionController {
 
       // Check if user owns the transaction
       if (transaction.userId !== userId) {
-        res
-          .status(403)
-          .json({
-            message: "Forbidden: You do not have access to this transaction",
-          });
+        res.status(403).json({
+          message: "Forbidden: You do not have access to this transaction",
+        });
         return;
       }
 
