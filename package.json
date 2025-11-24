@@ -1,0 +1,23 @@
+{
+  "name": "finflow",
+  "version": "1.0.0",
+  "description": "![CI/CD Status](https://img.shields.io/github/actions/workflow/status/abrar2030/Finflow/cicd.yml?branch=main&label=CI/CD&logo=github) [![Test Coverage](https://img.shields.io/badge/coverage-96%25-brightgreen)](https://github.com/abrar2030/FinFlow/tree/main/coverage) [![License](https://img.shields.io/github/license/abrar2030/FinFlow?style=flat-square)](LICENSE)",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@typescript-eslint/eslint-plugin": "^8.47.0",
+    "@typescript-eslint/parser": "^8.47.0",
+    "eslint": "^9.39.1",
+    "eslint-plugin-prettier": "^5.5.4",
+    "prettier": "^3.6.2"
+  }
+}
