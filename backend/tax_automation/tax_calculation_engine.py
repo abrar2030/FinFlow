@@ -192,26 +192,26 @@
 #             if rule.calculation_method == CalculationMethod.PERCENTAGE:
 #                 return (base_amount * rule.rate / Decimal("100")).quantize(
 #                     Decimal("0.01"), rounding=ROUND_HALF_UP
-                )
+#                )
 
 #             elif rule.calculation_method == CalculationMethod.FIXED_AMOUNT:
 #                 return rule.rate
 
 #             elif rule.calculation_method == CalculationMethod.TIERED:
-                # Implement tiered calculation logic
-                # This would require additional configuration in the rule
-                # For now, default to percentage
+# Implement tiered calculation logic
+# This would require additional configuration in the rule
+# For now, default to percentage
 #                 return (base_amount * rule.rate / Decimal("100")).quantize(
 #                     Decimal("0.01"), rounding=ROUND_HALF_UP
-                )
+#                )
 
 #             elif rule.calculation_method == CalculationMethod.PROGRESSIVE:
-                # Implement progressive calculation logic
-                # This would require additional configuration in the rule
-                # For now, default to percentage
+# Implement progressive calculation logic
+# This would require additional configuration in the rule
+# For now, default to percentage
 #                 return (base_amount * rule.rate / Decimal("100")).quantize(
 #                     Decimal("0.01"), rounding=ROUND_HALF_UP
-                )
+#                )
 
 #             else:
 #                 logger.warning(f"Unknown calculation method: {rule.calculation_method}")

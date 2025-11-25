@@ -14,7 +14,7 @@
 #     ComplianceStatus,
 #     InternationalComplianceManager,
 #     RiskLevel,
-)
+# )
 
 # Configure logging
 # logging.basicConfig(level=logging.INFO)
@@ -38,12 +38,12 @@
 ## def health_check():
 #    """Health check endpoint"""
 #     return jsonify(
-        {
-            "status": "healthy",
-            "timestamp": datetime.now().isoformat(),
-            "service": "compliance-api",
-        }
-    )
+#       {
+#          "status": "healthy",
+#         "timestamp": datetime.now().isoformat(),
+#        "service": "compliance-api",
+#   }
+# )
 
 
 # @compliance_app.route("/api/compliance/entity", methods=["POST"])
@@ -83,28 +83,28 @@
 #             return jsonify({"error": "Entity profile not found"}), 404
 
 #         response = {
-            "entity_id": profile.entity_id,
-            "entity_type": profile.entity_type,
-            "full_name": profile.full_name,
-            "date_of_birth": (
+#            "entity_id": profile.entity_id,
+#            "entity_type": profile.entity_type,
+#            "full_name": profile.full_name,
+#            "date_of_birth": (
 #                 profile.date_of_birth.isoformat() if profile.date_of_birth else None
-            ),
-            "nationality": profile.nationality,
-            "country_of_residence": profile.country_of_residence,
-            "address": profile.address,
-            "identification_documents": profile.identification_documents,
-            "business_activities": profile.business_activities,
-            "source_of_funds": profile.source_of_funds,
-            "expected_transaction_volume": (
+#            ),
+#            "nationality": profile.nationality,
+#            "country_of_residence": profile.country_of_residence,
+#            "address": profile.address,
+#            "identification_documents": profile.identification_documents,
+#            "business_activities": profile.business_activities,
+#            "source_of_funds": profile.source_of_funds,
+#            "expected_transaction_volume": (
 #                 float(profile.expected_transaction_volume)
 #                 if profile.expected_transaction_volume
 #                 else None
-            ),
-            "risk_factors": profile.risk_factors,
-            "compliance_flags": profile.compliance_flags,
-            "created_at": profile.created_at.isoformat(),
-            "updated_at": profile.updated_at.isoformat(),
-        }
+#            ),
+#            "risk_factors": profile.risk_factors,
+#            "compliance_flags": profile.compliance_flags,
+#            "created_at": profile.created_at.isoformat(),
+#            "updated_at": profile.updated_at.isoformat(),
+#        }
 
 #         return jsonify(response)
 
@@ -145,15 +145,15 @@
 #         result = compliance_manager.fatca_service.check_us_person_status(entity_id)
 
 #         response = {
-            "check_id": result.check_id,
-            "entity_id": result.entity_id,
-            "check_type": result.check_type.value,
-            "status": result.status.value,
-            "risk_level": result.risk_level.value,
-            "details": result.details,
-            "performed_at": result.performed_at.isoformat(),
-            "notes": result.notes,
-        }
+#            "check_id": result.check_id,
+#            "entity_id": result.entity_id,
+#            "check_type": result.check_type.value,
+#            "status": result.status.value,
+#            "risk_level": result.risk_level.value,
+#            "details": result.details,
+#            "performed_at": result.performed_at.isoformat(),
+#            "notes": result.notes,
+#        }
 
 #         return jsonify(response)
 
@@ -205,7 +205,7 @@
 #
 ## @compliance_app.route(
 #    "/api/compliance/check/comprehensive/<entity_id>", methods=["POST"]
-#)
+# )
 ## def perform_comprehensive_check(entity_id):
 #    """Perform comprehensive compliance check"""
 #     try:
@@ -214,16 +214,16 @@
 #         response = {}
 #         for check_type, result in results.items():
 #             response[check_type] = {
-                "check_id": result.check_id,
-                "status": result.status.value,
-                "risk_level": result.risk_level.value,
-                "details": result.details,
-                "performed_at": result.performed_at.isoformat(),
-                "expires_at": (
+#                "check_id": result.check_id,
+#                "status": result.status.value,
+#                "risk_level": result.risk_level.value,
+#                "details": result.details,
+#                "performed_at": result.performed_at.isoformat(),
+#                "expires_at": (
 #                     result.expires_at.isoformat() if result.expires_at else None
-                ),
-                "notes": result.notes,
-            }
+#               ),
+#               "notes": result.notes,
+#          }
 
 #         return jsonify(response)
 
@@ -246,7 +246,7 @@
 #
 ## @compliance_app.route(
 #    "/api/compliance/check/data-residency/<entity_id>", methods=["POST"]
-#)
+# )
 ## def check_data_residency(entity_id):
 #    """Check data residency compliance"""
 #     try:
@@ -256,18 +256,18 @@
 #         result = (
 #             compliance_manager.data_residency_service.check_data_residency_compliance(
 #                 entity_id, data_location
-            )
-        )
+#            )
+#        )
 
 #         response = {
-            "check_id": result.check_id,
-            "entity_id": result.entity_id,
-            "check_type": result.check_type.value,
-            "status": result.status.value,
-            "risk_level": result.risk_level.value,
-            "details": result.details,
-            "performed_at": result.performed_at.isoformat(),
-        }
+#           "check_id": result.check_id,
+#           "entity_id": result.entity_id,
+#           "check_type": result.check_type.value,
+#           "status": result.status.value,
+#           "risk_level": result.risk_level.value,
+#           "details": result.details,
+#           "performed_at": result.performed_at.isoformat(),
+#       }
 
 #         return jsonify(response)
 
@@ -333,7 +333,7 @@
 
 #         return jsonify(
 #             {"compliance_types": compliance_types, "count": len(compliance_types)}
-        )
+#       )
 
 #     except Exception as e:
 #         logger.error(f"Error getting compliance types: {e}")
@@ -351,8 +351,8 @@
 
 
 # if __name__ == "__main__":
-    # Initialize the compliance system
+# Initialize the compliance system
 #     init_compliance_system()
 
-    # Run the Flask app
+# Run the Flask app
 #     compliance_app.run(host="0.0.0.0", port=5001, debug=True)

@@ -47,25 +47,25 @@
 # class TransactionRequest(BaseModel):
 #     transaction_id: Optional[str] = Field(
 #         None, description="Unique transaction identifier"
-    )
+#    )
 #     source_account_id: str = Field(..., description="Source account identifier")
 #     destination_account_id: Optional[str] = Field(
 #         None, description="Destination account identifier"
-    )
+#    )
 #     amount: float = Field(..., gt=0, description="Transaction amount")
 #     currency: str = Field(
 #         ..., min_length=3, max_length=3, description="Currency code (ISO 4217)"
-    )
+#    )
 #     transaction_type: TransactionType
 #     reference: Optional[str] = Field(
 #         None, max_length=255, description="Transaction reference"
-    )
+#    )
 #     description: Optional[str] = Field(
 #         None, max_length=500, description="Transaction description"
-    )
+#    )
 #     metadata: Optional[Dict[str, Any]] = Field(
 #         None, description="Additional transaction metadata"
-    )
+#    )
 
 #     @validator("transaction_id")
 #     def validate_transaction_id(cls, v):
@@ -73,7 +73,7 @@
 #             return str(uuid.uuid4())
 #         if not re.match(
 #             r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", v
-        ):
+#       ):
 #             raise ValueError("Invalid transaction ID format. Must be a valid UUID.")
 #         return v
 
@@ -81,8 +81,8 @@
 #     def validate_currency(cls, v):
 #         if not re.match(r"^[A-Z]{3}$", v):
 #             raise ValueError(
-                "Currency must be a valid 3-letter ISO 4217 code (e.g., USD, EUR, GBP)"
-            )
+#               "Currency must be a valid 3-letter ISO 4217 code (e.g., USD, EUR, GBP)"
+#           )
 #         return v
 
 #     @root_validator
@@ -93,16 +93,16 @@
 
 #         if transaction_type == TransactionType.TRANSFER and not destination_account:
 #             raise ValueError(
-                "Destination account is required for transfer transactions"
-            )
+#                "Destination account is required for transfer transactions"
+#            )
 
 #         if (
 #             transaction_type == TransactionType.DEPOSIT
 #             and source_account == destination_account
-        ):
+#        ):
 #             raise ValueError(
-                "Source and destination accounts cannot be the same for deposits"
-            )
+#                "Source and destination accounts cannot be the same for deposits"
+#            )
 
 #         return values
 
@@ -148,8 +148,8 @@
 #             raise ValueError("Transaction batch cannot be empty")
 #         if len(v) > 1000:
 #             raise ValueError(
-                "Transaction batch cannot contain more than 1000 transactions"
-            )
+#                "Transaction batch cannot contain more than 1000 transactions"
+#            )
 #         return v
 
 

@@ -12,7 +12,7 @@
 #     ComplianceStatus,
 #     InternationalComplianceManager,
 #     RiskLevel,
-)
+# )
 # from tax_automation.tax_calculation_engine import (
 #     CalculationMethod,
 #     TaxCalculationEngine,
@@ -21,7 +21,7 @@
 #     TaxType,
 #     Transaction,
 #     create_sample_data,
-)
+# )
 # from tax_automation.tax_rule_management import TaxRuleManager
 
 
@@ -63,7 +63,7 @@
 #             timestamp=datetime.now(),
 #             payer_entity_id="user_001",
 #             payee_entity_id="corp_001",
-        )
+#        )
 
 #         result = self.engine.calculate_taxes(transaction)
 
@@ -103,7 +103,7 @@
 #             timestamp=datetime.now(),
 #             payer_entity_id="",
 #             payee_entity_id="",
-        )
+#        )
 
 #         errors = self.engine.validate_transaction(invalid_transaction)
 #         self.assertGreater(len(errors), 0)
@@ -126,15 +126,15 @@
 ##     def test_create_tax_rule(self):
 #        """Test tax rule creation"""
 #         rule_data = {
-            "rule_id": "TEST_RULE_001",
-            "jurisdiction": "TEST",
-            "tax_type": "vat",
-            "effective_date": "2024-01-01",
-            "rate": 20.0,
-            "calculation_method": "percentage",
-            "conditions": {"min_amount": 0.01},
-            "description": "Test VAT Rule",
-        }
+#           "rule_id": "TEST_RULE_001",
+#          "jurisdiction": "TEST",
+#         "tax_type": "vat",
+#        "effective_date": "2024-01-01",
+#       "rate": 20.0,
+#      "calculation_method": "percentage",
+#     "conditions": {"min_amount": 0.01},
+#    "description": "Test VAT Rule",
+# }
 
 #         rule = self.manager.create_tax_rule(rule_data)
 #         self.assertIsNotNone(rule)
@@ -163,25 +163,25 @@
 #
 ##     def test_update_tax_rule(self):
 #        """Test tax rule updates"""
-        # Create initial rule
+# Create initial rule
 #         rule_data = {
-            "rule_id": "TEST_RULE_003",
-            "jurisdiction": "TEST",
-            "tax_type": "vat",
-            "effective_date": "2024-01-01",
-            "rate": 15.0,
-            "calculation_method": "percentage",
-        }
+#            "rule_id": "TEST_RULE_003",
+#           "jurisdiction": "TEST",
+#          "tax_type": "vat",
+#         "effective_date": "2024-01-01",
+#        "rate": 15.0,
+#       "calculation_method": "percentage",
+#  }
 
 #         rule = self.manager.create_tax_rule(rule_data)
 #         self.assertIsNotNone(rule)
 
-        # Update the rule
+# Update the rule
 #         updates = {"rate": 18.0, "description": "Updated test rule"}
 #         success = self.manager.update_tax_rule("TEST_RULE_003", updates)
 #         self.assertTrue(success)
 
-        # Verify update
+# Verify update
 #         updated_rule = self.manager.get_tax_rule("TEST_RULE_003")
 #         self.assertEqual(updated_rule.rate, Decimal("18.0"))
 #         self.assertEqual(updated_rule.description, "Updated test rule")
@@ -203,22 +203,22 @@
 ##     def test_create_entity_profile(self):
 #        """Test entity profile creation"""
 #         profile_data = {
-            "entity_id": "test_entity_001",
-            "entity_type": "individual",
-            "full_name": "John Doe",
-            "date_of_birth": "1990-01-01",
-            "nationality": "US",
-            "country_of_residence": "US",
-            "address": {
-                "street": "123 Main St",
-                "city": "New York",
-                "state": "NY",
-                "country": "US",
-            },
-            "identification_documents": [
+#           "entity_id": "test_entity_001",
+#          "entity_type": "individual",
+#         "full_name": "John Doe",
+#        "date_of_birth": "1990-01-01",
+#       "nationality": "US",
+#      "country_of_residence": "US",
+#     "address": {
+#        "street": "123 Main St",
+#       "city": "New York",
+#      "state": "NY",
+#     "country": "US",
+# },
+# "identification_documents": [
 #                 {"type": "government_id", "number": "DL123456789"}
-            ],
-        }
+# ],
+# }
 
 #         profile = self.compliance_manager.create_entity_profile(profile_data)
 #         self.assertEqual(profile.entity_id, "test_entity_001")
@@ -255,21 +255,21 @@
 #
 ##     def test_fatca_check(self):
 #        """Test FATCA compliance check"""
-        # Create US person profile
+# Create US person profile
 #         profile_data = {
-            "entity_id": "test_entity_003",
-            "entity_type": "individual",
-            "full_name": "Bob Johnson",
-            "nationality": "US",
-            "country_of_residence": "US",
-        }
+#            "entity_id": "test_entity_003",
+#            "entity_type": "individual",
+#            "full_name": "Bob Johnson",
+#           "nationality": "US",
+#          "country_of_residence": "US",
+#     }
 
 #         profile = self.compliance_manager.create_entity_profile(profile_data)
 
-        # Perform FATCA check
+# Perform FATCA check
 #         fatca_result = self.compliance_manager.fatca_service.check_us_person_status(
-            "test_entity_003"
-        )
+#            "test_entity_003"
+#       )
 
 #         self.assertEqual(fatca_result.entity_id, "test_entity_003")
 #         self.assertEqual(fatca_result.check_type, ComplianceCheckType.FATCA)
@@ -298,31 +298,31 @@
 #
 ##     def test_comprehensive_compliance_check(self):
 #        """Test comprehensive compliance check"""
-        # Create entity profile
+# Create entity profile
 #         profile_data = {
-            "entity_id": "test_entity_005",
-            "entity_type": "individual",
-            "full_name": "Alice Brown",
-            "nationality": "CA",
-            "country_of_residence": "CA",
-            "identification_documents": [
+#            "entity_id": "test_entity_005",
+#           "entity_type": "individual",
+#          "full_name": "Alice Brown",
+#         "nationality": "CA",
+#        "country_of_residence": "CA",
+#       "identification_documents": [
 #                 {"type": "government_id", "number": "CA123456"},
 #                 {"type": "proof_of_address", "document": "bank_statement"},
-            ],
-        }
+#           ],
+#      }
 
 #         profile = self.compliance_manager.create_entity_profile(profile_data)
 
-        # Perform comprehensive check
+# Perform comprehensive check
 #         results = self.compliance_manager.perform_comprehensive_compliance_check(
-            "test_entity_005"
-        )
+#           "test_entity_005"
+#      )
 
 #         self.assertIn("kyc", results)
 #         self.assertIn("fatca", results)
 #         self.assertIn("data_residency", results)
 
-        # Verify all checks have valid statuses
+# Verify all checks have valid statuses
 #         for check_type, result in results.items():
 #             self.assertIsInstance(result.status, ComplianceStatus)
 #             self.assertIsInstance(result.risk_level, RiskLevel)
@@ -338,13 +338,13 @@
 
 #         self.temp_compliance_db = tempfile.NamedTemporaryFile(
 #             delete=False, suffix=".db"
-        )
+#        )
 #         self.temp_compliance_db.close()
 
 #         self.tax_manager = TaxRuleManager(self.temp_tax_db.name)
 #         self.compliance_manager = InternationalComplianceManager(
 #             self.temp_compliance_db.name
-        )
+#       )
 #         self.tax_engine = TaxCalculationEngine()
 
 #     def tearDown(self):
@@ -354,115 +354,102 @@
 #
 ##     def test_end_to_end_workflow(self):
 #        """Test complete end-to-end workflow"""
-        # 1. Create tax rules
+# 1. Create tax rules
 #         tax_rule_data = {
-            "rule_id": "INTEGRATION_VAT_001",
-            "jurisdiction": "UK",
-            "tax_type": "vat",
-            "effective_date": "2024-01-01",
-            "rate": 20.0,
-            "calculation_method": "percentage",
-            "conditions": {"min_amount": 0.01},
-        }
+#            "rule_id": "INTEGRATION_VAT_001",
+#           "jurisdiction": "UK",
+#          "tax_type": "vat",
+#         "effective_date": "2024-01-01",
+#        "rate": 20.0,
+#       "calculation_method": "percentage",
+#      "conditions": {"min_amount": 0.01},
+# }
 
 #         tax_rule = self.tax_manager.create_tax_rule(tax_rule_data)
 #         self.assertIsNotNone(tax_rule)
 
-        # Add rule to engine
+# Add rule to engine
 #         self.tax_engine.add_tax_rule(tax_rule)
 
-        # 2. Create entity profiles
+# 2. Create entity profiles
 #         entity_profile_data = {
-            "entity_id": "integration_entity_001",
-            "entity_type": "individual",
-            "full_name": "Integration Test User",
-            "nationality": "UK",
-            "country_of_residence": "UK",
-            "identification_documents": [
+#            "entity_id": "integration_entity_001",
+#           "entity_type": "individual",
+#          "full_name": "Integration Test User",
+#         "nationality": "UK",
+#        "country_of_residence": "UK",
+#       "identification_documents": [
 #                 {"type": "government_id", "number": "UK123456"},
 #                 {"type": "proof_of_address", "document": "council_tax_bill"},
-            ],
-        }
+#           ],
+#      }
 
 #         compliance_profile = self.compliance_manager.create_entity_profile(
 #             entity_profile_data
-        )
+#       )
 
 #         tax_profile = TaxProfile(
 #             entity_id="integration_entity_001",
 #             tax_identification_number="UK123456789",
 #             tax_residency="UK",
 #             entity_type="individual",
-        )
+#       )
 
 #         self.tax_engine.add_tax_profile(tax_profile)
 
-        # 3. Perform compliance checks
+# 3. Perform compliance checks
 #         compliance_results = (
 #             self.compliance_manager.perform_comprehensive_compliance_check(
-                "integration_entity_001"
-            )
-        )
+#                "integration_entity_001"
+#           )
+#      )
 
-        # Verify compliance checks passed
+# Verify compliance checks passed
 #         self.assertIn("kyc", compliance_results)
 #         kyc_result = compliance_results["kyc"]
 #         self.assertIn(
 #             kyc_result.status,
 #             [ComplianceStatus.PASSED, ComplianceStatus.REQUIRES_REVIEW],
-        )
+#       )
 
-        # 4. Process transaction with tax calculation
-#         transaction = Transaction(
-#             transaction_id="integration_txn_001",
-#             amount=Decimal("1000.00"),
-#             transaction_type="purchase",
-#             origin_jurisdiction="UK",
-#             destination_jurisdiction="UK",
-#             product_service_code="GOODS",
-#             timestamp=datetime.now(),
-#             payer_entity_id="integration_entity_001",
-#             payee_entity_id="merchant_001",
-        )
-
-        # Add merchant profile
+# Add merchant profile
 #         merchant_profile = TaxProfile(
 #             entity_id="merchant_001",
 #             tax_identification_number="UK987654321",
 #             tax_residency="UK",
 #             entity_type="corporation",
-        )
+#       )
 #         self.tax_engine.add_tax_profile(merchant_profile)
 
-        # Calculate taxes
+# Calculate taxes
 #         tax_result = self.tax_engine.calculate_taxes(transaction)
 
-        # Verify tax calculation
+# Verify tax calculation
 #         self.assertEqual(tax_result.transaction_id, "integration_txn_001")
 #         self.assertGreater(tax_result.total_tax_amount, Decimal("0"))
 #         self.assertEqual(len(tax_result.applied_rules), 1)
 #         self.assertEqual(tax_result.applied_rules[0], "INTEGRATION_VAT_001")
 
-        # Expected VAT: 1000 * 20% = 200
+# Expected VAT: 1000 * 20% = 200
 #         expected_vat = Decimal("200.00")
 #         self.assertEqual(tax_result.total_tax_amount, expected_vat)
 
-        # 5. Monitor transaction for AML
+# 5. Monitor transaction for AML
 #         aml_transaction_data = {
-            "transaction_id": "integration_txn_001",
-            "entity_id": "integration_entity_001",
-            "amount": 1000,
-            "currency": "GBP",
-            "transaction_type": "purchase",
-            "origin_country": "UK",
-            "destination_country": "UK",
-        }
+#            "transaction_id": "integration_txn_001",
+#           "entity_id": "integration_entity_001",
+#          "amount": 1000,
+#         "currency": "GBP",
+#        "transaction_type": "purchase",
+#       "origin_country": "UK",
+#      "destination_country": "UK",
+# }
 
 #         aml_result = self.compliance_manager.aml_service.monitor_transaction(
 #             aml_transaction_data
-        )
+#       )
 
-        # Verify AML monitoring
+# Verify AML monitoring
 #         self.assertEqual(aml_result.transaction_id, "integration_txn_001")
 #         self.assertIsInstance(aml_result.risk_score, float)
 

@@ -10,7 +10,7 @@
 # logging.basicConfig(
 #     level=logging.INFO,
 #     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-)
+# )
 # logger = logging.getLogger("transaction-cache")
 
 
@@ -40,25 +40,25 @@
 ##             Dict containing default cache configuration
 #        """"""
 #         return {
-            "ttl": {
-                "transaction": 3600,  # 1 hour
-                "account": 300,  # 5 minutes
-                "batch": 7200,  # 2 hours
-                "query": 60,  # 1 minute
-                "validation": 600,  # 10 minutes
-            },
-            "prefixes": {
-                "transaction": "tx:",
-                "account": "acct:",
-                "batch": "batch:",
-                "query": "query:",
-                "validation": "val:",
-            },
-            "limits": {
-                "max_cached_transactions": 10000,
-                "max_cached_queries": 1000,
-            },
-        }
+#            "ttl": {
+#                "transaction": 3600,  # 1 hour
+#                "account": 300,  # 5 minutes
+#                "batch": 7200,  # 2 hours
+#                "query": 60,  # 1 minute
+#                "validation": 600,  # 10 minutes
+#            },
+#            "prefixes": {
+#                "transaction": "tx:",
+#                "account": "acct:",
+#                "batch": "batch:",
+#                "query": "query:",
+#                "validation": "val:",
+#            },
+#            "limits": {
+#                "max_cached_transactions": 10000,
+#                "max_cached_queries": 1000,
+#            },
+#        }
 
 #     def get_transaction(self, transaction_id: str) -> Optional[Dict[str, Any]]:
 #        """"""
@@ -358,30 +358,30 @@
 ##             Dictionary with cache statistics
 #        """"""
 #         stats = {
-            "transaction_keys": 0,
-            "account_keys": 0,
-            "batch_keys": 0,
-            "query_keys": 0,
-            "validation_keys": 0,
-            "total_keys": 0,
-            "memory_used_bytes": 0,
-            "hit_rate": 0.0,
-        }
+#            "transaction_keys": 0,
+#            "account_keys": 0,
+#            "batch_keys": 0,
+#            "query_keys": 0,
+#            "validation_keys": 0,
+#            "total_keys": 0,
+#            "memory_used_bytes": 0,
+#            "hit_rate": 0.0,
+#        }
 
 #         try:
-            # Count keys by type
+# Count keys by type
 #             for prefix_name, prefix in self.config["prefixes"].items():
 #                 pattern = f"{prefix}*"
 #                 count = len(self.redis.keys(pattern))
 #                 stats[f"{prefix_name}_keys"] = count
 #                 stats["total_keys"] += count
 
-            # Get memory usage if available
+# Get memory usage if available
 #             info = self.redis.info("memory")
 #             if "used_memory" in info:
 #                 stats["memory_used_bytes"] = info["used_memory"]
 
-            # Get hit rate if available
+# Get hit rate if available
 #             info = self.redis.info("stats")
 #             if "keyspace_hits" in info and "keyspace_misses" in info:
 #                 hits = info["keyspace_hits"]
@@ -408,7 +408,7 @@
 #         self,
 #         primary_cache: TransactionCache,
 #         fallback_cache: Optional[TransactionCache] = None,
-    ):
+#   ):
 #        """"""
 ##         Initialize the cache manager with primary and optional fallback cache.
 #
@@ -433,17 +433,17 @@
 ##         Returns:
 ##             Transaction data or None if not in cache
 #        """"""
-        # Try primary cache
+# Try primary cache
 #         data = self.primary.get_transaction(transaction_id)
 #         if data:
 #             self._hits += 1
 #             return data
 
-        # Try fallback if available
+# Try fallback if available
 #         if self.fallback:
 #             data = self.fallback.get_transaction(transaction_id)
 #             if data:
-                # Populate primary cache
+# Populate primary cache
 #                 self.primary.set_transaction(transaction_id, data)
 #                 self._hits += 1
 #                 return data
@@ -484,17 +484,17 @@
 ##         Returns:
 ##             Query results or None if not in cache
 #        """"""
-        # Try primary cache
+# Try primary cache
 #         results = self.primary.get_query_results(query_hash)
 #         if results:
 #             self._hits += 1
 #             return results
 
-        # Try fallback if available
+# Try fallback if available
 #         if self.fallback:
 #             results = self.fallback.get_query_results(query_hash)
 #             if results:
-                # Populate primary cache
+# Populate primary cache
 #                 self.primary.set_query_results(query_hash, results)
 #                 self._hits += 1
 #                 return results
@@ -534,12 +534,12 @@
 #         hit_rate = self._hits / total if total > 0 else 0.0
 
 #         stats = {
-            "uptime_seconds": uptime,
-            "hits": self._hits,
-            "misses": self._misses,
-            "hit_rate": hit_rate,
-            "primary_cache": self.primary.get_cache_stats(),
-        }
+#            "uptime_seconds": uptime,
+#            "hits": self._hits,
+#            "misses": self._misses,
+#            "hit_rate": hit_rate,
+#            "primary_cache": self.primary.get_cache_stats(),
+#        }
 
 #         if self.fallback:
 #             stats["fallback_cache"] = self.fallback.get_cache_stats()

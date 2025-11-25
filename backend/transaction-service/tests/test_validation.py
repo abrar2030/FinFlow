@@ -19,7 +19,7 @@
 #        """Set up test fixtures"""
 #         self.validator = TransactionValidator()
 
-        # Create a valid transaction request for testing
+# Create a valid transaction request for testing
 #         self.valid_transaction = TransactionRequest(
 #             transaction_id="tx-12345",
 #             source_account_id="account-123",
@@ -29,15 +29,15 @@
 #             transaction_type=TransactionType.TRANSFER,
 #             reference="REF123",
 #             description="Test transaction",
-        )
+#        )
 
-        # Context for validation
+# Context for validation
 #         self.context = {
-            "user_id": "user-123",
-            "ip_address": "192.168.1.1",
-            "device_fingerprint": "device-123",
-            "country_code": "US",
-        }
+#            "user_id": "user-123",
+#           "ip_address": "192.168.1.1",
+#           "device_fingerprint": "device-123",
+#           "country_code": "US",
+#       }
 
 #     def test_validate_valid_transaction(self):
 #        """Test validation of a valid transaction"""
@@ -57,27 +57,27 @@
 #
 ##     def test_validate_invalid_amount(self):
 #        """Test validation of a transaction with invalid amount"""
-        # Create transaction with negative amount
+# Create transaction with negative amount
 #         invalid_transaction = self.valid_transaction.copy()
 #         invalid_transaction.amount = -100.0
 
-        # Mock the _validate_amount method to simulate failure
+# Mock the _validate_amount method to simulate failure
 #         with patch.object(self.validator, "_validate_amount") as mock_validate:
 #             mock_validate.return_value = (
 #                 False,
-                [
-                    {
-                        "code": "INVALID_AMOUNT",
-                        "message": "Amount must be positive",
-                        "field": "amount",
-                    }
-                ],
-                [],
-            )
+#                [
+#                    {
+#                        "code": "INVALID_AMOUNT",
+#                        "message": "Amount must be positive",
+#                        "field": "amount",
+#                    }
+#                ],
+#                [],
+#            )
 
 #             result = self.validator.validate_transaction(
 #                 invalid_transaction, self.context
-            )
+#            )
 
 #             self.assertFalse(result.is_valid)
 #             self.assertFalse(result.validation_checks["amount_valid"])
@@ -103,25 +103,25 @@
 #
 ##     def test_validate_transaction_velocity(self):
 #        """Test validation of transaction velocity"""
-        # Mock the velocity validation to simulate exceeding limits
+# Mock the velocity validation to simulate exceeding limits
 #         with patch.object(
 #             self.validator, "_validate_transaction_velocity"
 #         ) as mock_velocity:
 #             mock_velocity.return_value = (
 #                 False,
-                [
-                    {
-                        "code": "VELOCITY_EXCEEDED",
-                        "message": "Transaction frequency exceeds limits",
-                        "field": "transaction_id",
-                    }
-                ],
-                [],
-            )
+#                [
+#                    {
+#                        "code": "VELOCITY_EXCEEDED",
+#                        "message": "Transaction frequency exceeds limits",
+#                        "field": "transaction_id",
+#                    }
+#                ],
+#                [],
+#            )
 
 #             result = self.validator.validate_transaction(
 #                 self.valid_transaction, self.context
-            )
+#            )
 
 #             self.assertFalse(result.is_valid)
 #             self.assertFalse(result.validation_checks["velocity_valid"])
@@ -179,7 +179,7 @@
 #
 ##     def test_validate_batch(self):
 #        """Test batch validation with mock validator"""
-        # Configure mock validator to return valid results
+# Configure mock validator to return valid results
 #         self.mock_validator.validate_transaction.side_effect = (
 #             lambda tx, ctx: MagicMock(
 #                 is_valid=True,
@@ -187,16 +187,16 @@
 #                 risk_level=RiskLevel.LOW,
 #                 validation_checks={"basic_fields_valid": True},
 #                 errors=[],
-            )
-        )
+#            )
+#        )
 
 #         results = self.batch_validator.validate_batch(self.transactions, self.context)
 
-        # Verify results
+# Verify results
 #         self.assertEqual(len(results), 3)
 #         self.assertEqual(self.mock_validator.validate_transaction.call_count, 3)
 
-        # Verify each transaction was validated
+# Verify each transaction was validated
 #         for tx in self.transactions:
 #             self.assertIn(tx.transaction_id, results)
 #             self.assertTrue(results[tx.transaction_id].is_valid)

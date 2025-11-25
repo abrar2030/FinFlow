@@ -11,7 +11,7 @@
 # logging.basicConfig(
 #     level=logging.INFO,
 #     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-)
+# )
 # logger = logging.getLogger("transaction-database")
 
 
@@ -31,7 +31,7 @@
 #        """"""
 #         self.config = config or self._default_config()
 
-        # Create engine with optimized pool settings
+# Create engine with optimized pool settings
 #         self.engine = create_engine(
 #             connection_string,
 #             pool_size=self.config["pool"]["size"],
@@ -40,14 +40,14 @@
 #             pool_recycle=self.config["pool"]["recycle"],
 #             pool_pre_ping=True,
 #             echo=self.config["debug"]["echo_sql"],
-        )
+#        )
 
-        # Create session factory
+# Create session factory
 #         self.Session = sessionmaker(bind=self.engine)
 
 #         logger.info(
 #             f"Transaction database initialized with pool size {self.config['pool']['size']}"
-        )
+#        )
 
 #     def _default_config(self) -> Dict[str, Any]:
 #        """"""
@@ -57,22 +57,22 @@
 ##             Dict containing default database configuration
 #        """"""
 #         return {
-            "pool": {
-                "size": 10,
-                "max_overflow": 20,
-                "timeout": 30,
-                "recycle": 3600,
-            },
-            "query": {
-                "batch_size": 100,
-                "timeout": 30,
-            },
-            "debug": {
-                "echo_sql": False,
-                "log_slow_queries": True,
-                "slow_query_threshold": 1.0,  # seconds
-            },
-        }
+#            "pool": {
+#                "size": 10,
+#                "max_overflow": 20,
+#                "timeout": 30,
+#                "recycle": 3600,
+#            },
+#            "query": {
+#                "batch_size": 100,
+#                "timeout": 30,
+#            },
+#           "debug": {
+#                "echo_sql": False,
+#                "log_slow_queries": True,
+#                "slow_query_threshold": 1.0,  # seconds
+#            },
+#        }
 
 #     @contextmanager
 #     def session_scope(self):
@@ -108,8 +108,8 @@
 
 #         try:
 #             with self.session_scope() as session:
-                # In production, this would use an ORM model
-                # For demonstration, using raw SQL for performance
+# In production, this would use an ORM model
+# For demonstration, using raw SQL for performance
 #                 query = text(
 #                    """"""
 ##                     INSERT INTO transactions (
@@ -124,7 +124,7 @@
 ##                         :risk_score, :risk_level, :metadata
 #                    )
 #                """"""
-                )
+#               )
 
 #                 session.execute(query, transaction_data)
 
@@ -132,7 +132,7 @@
 #             if (
 #                 self.config["debug"]["log_slow_queries"]
 #                 and query_time > self.config["debug"]["slow_query_threshold"]
-            ):
+#           ):
 #                 logger.warning(f"Slow query in create_transaction: {query_time:.2f}s")
 
 #             logger.info(f"Transaction {transaction_id} created in {query_time:.2f}s")
@@ -156,13 +156,13 @@
 
 #         try:
 #             with self.session_scope() as session:
-                # Using indexed query for performance
+# Using indexed query for performance
 #                 query = text(
 #                    """"""
 ##                     SELECT * FROM transactions
 ##                     WHERE transaction_id = :transaction_id
 #                """"""
-                )
+#               )
 
 #                 result = session.execute(
 #                     query, {"transaction_id": transaction_id}
@@ -172,20 +172,20 @@
 #                 if (
 #                     self.config["debug"]["log_slow_queries"]
 #                     and query_time > self.config["debug"]["slow_query_threshold"]
-                ):
+#               ):
 #                     logger.warning(f"Slow query in get_transaction: {query_time:.2f}s")
 
 #                 if result:
-                    # Convert row to dict
+# Convert row to dict
 #                     transaction = dict(result)
 #                     logger.info(
 #                         f"Transaction {transaction_id} retrieved in {query_time:.2f}s"
-                    )
+#                    )
 #                     return transaction
 
 #                 logger.info(
 #                     f"Transaction {transaction_id} not found, query time: {query_time:.2f}s"
-                )
+#                )
 #                 return None
 
 #         except SQLAlchemyError as e:
@@ -213,26 +213,26 @@
 
 #         try:
 #             with self.session_scope() as session:
-                # Using optimized update query
+# Using optimized update query
 #                 query = text(
 #                    """"""
 ##                     UPDATE transactions
 ##                     SET status = :status, updated_at = NOW()
 ##                     WHERE transaction_id = :transaction_id
 #                """"""
-                )
+#               )
 
 #                 params = {"transaction_id": transaction_id, "status": status}
 
 #                 if metadata:
-                    # In production, this would handle JSON merging properly
+# In production, this would handle JSON merging properly
 #                     query = text(
 #                        """"""
 ##                         UPDATE transactions
 ##                         SET status = :status, updated_at = NOW(), metadata = :metadata
 ##                         WHERE transaction_id = :transaction_id
 #                    """"""
-                    )
+#                    )
 #                     params["metadata"] = metadata
 
 #                 result = session.execute(query, params)
@@ -242,14 +242,14 @@
 #                 if (
 #                     self.config["debug"]["log_slow_queries"]
 #                     and query_time > self.config["debug"]["slow_query_threshold"]
-                ):
+#                ):
 #                     logger.warning(
 #                         f"Slow query in update_transaction_status: {query_time:.2f}s"
-                    )
+#                    )
 
 #                 logger.info(
 #                     f"Transaction {transaction_id} status updated to {status} in {query_time:.2f}s"
-                )
+#                )
 #                 return rows_affected > 0
 
 #         except SQLAlchemyError as e:
@@ -272,19 +272,19 @@
 #        """"""
 #         start_time = time.time()
 
-        # Limit to configured batch size
+# Limit to configured batch size
 #         limit = min(limit, self.config["query"]["batch_size"])
 
 #         try:
 #             with self.session_scope() as session:
-                # Build dynamic query based on filters
+# Build dynamic query based on filters
 #                 where_clauses = []
 #                 params = {"limit": limit, "offset": offset}
 
 #                 if "account_id" in filters and filters["account_id"]:
 #                     where_clauses.append(
-                        "(source_account_id = :account_id OR destination_account_id = :account_id)"
-                    )
+#                        "(source_account_id = :account_id OR destination_account_id = :account_id)"
+#                    )
 #                     params["account_id"] = filters["account_id"]
 
 #                 if "transaction_type" in filters and filters["transaction_type"]:
@@ -319,18 +319,18 @@
 #                     where_clauses.append("reference LIKE :reference")
 #                     params["reference"] = f"%{filters['reference']}%"
 
-                # Construct WHERE clause
+# Construct WHERE clause
 #                 where_sql = " AND ".join(where_clauses) if where_clauses else "1=1"
 
-                # Execute count query first (optimized for COUNT)
+# Execute count query first (optimized for COUNT)
 #                 count_query = text(
 #                     f"SELECT COUNT(*) FROM transactions WHERE {where_sql}"
-                )
+#               )
 #                 total_count = session.execute(count_query, params).scalar()
 
-                # Execute main query with pagination
+# Execute main query with pagination
 #                 query = text(
-                    f""""""
+#                   f""""""
 #                     SELECT * FROM transactions
 #                     WHERE {where_sql}
 #                     ORDER BY created_at DESC
@@ -392,7 +392,7 @@
 #                         :amount, :currency, :transaction_type, :status,
 #                         :reference, :description, :created_at, :updated_at,
 #                         :risk_score, :risk_level, :metadata
-                    )
+#                   )
 #                """"""
 #                )
 #
@@ -467,19 +467,19 @@
 #                # Total count and amount
 ##                 count_query = text(
 #                    f""""""
-##                     SELECT COUNT(*) as total_count, 
+##                     SELECT COUNT(*) as total_count,
 ##                            SUM(amount) as total_amount,
 ##                            AVG(amount) as average_amount
 ##                     FROM transactions
 ##                     WHERE {where_sql}
 #                """"""
-                )
+#               )
 
 #                 count_result = session.execute(count_query, params).fetchone()
 
-                # Count by status
+# Count by status
 #                 status_query = text(
-                    f""""""
+#                   f""""""
 #                     SELECT status, COUNT(*) as count
 #                     FROM transactions
 #                     WHERE {where_sql}
@@ -497,39 +497,39 @@
 ##                     WHERE {where_sql}
 ##                     GROUP BY transaction_type
 #                """"""
-                )
+#                )
 
 #                 type_results = session.execute(type_query, params).fetchall()
 
-                # Compile statistics
+# Compile statistics
 #                 stats = {
-                    "total_count": count_result.total_count if count_result else 0,
-                    "total_amount": (
+#                   "total_count": count_result.total_count if count_result else 0,
+#                   "total_amount": (
 #                         float(count_result.total_amount)
 #                         if count_result and count_result.total_amount
 #                         else 0.0
-                    ),
-                    "average_amount": (
+#                   ),
+#                   "average_amount": (
 #                         float(count_result.average_amount)
 #                         if count_result and count_result.average_amount
 #                         else 0.0
-                    ),
-                    "by_status": {row.status: row.count for row in status_results},
-                    "by_type": {
+#                   ),
+#                   "by_status": {row.status: row.count for row in status_results},
+#                   "by_type": {
 #                         row.transaction_type: row.count for row in type_results
-                    },
-                    "period_start": start_date,
-                    "period_end": end_date,
-                }
+#                   },
+#                   "period_start": start_date,
+#                   "period_end": end_date,
+#               }
 
 #                 query_time = time.time() - start_time
 #                 if (
 #                     self.config["debug"]["log_slow_queries"]
 #                     and query_time > self.config["debug"]["slow_query_threshold"]
-                ):
+#               ):
 #                     logger.warning(
 #                         f"Slow query in get_transaction_statistics: {query_time:.2f}s"
-                    )
+#                    )
 
 #                 logger.info(f"Transaction statistics generated in {query_time:.2f}s")
 #                 return stats
@@ -549,62 +549,62 @@
 
 #         try:
 #             with self.session_scope() as session:
-                # Check connection
+# Check connection
 #                 session.execute(text("SELECT 1")).fetchone()
 
-                # Get connection pool stats
+# Get connection pool stats
 #                 pool_status = {
-                    "size": self.engine.pool.size(),
-                    "checkedin": self.engine.pool.checkedin(),
-                    "checkedout": self.engine.pool.checkedout(),
-                    "overflow": self.engine.pool.overflow(),
-                }
+#                    "size": self.engine.pool.size(),
+#                    "checkedin": self.engine.pool.checkedin(),
+#                    "checkedout": self.engine.pool.checkedout(),
+#                    "overflow": self.engine.pool.overflow(),
+#                }
 
-                # Get basic table stats
+# Get basic table stats
 #                 table_stats_query = text(
 #                    """"""
-##                     SELECT 
+##                     SELECT
 ##                         (SELECT COUNT(*) FROM transactions) as transaction_count,
 ##                         (SELECT MAX(created_at) FROM transactions) as latest_transaction
 #                """"""
-                )
+#                )
 
 #                 table_stats = session.execute(table_stats_query).fetchone()
 
 #                 health = {
-                    "status": "healthy",
-                    "response_time": time.time() - start_time,
-                    "pool": pool_status,
-                    "tables": {
-                        "transactions": {
-                            "count": (
+#                    "status": "healthy",
+#                    "response_time": time.time() - start_time,
+#                    "pool": pool_status,
+#                    "tables": {
+#                        "transactions": {
+#                            "count": (
 #                                 table_stats.transaction_count if table_stats else 0
-                            ),
-                            "latest": (
+#                            ),
+#                            "latest": (
 #                                 table_stats.latest_transaction.isoformat()
 #                                 if table_stats and table_stats.latest_transaction
 #                                 else None
-                            ),
-                        }
-                    },
-                }
+#                            ),
+#                        }
+#                    },
+#                }
 
 #                 return health
 
 #         except SQLAlchemyError as e:
 #             logger.error(f"Database health check failed: {e}")
 #             return {
-                "status": "unhealthy",
-                "error": str(e),
-                "response_time": time.time() - start_time,
-            }
+#                "status": "unhealthy",
+#                "error": str(e),
+#                "response_time": time.time() - start_time,
+#            }
 #         except Exception as e:
 #             logger.error(f"Database health check error: {e}")
 #             return {
-                "status": "error",
-                "error": str(e),
-                "response_time": time.time() - start_time,
-            }
+#                "status": "error",
+#                "error": str(e),
+#                "response_time": time.time() - start_time,
+#            }
 
 #     def initialize_schema(self) -> None:
 #        """"""
@@ -613,7 +613,7 @@
 #        """"""
 #         try:
 #             with self.session_scope() as session:
-                # Create transactions table with optimized schema
+# Create transactions table with optimized schema
 #                 session.execute(
 #                     text(
 #                        """"""
@@ -635,7 +635,7 @@
 ##                         risk_score DECIMAL(5, 4),
 ##                         risk_level VARCHAR(20),
 ##                         metadata JSONB,
-#                        
+#
 ##                         -- Optimized indexes for common queries
 ##                         INDEX idx_transaction_id (transaction_id),
 ##                         INDEX idx_batch_id (batch_id),
@@ -645,17 +645,17 @@
 ##                         INDEX idx_type (transaction_type),
 ##                         INDEX idx_created_at (created_at),
 ##                         INDEX idx_reference (reference),
-#                        
+#
 ##                         -- Compound indexes for common query patterns
 ##                         INDEX idx_account_date (source_account_id, created_at),
 ##                         INDEX idx_status_date (status, created_at),
 ##                         INDEX idx_type_date (transaction_type, created_at)
 #                    )
 #                """"""
-                    )
-                )
+#                    )
+#                )
 
-                # Create validation_results table
+# Create validation_results table
 #                 session.execute(
 #                     text(
 #                        """"""
@@ -669,13 +669,13 @@
 ##                         errors JSONB,
 ##                         warnings JSONB,
 ##                         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-#                        
+#
 ##                         INDEX idx_validation_transaction (transaction_id),
 ##                         INDEX idx_validation_risk (risk_level, risk_score)
 #                    )
 #                """"""
-                    )
-                )
+#                    )
+#                )
 
 #                 logger.info("Database schema initialized")
 

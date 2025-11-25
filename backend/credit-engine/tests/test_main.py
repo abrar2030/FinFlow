@@ -11,8 +11,8 @@
 # @pytest.fixture(autouse=True)
 # def mock_jwt_validation():
 #     with patch(
-        "src.main.get_current_user", return_value={"sub": "test-user", "role": "USER"}
-    ):
+#   "src.main.get_current_user", return_value={"sub": "test-user", "role": "USER"}
+# ):
 #         yield
 
 
@@ -24,27 +24,27 @@
 
 
 # def test_credit_score():
-    # Test data
+# Test data
 #     test_data = {
-        "income": 75000,
-        "numInvoices": 12,
-        "avgCashflow": 6500,
-        "delinquencies": 0,
-    }
+#        "income": 75000,
+#       "numInvoices": 12,
+#      "avgCashflow": 6500,
+#     "delinquencies": 0,
+# }
 
 #     response = client.post("/score", json=test_data)
 #     assert response.status_code == 200
 
-    # Check response structure
+# Check response structure
 #     data = response.json()
 #     assert "credit_score" in data
 #     assert "risk_category" in data
 #     assert "timestamp" in data
 
-    # Check score is in valid range
+# Check score is in valid range
 #     assert 0 <= data["credit_score"] <= 1
 
-    # Check risk category is valid
+# Check risk category is valid
 #     assert data["risk_category"] in ["LOW_RISK", "MEDIUM_RISK", "HIGH_RISK"]
 
 
@@ -52,16 +52,16 @@
 #     response = client.get("/offers?score=0.85")
 #     assert response.status_code == 200
 
-    # Check response structure
+# Check response structure
 #     data = response.json()
 #     assert "credit_score" in data
 #     assert "offers" in data
 #     assert "timestamp" in data
 
-    # Check offers are present
+# Check offers are present
 #     assert len(data["offers"]) > 0
 
-    # Check first offer structure
+# Check first offer structure
 #     offer = data["offers"][0]
 #     assert "amount" in offer
 #     assert "interest_rate" in offer
@@ -73,7 +73,7 @@
 #     response = client.get("/user/data")
 #     assert response.status_code == 200
 
-    # Check response structure
+# Check response structure
 #     data = response.json()
 #     assert "user_id" in data
 #     assert "credit_scores" in data

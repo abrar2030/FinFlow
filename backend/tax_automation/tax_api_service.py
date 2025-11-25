@@ -16,7 +16,7 @@
 #     TaxType,
 #     Transaction,
 #     create_sample_data,
-)
+# )
 # from .tax_rule_management import SAMPLE_TAX_RULES, TaxRuleManager
 
 # Configure logging
@@ -58,12 +58,12 @@
 ## def health_check():
 #    """Health check endpoint"""
 #     return jsonify(
-        {
-            "status": "healthy",
-            "timestamp": datetime.now().isoformat(),
-            "service": "tax-automation-api",
-        }
-    )
+#        {
+#            "status": "healthy",
+#            "timestamp": datetime.now().isoformat(),
+#            "service": "tax-automation-api",
+#        }
+#    )
 
 
 # @app.route("/api/tax/calculate", methods=["POST"])
@@ -143,13 +143,13 @@
 #     try:
 #         data = request.get_json()
 
-        # Validate required fields
+# Validate required fields
 #         required_fields = ["entity_id", "tax_residency"]
 #         for field in required_fields:
 #             if field not in data:
 #                 return jsonify({"error": f"Missing required field: {field}"}), 400
 
-        # Create tax profile
+# Create tax profile
 #         tax_profile = TaxProfile(
 #             entity_id=data["entity_id"],
 #             tax_identification_number=data.get("tax_identification_number"),
@@ -157,17 +157,17 @@
 #             exemptions=data.get("exemptions", []),
 #             entity_type=data.get("entity_type", "individual"),
 #             additional_data=data.get("additional_data", {}),
-        )
+#        )
 
-        # Add to tax engine
+# Add to tax engine
 #         tax_engine.add_tax_profile(tax_profile)
 
 #         return jsonify(
-            {
-                "message": "Tax profile created successfully",
-                "entity_id": tax_profile.entity_id,
-            }
-        )
+#            {
+#                "message": "Tax profile created successfully",
+#                "entity_id": tax_profile.entity_id,
+#            }
+#        )
 
 #     except Exception as e:
 #         logger.error(f"Error creating tax profile: {e}")
@@ -217,22 +217,22 @@
 #             except ValueError:
 #                 return jsonify({"error": f"Invalid tax type: {tax_type}"}), 400
 
-        # Convert rules to JSON-serializable format
+# Convert rules to JSON-serializable format
 #         rules_data = []
 #         for rule in rules:
 #             rule_data = {
-                "rule_id": rule.rule_id,
-                "jurisdiction": rule.jurisdiction,
-                "tax_type": rule.tax_type.value,
-                "effective_date": rule.effective_date.isoformat(),
-                "expiration_date": (
+#                "rule_id": rule.rule_id,
+#                "jurisdiction": rule.jurisdiction,
+#                "tax_type": rule.tax_type.value,
+#                "effective_date": rule.effective_date.isoformat(),
+#                "expiration_date": (
 #                     rule.expiration_date.isoformat() if rule.expiration_date else None
-                ),
-                "rate": float(rule.rate),
-                "calculation_method": rule.calculation_method.value,
-                "conditions": rule.conditions,
-                "description": rule.description,
-            }
+#                ),
+#                "rate": float(rule.rate),
+#                "calculation_method": rule.calculation_method.value,
+#                "conditions": rule.conditions,
+#                "description": rule.description,
+#            }
 #             rules_data.append(rule_data)
 
 #         return jsonify({"rules": rules_data, "count": len(rules_data)})
@@ -288,7 +288,7 @@
 #         if not success:
 #             return jsonify({"error": "Failed to update tax rule"}), 500
 
-        # Reload rules in tax engine
+# Reload rules in tax engine
 #         tax_engine.tax_rules.clear()
 #         active_rules = rule_manager.db.get_active_tax_rules()
 #         for rule in active_rules:

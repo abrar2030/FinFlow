@@ -26,7 +26,7 @@
 #         conn = sqlite3.connect(self.db_path)
 #         cursor = conn.cursor()
 
-        # Create tax_rules table
+# Create tax_rules table
 #         cursor.execute(
 #            """"""
 ##             CREATE TABLE IF NOT EXISTS tax_rules (
@@ -44,9 +44,9 @@
 ##                 is_active BOOLEAN DEFAULT 1
 #            )
 #        """"""
-        )
+#        )
 
-        # Create tax_rule_history table for audit trail
+# Create tax_rule_history table for audit trail
 #         cursor.execute(
 #            """"""
 ##             CREATE TABLE IF NOT EXISTS tax_rule_history (
@@ -59,16 +59,16 @@
 ##                 changed_at TEXT NOT NULL
 #            )
 #        """"""
-        )
+#       )
 
-        # Create indexes
+# Create indexes
 #         cursor.execute(
-            "CREATE INDEX IF NOT EXISTS idx_jurisdiction ON tax_rules(jurisdiction)"
-        )
+#            "CREATE INDEX IF NOT EXISTS idx_jurisdiction ON tax_rules(jurisdiction)"
+#        )
 #         cursor.execute("CREATE INDEX IF NOT EXISTS idx_tax_type ON tax_rules(tax_type)")
 #         cursor.execute(
-            "CREATE INDEX IF NOT EXISTS idx_effective_date ON tax_rules(effective_date)"
-        )
+#            "CREATE INDEX IF NOT EXISTS idx_effective_date ON tax_rules(effective_date)"
+#        )
 
 #         conn.commit()
 #         conn.close()
@@ -122,7 +122,7 @@
 #                # Log to history
 ##                 cursor.execute(
 #                    """"""
-#                     INSERT INTO tax_rule_history 
+#                     INSERT INTO tax_rule_history
 #                     (rule_id, action, old_data, new_data, changed_by, changed_at)
 #                     VALUES (?, ?, ?, ?, ?, ?)
 #                ""","""
@@ -140,7 +140,7 @@
 #                # Insert new rule
 ##                 cursor.execute(
 #                    """"""
-#                     INSERT INTO tax_rules 
+#                     INSERT INTO tax_rules
 #                     (rule_id, jurisdiction, tax_type, effective_date, expiration_date,
 #                      rate, calculation_method, conditions, description, created_at, updated_at)
 #                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -167,7 +167,7 @@
 #                # Log to history
 ##                 cursor.execute(
 #                    """"""
-#                     INSERT INTO tax_rule_history 
+#                     INSERT INTO tax_rule_history
 #                     (rule_id, action, old_data, new_data, changed_by, changed_at)
 #                     VALUES (?, ?, ?, ?, ?, ?)
 #                ""","""
@@ -196,9 +196,9 @@
 #             cursor = conn.cursor()
 
 #             cursor.execute(
-                "SELECT * FROM tax_rules WHERE rule_id = ? AND is_active = 1",
+#               "SELECT * FROM tax_rules WHERE rule_id = ? AND is_active = 1",
 #                 (rule_id,),
-            )
+#           )
 #             row = cursor.fetchone()
 #             conn.close()
 
@@ -218,7 +218,7 @@
 #
 ##             cursor.execute(
 #                """"""
-#                 SELECT * FROM tax_rules 
+#                 SELECT * FROM tax_rules
 #                 WHERE jurisdiction = ? AND is_active = 1
 #                 ORDER BY effective_date DESC
 #            ""","""
@@ -247,14 +247,14 @@
 
 #             cursor.execute(
 #                """"""
-##                 SELECT * FROM tax_rules 
-##                 WHERE is_active = 1 
+##                 SELECT * FROM tax_rules
+##                 WHERE is_active = 1
 ##                 AND effective_date <= ?
 ##                 AND (expiration_date IS NULL OR expiration_date > ?)
 ##                 ORDER BY jurisdiction, tax_type, effective_date DESC
 #            ""","""
 #                 (as_of_date.isoformat(), as_of_date.isoformat()),
-            )
+#           )
 
 #             rows = cursor.fetchall()
 #             conn.close()
@@ -279,7 +279,7 @@
 #            # Log to history
 ##             cursor.execute(
 #                """"""
-#                 INSERT INTO tax_rule_history 
+#                 INSERT INTO tax_rule_history
 #                 (rule_id, action, old_data, new_data, changed_by, changed_at)
 #                 VALUES (?, ?, ?, ?, ?, ?)
 #            ""","""
@@ -313,7 +313,7 @@
 #             calculation_method=CalculationMethod(row[6]),
 #             conditions=json.loads(row[7]) if row[7] else {},
 #             description=row[8] or "",
-        )
+#       )
 
 
 # class TaxRuleManager:
@@ -339,12 +339,12 @@
 #                     date.fromisoformat(rule_data["expiration_date"])
 #                     if rule_data.get("expiration_date")
 #                     else None
-                ),
+#               ),
 #                 rate=Decimal(str(rule_data["rate"])),
 #                 calculation_method=CalculationMethod(rule_data["calculation_method"]),
 #                 conditions=rule_data.get("conditions", {}),
 #                 description=rule_data.get("description", ""),
-            )
+#            )
 
 #             if self.db.save_tax_rule(tax_rule, changed_by):
 #                 self._invalidate_cache()
@@ -544,7 +544,7 @@
 #        },
 #        "description": "US Withholding Tax for Non-Resident Aliens",
 #    },
-#]
+# ]
 #
 ## if __name__ == "__main__":
 #    # Example usage

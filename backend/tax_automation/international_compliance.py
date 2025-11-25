@@ -116,7 +116,7 @@
 #         conn = sqlite3.connect(self.db_path)
 #         cursor = conn.cursor()
 
-        # Entity profiles table
+# Entity profiles table
 #         cursor.execute(
 #            """"""
 ##             CREATE TABLE IF NOT EXISTS entity_profiles (
@@ -137,9 +137,9 @@
 ##                 updated_at TEXT NOT NULL
 #            )
 #        """"""
-        )
+#        )
 
-        # Compliance checks table
+# Compliance checks table
 #         cursor.execute(
 #            """"""
 ##             CREATE TABLE IF NOT EXISTS compliance_checks (
@@ -157,9 +157,9 @@
 ##                 FOREIGN KEY (entity_id) REFERENCES entity_profiles (entity_id)
 #            )
 #        """"""
-        )
+#       )
 
-        # Transaction monitoring table
+# Transaction monitoring table
 #         cursor.execute(
 #            """"""
 ##             CREATE TABLE IF NOT EXISTS transaction_monitoring (
@@ -178,9 +178,9 @@
 ##                 FOREIGN KEY (entity_id) REFERENCES entity_profiles (entity_id)
 #            )
 #        """"""
-        )
+#       )
 
-        # FATCA reporting table
+# FATCA reporting table
 #         cursor.execute(
 #            """"""
 ##             CREATE TABLE IF NOT EXISTS fatca_reports (
@@ -197,21 +197,21 @@
 ##                 FOREIGN KEY (entity_id) REFERENCES entity_profiles (entity_id)
 #            )
 #        """"""
-        )
+#        )
 
-        # Create indexes
+# Create indexes
 #         cursor.execute(
-            "CREATE INDEX IF NOT EXISTS idx_entity_compliance ON compliance_checks(entity_id)"
-        )
+#           "CREATE INDEX IF NOT EXISTS idx_entity_compliance ON compliance_checks(entity_id)"
+#       )
 #         cursor.execute(
-            "CREATE INDEX IF NOT EXISTS idx_check_type ON compliance_checks(check_type)"
-        )
+#           "CREATE INDEX IF NOT EXISTS idx_check_type ON compliance_checks(check_type)"
+#       )
 #         cursor.execute(
-            "CREATE INDEX IF NOT EXISTS idx_transaction_entity ON transaction_monitoring(entity_id)"
-        )
+#            "CREATE INDEX IF NOT EXISTS idx_transaction_entity ON transaction_monitoring(entity_id)"
+#       )
 #         cursor.execute(
-            "CREATE INDEX IF NOT EXISTS idx_transaction_risk ON transaction_monitoring(risk_score)"
-        )
+#         "CREATE INDEX IF NOT EXISTS idx_transaction_risk ON transaction_monitoring(risk_score)"
+#      )
 
 #         conn.commit()
 #         conn.close()
@@ -224,7 +224,7 @@
 #
 ##             cursor.execute(
 #                """"""
-#                 INSERT OR REPLACE INTO entity_profiles 
+#                 INSERT OR REPLACE INTO entity_profiles
 #                 (entity_id, entity_type, full_name, date_of_birth, nationality,
 #                  country_of_residence, address, identification_documents,
 #                  business_activities, source_of_funds, expected_transaction_volume,
@@ -274,12 +274,12 @@
 
 #             cursor.execute(
 #                """"""
-##                 INSERT OR REPLACE INTO compliance_checks 
+##                 INSERT OR REPLACE INTO compliance_checks
 ##                 (check_id, entity_id, check_type, status, risk_level, details,
 ##                  external_reference, performed_at, expires_at, performed_by, notes)
 ##                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 #            ""","""
-                (
+#                (
 #                     check.check_id,
 #                     check.entity_id,
 #                     check.check_type.value,
@@ -291,8 +291,8 @@
 #                     check.expires_at.isoformat() if check.expires_at else None,
 #                     check.performed_by,
 #                     check.notes,
-                ),
-            )
+#                ),
+#           )
 
 #             conn.commit()
 #             conn.close()
@@ -347,13 +347,13 @@
 #     def __init__(self, db: ComplianceDatabase):
 #         self.db = db
 #         self.required_documents = {
-            "individual": ["government_id", "proof_of_address"],
-            "corporation": [
-                "certificate_of_incorporation",
-                "proof_of_address",
-                "beneficial_ownership",
-            ],
-        }
+#            "individual": ["government_id", "proof_of_address"],
+#           "corporation": [
+#              "certificate_of_incorporation",
+#             "proof_of_address",
+#            "beneficial_ownership",
+#       ],
+#  }
 
 #     def perform_kyc_check(self, entity_id: str) -> ComplianceCheck:
 #        """Perform KYC compliance check"""
@@ -427,23 +427,23 @@
 #        """Assess KYC risk level"""
 #         risk_score = 0
 
-        # Missing documents
+# Missing documents
 #         risk_score += len(missing_docs) * 20
 
-        # High-risk countries (simplified list)
+# High-risk countries (simplified list)
 #         high_risk_countries = [
-            "AF",
-            "IR",
-            "KP",
-            "SY",
+#            "AF",
+#           "IR",
+#          "KP",
+#         "SY",
 #         ]  # Afghanistan, Iran, North Korea, Syria
 #         if profile.country_of_residence in high_risk_countries:
 #             risk_score += 30
 
-        # Risk factors
+# Risk factors
 #         risk_score += len(profile.risk_factors) * 10
 
-        # Determine risk level
+# Determine risk level
 #         if risk_score >= 70:
 #             return RiskLevel.CRITICAL
 #         elif risk_score >= 50:
@@ -482,12 +482,12 @@
 #                 origin_country=transaction_data["origin_country"],
 #                 destination_country=transaction_data["destination_country"],
 #                 risk_score=0.0,
-            )
+#           )
 
-            # Apply monitoring rules
+# Apply monitoring rules
 #             self._apply_monitoring_rules(monitoring)
 
-            # Save monitoring record
+# Save monitoring record
 #             self._save_transaction_monitoring(monitoring)
 
 #             return monitoring
@@ -495,7 +495,7 @@
 #         except Exception as e:
 #             logger.error(
 #                 f"Error monitoring transaction {transaction_data.get('transaction_id')}: {e}"
-            )
+#           )
 #             raise
 
 #     def _apply_monitoring_rules(self, monitoring: TransactionMonitoring):
@@ -536,13 +536,13 @@
 
 #             cursor.execute(
 #                """"""
-##                 INSERT INTO transaction_monitoring 
+##                 INSERT INTO transaction_monitoring
 ##                 (transaction_id, entity_id, amount, currency, transaction_type,
 ##                  counterparty_id, origin_country, destination_country, risk_score,
 ##                  flags, monitoring_rules_triggered, timestamp)
 ##                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 #            ""","""
-                (
+#               (
 #                     monitoring.transaction_id,
 #                     monitoring.entity_id,
 #                     float(monitoring.amount),
@@ -555,8 +555,8 @@
 #                     json.dumps(monitoring.flags),
 #                     json.dumps(monitoring.monitoring_rules_triggered),
 #                     monitoring.timestamp.isoformat(),
-                ),
-            )
+#                ),
+#           )
 
 #             conn.commit()
 #             conn.close()
@@ -594,24 +594,24 @@
 #                     status=ComplianceStatus.FAILED,
 #                     risk_level=RiskLevel.HIGH,
 #                     details={"error": "Entity profile not found"},
-                )
+#               )
 
-            # Check for US person indicators
+# Check for US person indicators
 #             us_indicators_found = []
 
-            # Check nationality
+# Check nationality
 #             if profile.nationality == "US":
 #                 us_indicators_found.append("us_citizenship")
 
-            # Check country of residence
+# Check country of residence
 #             if profile.country_of_residence == "US":
 #                 us_indicators_found.append("us_residence")
 
-            # Check address
+# Check address
 #             if profile.address.get("country") == "US":
 #                 us_indicators_found.append("us_address")
 
-            # Additional checks can be added based on available data
+# Additional checks can be added based on available data
 
 #             is_us_person = len(us_indicators_found) > 0
 
@@ -622,11 +622,11 @@
 #                 status=ComplianceStatus.PASSED,
 #                 risk_level=RiskLevel.MEDIUM if is_us_person else RiskLevel.LOW,
 #                 details={
-                    "is_us_person": is_us_person,
-                    "us_indicators_found": us_indicators_found,
-                    "requires_reporting": is_us_person,
-                },
-            )
+#                    "is_us_person": is_us_person,
+#                   "us_indicators_found": us_indicators_found,
+#                  "requires_reporting": is_us_person,
+#             },
+#        )
 
 #             self.db.save_compliance_check(check)
 #             return check
@@ -640,7 +640,7 @@
 #                 status=ComplianceStatus.FAILED,
 #                 risk_level=RiskLevel.HIGH,
 #                 details={"error": str(e)},
-            )
+#           )
 
 
 # class DataResidencyService:
@@ -700,13 +700,13 @@
 #         check_id = f"data_residency_{entity_id}_{int(datetime.now().timestamp())}"
 
 #         try:
-            # This would typically integrate with the entity's profile
-            # For now, we'll use a simplified check
+# This would typically integrate with the entity's profile
+# For now, we'll use a simplified check
 
 #             compliance_issues = []
 #             requirements = []
 
-            # Check if data location meets residency requirements
+# Check if data location meets residency requirements
 #             for region, rules in self.data_residency_rules.items():
 #                 if data_location in rules["countries"]:
 #                     requirements.extend(rules["requirements"])
@@ -716,7 +716,7 @@
 #                 ComplianceStatus.PASSED
 #                 if not compliance_issues
 #                 else ComplianceStatus.REQUIRES_REVIEW
-            )
+#           )
 
 #             check = ComplianceCheck(
 #                 check_id=check_id,
@@ -727,20 +727,20 @@
 #                     RiskLevel.LOW
 #                     if status == ComplianceStatus.PASSED
 #                     else RiskLevel.MEDIUM
-                ),
+#               ),
 #                 details={
-                    "data_location": data_location,
-                    "requirements": requirements,
-                    "compliance_issues": compliance_issues,
-                },
-            )
+#                  "data_location": data_location,
+#                 "requirements": requirements,
+#                "compliance_issues": compliance_issues,
+#           },
+#      )
 
 #             return check
 
 #         except Exception as e:
 #             logger.error(
 #                 f"Error checking data residency compliance for {entity_id}: {e}"
-            )
+#           )
 #             return ComplianceCheck(
 #                 check_id=check_id,
 #                 entity_id=entity_id,
@@ -748,7 +748,7 @@
 #                 status=ComplianceStatus.FAILED,
 #                 risk_level=RiskLevel.HIGH,
 #                 details={"error": str(e)},
-            )
+#          )
 
 
 # class InternationalComplianceManager:
@@ -771,7 +771,7 @@
 #                 date.fromisoformat(profile_data["date_of_birth"])
 #                 if profile_data.get("date_of_birth")
 #                 else None
-            ),
+#           ),
 #             nationality=profile_data.get("nationality"),
 #             country_of_residence=profile_data.get("country_of_residence", ""),
 #             address=profile_data.get("address", {}),
@@ -782,9 +782,9 @@
 #                 Decimal(str(profile_data["expected_transaction_volume"]))
 #                 if profile_data.get("expected_transaction_volume")
 #                 else None
-            ),
+#           ),
 #             risk_factors=profile_data.get("risk_factors", []),
-        )
+#      )
 
 #         self.db.save_entity_profile(profile)
 #         return profile
@@ -817,12 +817,12 @@
 #             cursor.execute(
 #                """"""
 ##                 SELECT check_type, status, risk_level, performed_at, expires_at
-##                 FROM compliance_checks 
-##                 WHERE entity_id = ? 
+##                 FROM compliance_checks
+##                 WHERE entity_id = ?
 ##                 ORDER BY performed_at DESC
 #            ""","""
 #                 (entity_id,),
-            )
+#           )
 
 #             checks = cursor.fetchall()
 #             conn.close()
@@ -834,32 +834,32 @@
 #                 check_type = check[0]
 #                 if check_type not in status_summary:
 #                     status_summary[check_type] = {
-                        "status": check[1],
-                        "risk_level": check[2],
-                        "last_checked": check[3],
-                        "expires_at": check[4],
-                    }
+#                        "status": check[1],
+#                       "risk_level": check[2],
+#                      "last_checked": check[3],
+#                     "expires_at": check[4],
+#                }
 
-                    # Update overall risk level
+# Update overall risk level
 #                     if RiskLevel(check[2]).name == "CRITICAL":
 #                         overall_risk = RiskLevel.CRITICAL
 #                     elif (
 #                         RiskLevel(check[2]).name == "HIGH"
 #                         and overall_risk != RiskLevel.CRITICAL
-                    ):
+#               ):
 #                         overall_risk = RiskLevel.HIGH
 #                     elif (
 #                         RiskLevel(check[2]).name == "MEDIUM"
 #                         and overall_risk == RiskLevel.LOW
-                    ):
+#                    ):
 #                         overall_risk = RiskLevel.MEDIUM
 
 #             return {
-                "entity_id": entity_id,
-                "overall_risk_level": overall_risk.value,
-                "compliance_checks": status_summary,
-                "last_updated": datetime.now().isoformat(),
-            }
+#               "entity_id": entity_id,
+#              "overall_risk_level": overall_risk.value,
+#             "compliance_checks": status_summary,
+#            "last_updated": datetime.now().isoformat(),
+#       }
 
 #         except Exception as e:
 #             logger.error(f"Error getting compliance status for {entity_id}: {e}")
@@ -867,44 +867,44 @@
 
 
 # if __name__ == "__main__":
-    # Example usage
+# Example usage
 #     compliance_manager = InternationalComplianceManager()
 
-    # Create sample entity profile
+# Create sample entity profile
 #     profile_data = {
-        "entity_id": "test_entity_001",
-        "entity_type": "individual",
-        "full_name": "John Doe",
-        "date_of_birth": "1990-01-01",
-        "nationality": "US",
-        "country_of_residence": "US",
-        "address": {
-            "street": "123 Main St",
-            "city": "New York",
-            "state": "NY",
-            "zip": "10001",
-            "country": "US",
-        },
-        "identification_documents": [
+#        "entity_id": "test_entity_001",
+#       "entity_type": "individual",
+#      "full_name": "John Doe",
+#     "date_of_birth": "1990-01-01",
+#    "nationality": "US",
+#   "country_of_residence": "US",
+#  "address": {
+#     "street": "123 Main St",
+#    "city": "New York",
+#   "state": "NY",
+#  "zip": "10001",
+# "country": "US",
+# },
+# "identification_documents": [
 #             {"type": "government_id", "number": "DL123456789", "issuer": "NY DMV"},
 #             {"type": "proof_of_address", "document": "utility_bill"},
-        ],
-        "source_of_funds": "employment",
-        "expected_transaction_volume": 50000,
-    }
+# ],
+# "source_of_funds": "employment",
+# "expected_transaction_volume": 50000,
+# }
 
 #     profile = compliance_manager.create_entity_profile(profile_data)
 #     print(f"Created profile for: {profile.full_name}")
 
-    # Perform compliance checks
+# Perform compliance checks
 #     results = compliance_manager.perform_comprehensive_compliance_check(
-        "test_entity_001"
-    )
+#       "test_entity_001"
+#  )
 #     for check_type, result in results.items():
 #         print(
 #             f"{check_type.upper()}: {result.status.value} (Risk: {result.risk_level.value})"
-        )
+#       )
 
-    # Get overall compliance status
+# Get overall compliance status
 #     status = compliance_manager.get_compliance_status("test_entity_001")
 #     print(f"Overall compliance status: {json.dumps(status, indent=2)}")

@@ -19,19 +19,19 @@
 #         self.mock_redis = MagicMock()
 #         self.cache = TransactionCache(self.mock_redis)
 
-        # Sample transaction data
+# Sample transaction data
 #         self.transaction_data = {
-            "transaction_id": "tx-12345",
-            "source_account_id": "account-123",
-            "amount": 1000.0,
-            "status": "COMPLETED",
-        }
+#            "transaction_id": "tx-12345",
+#            "source_account_id": "account-123",
+#            "amount": 1000.0,
+#            "status": "COMPLETED",
+#        }
 
-        # Sample query results
+# Sample query results
 #         self.query_results = [
 #             {"transaction_id": "tx-1", "amount": 100.0},
 #             {"transaction_id": "tx-2", "amount": 200.0},
-        ]
+#        ]
 
 #     def test_get_transaction(self):
 #        """Test getting a transaction from cache"""
@@ -49,16 +49,16 @@
 #
 ##     def test_get_transaction_not_found(self):
 #        """Test getting a transaction that's not in cache"""
-        # Configure mock Redis to return None
+# Configure mock Redis to return None
 #         self.mock_redis.get.return_value = None
 
-        # Get transaction from cache
+# Get transaction from cache
 #         result = self.cache.get_transaction("tx-nonexistent")
 
-        # Verify Redis was called correctly
+# Verify Redis was called correctly
 #         self.mock_redis.get.assert_called_once_with("tx:tx-nonexistent")
 
-        # Verify result is None
+# Verify result is None
 #         self.assertIsNone(result)
 
 #     def test_set_transaction(self):
@@ -78,16 +78,16 @@
 #
 ##     def test_get_query_results(self):
 #        """Test getting query results from cache"""
-        # Configure mock Redis to return cached data
+# Configure mock Redis to return cached data
 #         self.mock_redis.get.return_value = json.dumps(self.query_results)
 
-        # Get query results from cache
+# Get query results from cache
 #         result = self.cache.get_query_results("query-hash-123")
 
-        # Verify Redis was called correctly
+# Verify Redis was called correctly
 #         self.mock_redis.get.assert_called_once_with("query:query-hash-123")
 
-        # Verify result
+# Verify result
 #         self.assertEqual(result, self.query_results)
 
 #     def test_set_query_results(self):
@@ -107,13 +107,13 @@
 #
 ##     def test_invalidate_transaction(self):
 #        """Test invalidating a transaction in cache"""
-        # Invalidate transaction
+# Invalidate transaction
 #         result = self.cache.invalidate_transaction("tx-12345")
 
-        # Verify Redis was called correctly
+# Verify Redis was called correctly
 #         self.mock_redis.delete.assert_called_once_with("tx:tx-12345")
 
-        # Verify result
+# Verify result
 #         self.assertTrue(result)
 
 #     def test_invalidate_all_queries(self):
@@ -133,16 +133,16 @@
 #
 ##     def test_redis_error_handling(self):
 #        """Test handling Redis errors"""
-        # Configure mock Redis to raise an exception
+# Configure mock Redis to raise an exception
 #         self.mock_redis.get.side_effect = Exception("Redis connection error")
 
-        # Get transaction from cache
+# Get transaction from cache
 #         result = self.cache.get_transaction("tx-12345")
 
-        # Verify Redis was called
+# Verify Redis was called
 #         self.mock_redis.get.assert_called_once()
 
-        # Verify result is None due to error
+# Verify result is None due to error
 #         self.assertIsNone(result)
 
 
@@ -155,7 +155,7 @@
 #         self.mock_fallback = MagicMock()
 #         self.cache_manager = CacheManager(self.mock_primary, self.mock_fallback)
 
-        # Sample transaction data
+# Sample transaction data
 #         self.transaction_data = {"transaction_id": "tx-12345", "amount": 1000.0}
 
 #     def test_get_transaction_primary_hit(self):
@@ -179,23 +179,23 @@
 #
 ##     def test_get_transaction_primary_miss_fallback_hit(self):
 #        """Test getting a transaction with primary miss, fallback hit"""
-        # Configure primary cache to miss, fallback to hit
+# Configure primary cache to miss, fallback to hit
 #         self.mock_primary.get_transaction.return_value = None
 #         self.mock_fallback.get_transaction.return_value = self.transaction_data
 
-        # Get transaction
+# Get transaction
 #         result = self.cache_manager.get_transaction("tx-12345")
 
-        # Verify both caches were called
+# Verify both caches were called
 #         self.mock_primary.get_transaction.assert_called_once_with("tx-12345")
 #         self.mock_fallback.get_transaction.assert_called_once_with("tx-12345")
 
-        # Verify primary cache was populated from fallback
+# Verify primary cache was populated from fallback
 #         self.mock_primary.set_transaction.assert_called_once_with(
-            "tx-12345", self.transaction_data
-        )
+#           "tx-12345", self.transaction_data
+#       )
 
-        # Verify result
+# Verify result
 #         self.assertEqual(result, self.transaction_data)
 #         self.assertEqual(self.cache_manager._hits, 1)
 #         self.assertEqual(self.cache_manager._misses, 0)
@@ -223,16 +223,16 @@
 #
 ##     def test_set_transaction(self):
 #        """Test setting a transaction in all caches"""
-        # Set transaction
+# Set transaction
 #         self.cache_manager.set_transaction("tx-12345", self.transaction_data)
 
-        # Verify both caches were updated
+# Verify both caches were updated
 #         self.mock_primary.set_transaction.assert_called_once_with(
-            "tx-12345", self.transaction_data
-        )
+#            "tx-12345", self.transaction_data
+#        )
 #         self.mock_fallback.set_transaction.assert_called_once_with(
-            "tx-12345", self.transaction_data
-        )
+#            "tx-12345", self.transaction_data
+#        )
 
 #     def test_invalidate_transaction(self):
 #        """Test invalidating a transaction in all caches"""
@@ -245,20 +245,20 @@
 #
 ##     def test_get_stats(self):
 #        """Test getting cache statistics"""
-        # Configure mock caches to return stats
+# Configure mock caches to return stats
 #         self.mock_primary.get_cache_stats.return_value = {"total_keys": 100}
 #         self.mock_fallback.get_cache_stats.return_value = {"total_keys": 200}
 
-        # Get stats
+# Get stats
 #         stats = self.cache_manager.get_stats()
 
-        # Verify stats include cache stats
+# Verify stats include cache stats
 #         self.assertIn("primary_cache", stats)
 #         self.assertEqual(stats["primary_cache"], {"total_keys": 100})
 #         self.assertIn("fallback_cache", stats)
 #         self.assertEqual(stats["fallback_cache"], {"total_keys": 200})
 
-        # Verify hit/miss stats
+# Verify hit/miss stats
 #         self.assertEqual(stats["hits"], 0)
 #         self.assertEqual(stats["misses"], 0)
 #         self.assertEqual(stats["hit_rate"], 0)

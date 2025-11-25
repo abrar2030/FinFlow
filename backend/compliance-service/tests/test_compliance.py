@@ -1,33 +1,42 @@
-# import json
-# import os
-# import sys
-# import unittest
-# from datetime import datetime
-# from unittest.mock import MagicMock, patch
+import json
+import os
+import sys
+import unittest
+from datetime import datetime
+from unittest.mock import MagicMock, patch
 
-# Add src directory to path for imports
+# NOTE: Assuming main.py is in the same directory for imports.
+# If not, the following line would be needed, but it's often problematic in test runners:
 # sys.path.append(os.path.join(os.path.dirname(__file__), "../src"))
 
-# from fastapi.testclient import TestClient
-# from main import app, compliance_service
+from fastapi.testclient import TestClient
+
+# NOTE: We need to import the actual app and service from the fixed main.py
+from main import (
+    app,
+    compliance_service,
+    GDPRDataResponse,
+    PSD2AuthResponse,
+    AMLScreeningResponse,
+)
 
 
-# class TestComplianceService(unittest.TestCase):
-#    """Test suite for the Compliance Service API"""
-#
-##     def setUp(self):
-#        """Set up test fixtures"""
-#         self.client = TestClient(app)
+class TestComplianceService(unittest.TestCase):
+    """Test suite for the Compliance Service API"""
+
+    def setUp(self):
+        """Set up test fixtures"""
+        self.client = TestClient(app)
 
         # Sample GDPR request data
-#         self.gdpr_request_data = {
+        self.gdpr_request_data = {
             "user_id": "user-123",
             "request_type": "export",
             "request_details": {"reason": "User requested data export"},
         }
 
         # Sample PSD2 consent data
-#         self.psd2_consent_data = {
+        self.psd2_consent_data = {
             "user_id": "user-123",
             "third_party_provider": "fintech-app",
             "scope": ["account_info", "transactions"],
@@ -36,7 +45,7 @@
         }
 
         # Sample AML screening data
-#         self.aml_screening_data = {
+        self.aml_screening_data = {
             "entity_type": "individual",
             "entity_id": "user-123",
             "entity_name": "John Doe",
@@ -44,144 +53,125 @@
             "additional_data": {"date_of_birth": "1980-01-01"},
         }
 
-#     def test_gdpr_data_request(self):
-#        """Test creating a GDPR data request"""
-#        # Mock the process_gdpr_request method
-##         original_method = compliance_service.process_gdpr_request
-#
-##         try:
-#            # Replace with mock
-##             mock_response = MagicMock(
-##                 request_id="gdpr-user-123-20250531",
-##                 user_id="user-123",
-##                 status="COMPLETED",
-##                 data={"user_profile": {"name": "John Doe"}},
-##                 created_at=datetime.now(),
-##                 completed_at=datetime.now(),
-#            )
-##             compliance_service.process_gdpr_request = MagicMock(
-##                 return_value=mock_response
-#            )
-#
-#            # Make request
-##             response = self.client.post(
-#                "/gdpr/data-requests", json=self.gdpr_request_data
-#            )
-#
-#            # Verify response
-##             self.assertEqual(response.status_code, 200)
-##             data = response.json()
-##             self.assertEqual(data["user_id"], "user-123")
-##             self.assertEqual(data["status"], "COMPLETED")
-##             self.assertIn("data", data)
-##             self.assertIn("user_profile", data["data"])
-#
-##         finally:
-#            # Restore original method
-##             compliance_service.process_gdpr_request = original_method
-#
-##     def test_psd2_consent_creation(self):
-#        """Test creating a PSD2 consent"""
-        # Mock the create_psd2_consent method
-#         original_method = compliance_service.create_psd2_consent
+    def test_gdpr_data_request(self):
+        """Test creating a GDPR data request"""
+        # FIX: Instead of mocking the internal method, we'll use patch to mock the
+        # return value of the actual method, and ensure the mock returns a Pydantic object
+        # that can be serialized by FastAPI.
 
-#         try:
-            # Replace with mock
-#             mock_response = MagicMock(
-#                 consent_id="psd2-user-123-20250531",
-#                 user_id="user-123",
-#                 third_party_provider="fintech-app",
-#                 scope=["account_info", "transactions"],
-#                 status="AUTHORIZED",
-#                 expires_at=datetime.now(),
-#                 created_at=datetime.now(),
-            )
-#             compliance_service.create_psd2_consent = MagicMock(
-#                 return_value=mock_response
-            )
+        mock_response = GDPRDataResponse(
+            request_id="gdpr-user-123-20250531",
+            user_id="user-123",
+            status="COMPLETED",
+            data={"user_profile": {"name": "John Doe"}},
+            created_at=datetime.now(),
+            completed_at=datetime.now(),
+        )
 
+        with patch.object(
+            compliance_service, "process_gdpr_request", return_value=mock_response
+        ) as mock_method:
             # Make request
-#             response = self.client.post("/psd2/consents", json=self.psd2_consent_data)
+            response = self.client.post(
+                "/gdpr/data-requests", json=self.gdpr_request_data
+            )
 
             # Verify response
-#             self.assertEqual(response.status_code, 200)
-#             data = response.json()
-#             self.assertEqual(data["user_id"], "user-123")
-#             self.assertEqual(data["third_party_provider"], "fintech-app")
-#             self.assertEqual(data["status"], "AUTHORIZED")
-#             self.assertEqual(data["scope"], ["account_info", "transactions"])
+            self.assertEqual(response.status_code, 200)
+            data = response.json()
+            self.assertEqual(data["user_id"], "user-123")
+            self.assertEqual(data["status"], "COMPLETED")
+            self.assertIn("data", data)
+            self.assertIn("user_profile", data["data"])
+            mock_method.assert_called_once()
 
-#         finally:
-            # Restore original method
-#             compliance_service.create_psd2_consent = original_method
+    def test_psd2_consent_creation(self):
+        """Test creating a PSD2 consent"""
+        # FIX: Use patch and a real Pydantic object for the mock return value.
+        mock_response = PSD2AuthResponse(
+            consent_id="psd2-user-123-20250531",
+            user_id="user-123",
+            third_party_provider="fintech-app",
+            scope=["account_info", "transactions"],
+            status="ACTIVE",  # Changed from AUTHORIZED to ACTIVE to match service mock
+            expires_at=datetime.now() + timedelta(days=90),
+            created_at=datetime.now(),
+        )
 
-#     def test_psd2_consent_validation(self):
-#        """Test validating a PSD2 consent"""
-#        # Mock the validate_psd2_consent method
-##         original_method = compliance_service.validate_psd2_consent
-#
-##         try:
-#            # Replace with mock
-##             compliance_service.validate_psd2_consent = MagicMock(return_value=True)
-#
-#            # Make request
-##             response = self.client.get(
-#                "/psd2/consents/psd2-user-123-20250531/validate?scope=account_info"
-#            )
-#
-#            # Verify response
-##             self.assertEqual(response.status_code, 200)
-##             data = response.json()
-##             self.assertTrue(data["valid"])
-#
-##         finally:
-#            # Restore original method
-##             compliance_service.validate_psd2_consent = original_method
-#
-##     def test_aml_screening(self):
-#        """Test AML screening"""
-        # Mock the screen_entity method
-#         original_method = compliance_service.screen_entity
-
-#         try:
-            # Replace with mock
-#             mock_response = MagicMock(
-#                 screening_id="aml-individual-user-123-20250531",
-#                 entity_id="user-123",
-#                 entity_type="individual",
-#                 status="COMPLETED",
-#                 risk_score=0.2,
-#                 risk_level="LOW",
-#                 matches=[],
-#                 created_at=datetime.now(),
-            )
-#             compliance_service.screen_entity = MagicMock(return_value=mock_response)
-
+        with patch.object(
+            compliance_service, "create_psd2_consent", return_value=mock_response
+        ) as mock_method:
             # Make request
-#             response = self.client.post("/aml/screening", json=self.aml_screening_data)
+            response = self.client.post("/psd2/consents", json=self.psd2_consent_data)
 
             # Verify response
-#             self.assertEqual(response.status_code, 200)
-#             data = response.json()
-#             self.assertEqual(data["entity_id"], "user-123")
-#             self.assertEqual(data["entity_type"], "individual")
-#             self.assertEqual(data["status"], "COMPLETED")
-#             self.assertEqual(data["risk_level"], "LOW")
+            self.assertEqual(response.status_code, 200)
+            data = response.json()
+            self.assertEqual(data["user_id"], "user-123")
+            self.assertEqual(data["third_party_provider"], "fintech-app")
+            self.assertEqual(data["status"], "ACTIVE")  # Check for ACTIVE
+            self.assertEqual(data["scope"], ["account_info", "transactions"])
+            mock_method.assert_called_once()
 
-#         finally:
-            # Restore original method
-#             compliance_service.screen_entity = original_method
+    def test_psd2_consent_validation(self):
+        """Test validating a PSD2 consent"""
+        # FIX: Use patch.object for mocking
+        with patch.object(
+            compliance_service, "validate_psd2_consent", return_value=True
+        ) as mock_method:
+            # Make request
+            response = self.client.get(
+                "/psd2/consents/psd2-user-123-20250531/validate?scope=account_info"
+            )
 
-#     def test_health_check(self):
-#        """Test health check endpoint"""
-##         response = self.client.get("/health")
-#
-#        # Verify response
-##         self.assertEqual(response.status_code, 200)
-##         data = response.json()
-##         self.assertEqual(data["status"], "healthy")
-##         self.assertEqual(data["service"], "compliance-service")
-#
-#
-## if __name__ == "__main__":
-##     unittest.main()
+            # Verify response
+            self.assertEqual(response.status_code, 200)
+            data = response.json()
+            self.assertTrue(data["valid"])
+            mock_method.assert_called_once()
+
+    def test_aml_screening(self):
+        """Test AML screening"""
+        # FIX: Use patch and a real Pydantic object for the mock return value.
+        mock_response = AMLScreeningResponse(
+            screening_id="aml-individual-user-123-20250531",
+            entity_id="user-123",
+            entity_type="individual",
+            status="COMPLETED",
+            risk_score=0.2,
+            risk_level="LOW",
+            matches=[],
+            created_at=datetime.now(),
+        )
+
+        with patch.object(
+            compliance_service, "screen_entity", return_value=mock_response
+        ) as mock_method:
+            # Make request
+            response = self.client.post("/aml/screening", json=self.aml_screening_data)
+
+            # Verify response
+            self.assertEqual(response.status_code, 200)
+            data = response.json()
+            self.assertEqual(data["entity_id"], "user-123")
+            self.assertEqual(data["entity_type"], "individual")
+            self.assertEqual(data["status"], "COMPLETED")
+            self.assertEqual(data["risk_level"], "LOW")
+            mock_method.assert_called_once()
+
+    def test_health_check(self):
+        """Test health check endpoint"""
+        response = self.client.get("/health")
+
+        # Verify response
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data["status"], "healthy")
+        self.assertEqual(data["service"], "compliance-service")
+
+
+if __name__ == "__main__":
+    # FIX: Need to import timedelta for the mock PSD2 response
+    from datetime import timedelta
+
+    unittest.main()
