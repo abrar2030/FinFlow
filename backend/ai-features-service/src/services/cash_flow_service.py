@@ -9,12 +9,10 @@ Provides advanced cash flow modeling and forecasting capabilities:
 - Liquidity risk assessment
 """
 
-import asyncio
 import logging
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List
 
-import joblib
 import numpy as np
 import pandas as pd
 from config.database import get_database
@@ -29,8 +27,7 @@ from models.cash_flow import (
 )
 from prophet import Prophet
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
-from sklearn.linear_model import LinearRegression, Ridge
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.linear_model import Ridge
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
@@ -334,7 +331,6 @@ class CashFlowService:
                 # Placeholder for incorporating external factors (e.g., holidays, economic data)
                 # This would typically involve merging with an external dataset.
                 logger.debug("Incorporating external factors from request.")
-                pass
 
             # Drop rows with NaN values created by rolling/lag features
             df = df.dropna()
@@ -481,7 +477,6 @@ class CashFlowService:
         #     self.models["random_forest"] = joblib.load("models/rf_model.joblib")
         # except FileNotFoundError:
         #     logger.warning("Random Forest model not found. Will train from scratch.")
-        pass
 
     async def _get_model_performance(self) -> Dict[str, float]:
         """Get the latest performance metrics for the models"""

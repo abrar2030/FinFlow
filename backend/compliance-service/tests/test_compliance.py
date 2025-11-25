@@ -1,9 +1,6 @@
-import json
-import os
-import sys
 import unittest
 from datetime import datetime
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 # NOTE: Assuming main.py is in the same directory for imports.
 # If not, the following line would be needed, but it's often problematic in test runners:

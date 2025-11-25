@@ -13,7 +13,7 @@ Provides intelligent financial advice and recommendations:
 import asyncio
 import logging
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List
 
 # --- MOCKING EXTERNAL DEPENDENCIES ---
 # Since the original code relies on a complex project structure (config, models, utils),
@@ -864,7 +864,7 @@ class AdvisoryService:
             insights = []
 
             # Get market data
-            market_data = await self._get_current_market_data()
+            await self._get_current_market_data()
 
             # Market trend analysis
             sp500_trend = await self._analyze_market_trend("SPY")

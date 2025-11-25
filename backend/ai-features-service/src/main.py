@@ -9,11 +9,10 @@ Advanced AI-powered financial features including:
 - Market analysis and insights
 """
 
-import asyncio
 import logging
 import sys
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator, List, Optional
+from typing import AsyncGenerator
 
 import uvicorn
 from fastapi import FastAPI, HTTPException
