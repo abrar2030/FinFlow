@@ -695,23 +695,3 @@ npm run build
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Support
-
-For support and questions:
-
-- **Documentation**: [https://docs.finflow.com/kafka](https://docs.finflow.com/kafka)
-- **Issues**: [https://github.com/finflow/kafka-enhanced/issues](https://github.com/finflow/kafka-enhanced/issues)
-- **Security Issues**: security@finflow.com
-- **Compliance Questions**: compliance@finflow.com
-
-## Changelog
-
-See [CHANGELOG.md](CHANGELOG.md) for a detailed history of changes.
-
-## Acknowledgments
-
-- Apache Kafka community for the excellent streaming platform
-- KafkaJS team for the Node.js client library
-- Financial industry security and compliance experts who provided guidance
-- Open source security tools and libraries that make this implementation possible
