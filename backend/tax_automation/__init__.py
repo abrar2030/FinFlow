@@ -9,8 +9,6 @@ for the Finflow financial platform, including:
 - International compliance features
 - RESTful API for integration
 
-Author: Manus AI
-Version: 1.0.0
 """
 
 # Import core components for easy access
@@ -29,7 +27,7 @@ from .tax_calculation_engine import (
 from .tax_rule_management import SAMPLE_TAX_RULES, TaxRuleDatabase, TaxRuleManager
 
 __version__ = "1.0.0"
-__author__ = "Manus AI"
+__author__ = "Abrar Ahmed"
 
 # Define what is exposed when 'from tax_module import *' is used
 __all__ = [
