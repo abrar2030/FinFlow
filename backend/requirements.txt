@@ -1,0 +1,25 @@
+# Updated Requirements for FinFlow
+# Consolidated and verified dependencies based on code review and existing project files.
+
+# Core Framework & Web
+fastapi
+uvicorn
+pydantic
+fastapi-testclient
+fastapi-middleware-cors
+fastapi-middleware-gzip
+
+# Data Processing & ML/AI
+numpy
+pandas
+scikit-learn
+joblib
+prophet # For time series forecasting
+statsmodels # For time series analysis (ARIMA, ExponentialSmoothing)
+
+# Database & ORM
+sqlalchemy # Assumed for ORM/Database interaction
+psycopg2-binary # Assumed for PostgreSQL connection
+
+# Utilities
+pytest
