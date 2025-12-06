@@ -7,6 +7,7 @@ from datetime import date, datetime
 from decimal import Decimal
 
 from core.logging import get_logger
+
 logger = get_logger(__name__)
 
 # NOTE: The original imports assumed a package structure 'tax_automation'.
@@ -39,7 +40,9 @@ try:
     from tax_automation.tax_rule_management import TaxRuleManager
 except ImportError:
     # Fallback for local testing if the package is not installed
-    logger.info("Warning: Could not import from 'tax_automation' package. Assuming local files.")
+    logger.info(
+        "Warning: Could not import from 'tax_automation' package. Assuming local files."
+    )
     # In a real scenario, this would be a fatal error, but for un-commenting, we proceed.
 
 

@@ -2,10 +2,11 @@ import logging
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple
 
-from .models import (
-
 from core.logging import get_logger
+
 logger = get_logger(__name__)
+
+from .models import (
     RiskLevel,
     TransactionRequest,
     TransactionType,
