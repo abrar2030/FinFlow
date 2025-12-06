@@ -1155,9 +1155,6 @@ class AdvisoryService:
 # Example usage (requires json import)
 import json
 
-from core.logging import get_logger
-logger = get_logger(__name__)
-
 if __name__ == "__main__":
 
     async def run_example():
@@ -1185,11 +1182,12 @@ if __name__ == "__main__":
 
         try:
             advice = await service.get_financial_advice(request)
-            logger.info("\n--- Financial Advisory Response ---")
+            print("\n--- Financial Advisory Response ---")
             # FIX: Use the mocked json method for printing
-            logger.info(advice.json())
+            print(advice.json())
         except Exception as e:
-            logger.info(f"An error occurred: {e}")
+            print(f"An error occurred: {e}")
+
         await service.cleanup()
 
     # Run the async function
@@ -1198,6 +1196,6 @@ if __name__ == "__main__":
     except RuntimeError as e:
         # Handle "RuntimeError: Event loop is closed" in some environments
         if "Event loop is closed" in str(e):
-            logger.info("Event loop closed, skipping final run.")
+            print("Event loop closed, skipping final run.")
         else:
             raise e
