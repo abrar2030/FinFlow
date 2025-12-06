@@ -1,11 +1,28 @@
+# Test Suite for Tax Automation Module
+
 import os
 import tempfile
 import unittest
 from datetime import date, datetime
 from decimal import Decimal
+
 from core.logging import get_logger
 
 logger = get_logger(__name__)
+
+# NOTE: The original imports assumed a package structure 'tax_automation'.
+# Since the user only provided individual files, I will assume the imports
+# should be relative or from the top level if the files are placed there.
+# I will change the imports to assume the modules are available at the top level
+# or are part of a package named 'tax_automation' which is installed.
+# Given the context of the previous __init__.py, the module name is likely 'tax_automation'.
+# I will use the original import paths but assume the necessary modules exist.
+
+# Assuming the following modules exist in the 'tax_automation' package:
+# - international_compliance
+# - tax_calculation_engine
+# - tax_rule_management
+
 try:
     from tax_automation.international_compliance import (
         ComplianceCheckType,
@@ -22,19 +39,22 @@ try:
     )
     from tax_automation.tax_rule_management import TaxRuleManager
 except ImportError:
+    # Fallback for local testing if the package is not installed
     logger.info(
         "Warning: Could not import from 'tax_automation' package. Assuming local files."
     )
+    # In a real scenario, this would be a fatal error, but for un-commenting, we proceed.
 
 
 class TestTaxCalculationEngine(unittest.TestCase):
     """Test cases for the tax calculation engine"""
 
-    def setUp(self) -> Any:
+    def setUp(self):
         """Set up test fixtures"""
+        # NOTE: create_sample_data is assumed to return an instance of TaxCalculationEngine
         self.engine = create_sample_data()
 
-    def test_tax_rule_creation(self) -> Any:
+    def test_tax_rule_creation(self):
         """Test tax rule creation and validation"""
         rule = TaxRule(
             rule_id="TEST_RULE",
@@ -47,12 +67,14 @@ class TestTaxCalculationEngine(unittest.TestCase):
             conditions={"min_amount": 100},
             description="Test VAT Rule",
         )
+
         self.assertEqual(rule.rule_id, "TEST_RULE")
         self.assertEqual(rule.tax_type, TaxType.VAT)
         self.assertEqual(rule.rate, Decimal("15.0"))
+        # NOTE: is_active() is assumed to be a method on TaxRule
         self.assertTrue(rule.is_active())
 
-    def test_tax_calculation_basic(self) -> Any:
+    def test_tax_calculation_basic(self):
         """Test basic tax calculation"""
         transaction = Transaction(
             transaction_id="test_txn_001",
@@ -65,13 +87,16 @@ class TestTaxCalculationEngine(unittest.TestCase):
             payer_entity_id="user_001",
             payee_entity_id="corp_001",
         )
+
+        # NOTE: calculate_taxes is assumed to be a method on TaxCalculationEngine
         result = self.engine.calculate_taxes(transaction)
+
         self.assertEqual(result.transaction_id, "test_txn_001")
         self.assertGreater(result.total_tax_amount, Decimal("0"))
         self.assertIsInstance(result.tax_breakdown, list)
         self.assertIsInstance(result.applied_rules, list)
 
-    def test_tax_calculation_no_applicable_rules(self) -> Any:
+    def test_tax_calculation_no_applicable_rules(self):
         """Test tax calculation when no rules apply"""
         transaction = Transaction(
             transaction_id="test_txn_002",
@@ -84,15 +109,17 @@ class TestTaxCalculationEngine(unittest.TestCase):
             payer_entity_id="user_001",
             payee_entity_id="user_002",
         )
+
         result = self.engine.calculate_taxes(transaction)
+
         self.assertEqual(result.total_tax_amount, Decimal("0"))
         self.assertEqual(len(result.applied_rules), 0)
 
-    def test_transaction_validation(self) -> Any:
+    def test_transaction_validation(self):
         """Test transaction validation"""
         invalid_transaction = Transaction(
             transaction_id="invalid_txn",
-            amount=Decimal("-100.00"),
+            amount=Decimal("-100.00"),  # Invalid negative amount
             transaction_type="",
             origin_jurisdiction="",
             destination_jurisdiction="",
@@ -101,25 +128,32 @@ class TestTaxCalculationEngine(unittest.TestCase):
             payer_entity_id="",
             payee_entity_id="",
         )
+
+        # NOTE: validate_transaction is assumed to be a method on TaxCalculationEngine
         errors = self.engine.validate_transaction(invalid_transaction)
         self.assertGreater(len(errors), 0)
+        # NOTE: The original assertion was missing the key to check in the list of errors.
+        # Assuming the error message is a string in the list.
         self.assertIn("Transaction amount must be positive", errors)
 
 
 class TestTaxRuleManagement(unittest.TestCase):
     """Test cases for tax rule management"""
 
-    def setUp(self) -> Any:
+    def setUp(self):
         """Set up test fixtures with temporary database"""
+        # Fix: tempfile.NamedTemporaryFile needs to be closed before it can be used by name
         self.temp_db = tempfile.NamedTemporaryFile(delete=False, suffix=".db")
         self.temp_db.close()
+        # NOTE: TaxRuleManager is assumed to take a database path
         self.manager = TaxRuleManager(self.temp_db.name)
 
-    def tearDown(self) -> Any:
+    def tearDown(self):
         """Clean up test fixtures"""
+        # Fix: Ensure the temporary file is deleted
         os.unlink(self.temp_db.name)
 
-    def test_create_tax_rule(self) -> Any:
+    def test_create_tax_rule(self):
         """Test tax rule creation"""
         rule_data = {
             "rule_id": "TEST_RULE_001",
@@ -131,13 +165,17 @@ class TestTaxRuleManagement(unittest.TestCase):
             "conditions": {"min_amount": 0.01},
             "description": "Test VAT Rule",
         }
+
+        # NOTE: create_tax_rule is assumed to be a method on TaxRuleManager
         rule = self.manager.create_tax_rule(rule_data)
         self.assertIsNotNone(rule)
         self.assertEqual(rule.rule_id, "TEST_RULE_001")
+        # Fix: Ensure the rate is compared as a Decimal
         self.assertEqual(rule.rate, Decimal("20.0"))
 
-    def test_get_tax_rule(self) -> Any:
+    def test_get_tax_rule(self):
         """Test tax rule retrieval"""
+        # First create a rule
         rule_data = {
             "rule_id": "TEST_RULE_002",
             "jurisdiction": "TEST",
@@ -146,14 +184,18 @@ class TestTaxRuleManagement(unittest.TestCase):
             "rate": 8.5,
             "calculation_method": "percentage",
         }
+
         created_rule = self.manager.create_tax_rule(rule_data)
         self.assertIsNotNone(created_rule)
+
+        # Then retrieve it
         retrieved_rule = self.manager.get_tax_rule("TEST_RULE_002")
         self.assertIsNotNone(retrieved_rule)
         self.assertEqual(retrieved_rule.rule_id, "TEST_RULE_002")
 
-    def test_update_tax_rule(self) -> Any:
+    def test_update_tax_rule(self):
         """Test tax rule updates"""
+        # Create initial rule
         rule_data = {
             "rule_id": "TEST_RULE_003",
             "jurisdiction": "TEST",
@@ -162,11 +204,16 @@ class TestTaxRuleManagement(unittest.TestCase):
             "rate": 15.0,
             "calculation_method": "percentage",
         }
+
         rule = self.manager.create_tax_rule(rule_data)
         self.assertIsNotNone(rule)
+
+        # Update the rule
         updates = {"rate": 18.0, "description": "Updated test rule"}
         success = self.manager.update_tax_rule("TEST_RULE_003", updates)
         self.assertTrue(success)
+
+        # Verify update
         updated_rule = self.manager.get_tax_rule("TEST_RULE_003")
         self.assertEqual(updated_rule.rate, Decimal("18.0"))
         self.assertEqual(updated_rule.description, "Updated test rule")
@@ -175,17 +222,18 @@ class TestTaxRuleManagement(unittest.TestCase):
 class TestInternationalCompliance(unittest.TestCase):
     """Test cases for international compliance"""
 
-    def setUp(self) -> Any:
+    def setUp(self):
         """Set up test fixtures with temporary database"""
         self.temp_db = tempfile.NamedTemporaryFile(delete=False, suffix=".db")
         self.temp_db.close()
+        # NOTE: InternationalComplianceManager is assumed to take a database path
         self.compliance_manager = InternationalComplianceManager(self.temp_db.name)
 
-    def tearDown(self) -> Any:
+    def tearDown(self):
         """Clean up test fixtures"""
         os.unlink(self.temp_db.name)
 
-    def test_create_entity_profile(self) -> Any:
+    def test_create_entity_profile(self):
         """Test entity profile creation"""
         profile_data = {
             "entity_id": "test_entity_001",
@@ -204,13 +252,16 @@ class TestInternationalCompliance(unittest.TestCase):
                 {"type": "government_id", "number": "DL123456789"}
             ],
         }
+
+        # NOTE: create_entity_profile is assumed to be a method on InternationalComplianceManager
         profile = self.compliance_manager.create_entity_profile(profile_data)
         self.assertEqual(profile.entity_id, "test_entity_001")
         self.assertEqual(profile.full_name, "John Doe")
         self.assertEqual(profile.nationality, "US")
 
-    def test_kyc_check(self) -> Any:
+    def test_kyc_check(self):
         """Test KYC compliance check"""
+        # Create entity profile first
         profile_data = {
             "entity_id": "test_entity_002",
             "entity_type": "individual",
@@ -221,10 +272,15 @@ class TestInternationalCompliance(unittest.TestCase):
                 {"type": "proof_of_address", "document": "utility_bill"},
             ],
         }
+
         self.compliance_manager.create_entity_profile(profile_data)
+
+        # Perform KYC check
+        # NOTE: kyc_service is assumed to be an attribute of InternationalComplianceManager
         kyc_result = self.compliance_manager.kyc_service.perform_kyc_check(
             "test_entity_002"
         )
+
         self.assertEqual(kyc_result.entity_id, "test_entity_002")
         self.assertEqual(kyc_result.check_type, ComplianceCheckType.KYC)
         self.assertIn(
@@ -232,8 +288,9 @@ class TestInternationalCompliance(unittest.TestCase):
             [ComplianceStatus.PASSED, ComplianceStatus.REQUIRES_REVIEW],
         )
 
-    def test_fatca_check(self) -> Any:
+    def test_fatca_check(self):
         """Test FATCA compliance check"""
+        # Create US person profile
         profile_data = {
             "entity_id": "test_entity_003",
             "entity_type": "individual",
@@ -241,35 +298,45 @@ class TestInternationalCompliance(unittest.TestCase):
             "nationality": "US",
             "country_of_residence": "US",
         }
+
         self.compliance_manager.create_entity_profile(profile_data)
+
+        # Perform FATCA check
+        # NOTE: fatca_service is assumed to be an attribute of InternationalComplianceManager
         fatca_result = self.compliance_manager.fatca_service.check_us_person_status(
             "test_entity_003"
         )
+
         self.assertEqual(fatca_result.entity_id, "test_entity_003")
         self.assertEqual(fatca_result.check_type, ComplianceCheckType.FATCA)
         self.assertEqual(fatca_result.status, ComplianceStatus.PASSED)
+        # Fix: Use get() with a default value for safety
         self.assertTrue(fatca_result.details.get("is_us_person", False))
 
-    def test_aml_transaction_monitoring(self) -> Any:
+    def test_aml_transaction_monitoring(self):
         """Test AML transaction monitoring"""
         transaction_data = {
             "transaction_id": "test_txn_aml_001",
             "entity_id": "test_entity_004",
-            "amount": 15000,
+            "amount": 15000,  # Large amount to trigger monitoring
             "currency": "USD",
             "transaction_type": "transfer",
             "origin_country": "US",
             "destination_country": "US",
         }
+
+        # NOTE: aml_service is assumed to be an attribute of InternationalComplianceManager
         monitoring_result = self.compliance_manager.aml_service.monitor_transaction(
             transaction_data
         )
+
         self.assertEqual(monitoring_result.transaction_id, "test_txn_aml_001")
         self.assertGreater(monitoring_result.risk_score, 0)
         self.assertIn("large_cash_transaction", monitoring_result.flags)
 
-    def test_comprehensive_compliance_check(self) -> Any:
+    def test_comprehensive_compliance_check(self):
         """Test comprehensive compliance check"""
+        # Create a profile
         profile_data = {
             "entity_id": "test_entity_005",
             "entity_type": "individual",
@@ -280,9 +347,13 @@ class TestInternationalCompliance(unittest.TestCase):
             ],
         }
         self.compliance_manager.create_entity_profile(profile_data)
+
+        # Perform comprehensive check
+        # NOTE: perform_comprehensive_check is assumed to be a method on InternationalComplianceManager
         comprehensive_result = self.compliance_manager.perform_comprehensive_check(
             "test_entity_005"
         )
+
         self.assertEqual(comprehensive_result.entity_id, "test_entity_005")
         self.assertIsInstance(comprehensive_result.risk_level, RiskLevel)
         self.assertIsInstance(comprehensive_result.compliance_checks, list)

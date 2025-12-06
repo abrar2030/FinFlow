@@ -2,13 +2,18 @@ import logging
 import os
 from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional
+
 from fastapi import BackgroundTasks, FastAPI, HTTPException, status
 from pydantic import BaseModel, Field
 
+# Configure logging
 logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 logger = logging.getLogger("compliance-service")
+
+# Initialize FastAPI app
 app = FastAPI(
     title="FinFlow Compliance Service",
     description="Financial compliance modules for GDPR, PSD2, and other regulations",
@@ -16,6 +21,7 @@ app = FastAPI(
 )
 
 
+# Models for GDPR compliance
 class GDPRDataRequest(BaseModel):
     user_id: str
     request_type: str = Field(
@@ -33,6 +39,7 @@ class GDPRDataResponse(BaseModel):
     completed_at: Optional[datetime] = None
 
 
+# Models for PSD2 compliance
 class PSD2AuthRequest(BaseModel):
     user_id: str
     third_party_provider: str
@@ -51,6 +58,7 @@ class PSD2AuthResponse(BaseModel):
     created_at: datetime
 
 
+# Models for AML/CFT compliance
 class AMLScreeningRequest(BaseModel):
     entity_type: str = Field(
         ..., description="Type of entity: individual, organization"
@@ -72,12 +80,13 @@ class AMLScreeningResponse(BaseModel):
     created_at: datetime
 
 
+# Compliance service implementation
 class ComplianceService:
     """
     Comprehensive compliance service implementing GDPR, PSD2, and other financial regulations.
     """
 
-    def __init__(self, config: Optional[Dict[str, Any]] = None) -> Any:
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """
         Initialize the compliance service with optional configuration.
 
@@ -85,9 +94,9 @@ class ComplianceService:
             config: Configuration dictionary with compliance settings
         """
         self.config = config or self._default_config()
-        self._data_requests = {}
-        self._psd2_consents = {}
-        self._aml_screenings = {}
+        self._data_requests = {}  # In production, this would be a database
+        self._psd2_consents = {}  # In production, this would be a database
+        self._aml_screenings = {}  # In production, this would be a database
         logger.info("Compliance service initialized with configuration")
 
     def _default_config(self) -> Dict[str, Any]:
@@ -99,7 +108,7 @@ class ComplianceService:
         """
         return {
             "gdpr": {
-                "data_retention_days": 730,
+                "data_retention_days": 730,  # 2 years
                 "export_format": "json",
                 "data_sources": [
                     "transactions",
@@ -128,6 +137,8 @@ class ComplianceService:
             },
         }
 
+    # GDPR compliance methods
+
     def process_gdpr_request(self, request: GDPRDataRequest) -> GDPRDataResponse:
         """
         Process a GDPR data request (export, delete, etc.).
@@ -139,33 +150,52 @@ class ComplianceService:
             GDPR data response
         """
         request_id = f"gdpr-{request.user_id}-{datetime.now().strftime('%Y%m%d%H%M%S')}"
+
+        # Log the request for audit purposes
         logger.info(
             f"GDPR {request.request_type} request {request_id} for user {request.user_id}"
         )
+
+        # Initialize response
         response = GDPRDataResponse(
             request_id=request_id,
             user_id=request.user_id,
             status="PROCESSING",
             created_at=datetime.now(),
         )
+
+        # Store request for tracking
+        # FIX: Use .model_dump() instead of .dict() for Pydantic v2 compatibility
         self._data_requests[request_id] = response.model_dump()
+
+        # Process based on request type
         if request.request_type == "export":
+            # In production, this would gather data from all systems
             user_data = self._gather_user_data(request.user_id)
             response.data = user_data
             response.status = "COMPLETED"
             response.completed_at = datetime.now()
+
         elif request.request_type == "delete":
+            # In production, this would delete data from all systems
             self._delete_user_data(request.user_id)
             response.status = "COMPLETED"
             response.completed_at = datetime.now()
+
         elif request.request_type == "restrict":
+            # In production, this would restrict processing in all systems
             self._restrict_user_data_processing(request.user_id)
             response.status = "COMPLETED"
             response.completed_at = datetime.now()
+
         else:
             response.status = "FAILED"
             logger.error(f"Unknown GDPR request type: {request.request_type}")
+
+        # Update stored request
+        # FIX: Use .model_dump() instead of .dict() for Pydantic v2 compatibility
         self._data_requests[request_id] = response.model_dump()
+
         return response
 
     def get_gdpr_request_status(self, request_id: str) -> Optional[GDPRDataResponse]:
@@ -180,6 +210,8 @@ class ComplianceService:
         """
         if request_id in self._data_requests:
             data = self._data_requests[request_id]
+            # FIX: The data dictionary contains datetime objects which Pydantic can handle,
+            # but it's safer to ensure it's loaded correctly.
             return GDPRDataResponse(**data)
         return None
 
@@ -194,6 +226,7 @@ class ComplianceService:
         Returns:
             Dictionary with all user data
         """
+        # Mock implementation
         return {
             "user_profile": {
                 "user_id": user_id,
@@ -246,6 +279,7 @@ class ComplianceService:
         Args:
             user_id: User ID
         """
+        # Mock implementation
         logger.info(f"Deleted all data for user {user_id}")
 
     def _restrict_user_data_processing(self, user_id: str) -> None:
@@ -256,7 +290,10 @@ class ComplianceService:
         Args:
             user_id: User ID
         """
+        # Mock implementation
         logger.info(f"Restricted data processing for user {user_id}")
+
+    # PSD2 compliance methods
 
     def create_psd2_consent(self, request: PSD2AuthRequest) -> PSD2AuthResponse:
         """
@@ -268,11 +305,18 @@ class ComplianceService:
         Returns:
             PSD2 authorization response
         """
+        # Validate scopes against allowed scopes
         for scope in request.scope:
             if scope not in self.config["psd2"]["allowed_scopes"]:
                 raise ValueError(f"Invalid scope: {scope}")
+
+        # Generate consent ID
         consent_id = f"psd2-{request.user_id}-{datetime.now().strftime('%Y%m%d%H%M%S')}"
+
+        # Calculate expiry date
         expires_at = datetime.now() + timedelta(days=request.duration_days)
+
+        # Initialize response
         response = PSD2AuthResponse(
             consent_id=consent_id,
             user_id=request.user_id,
@@ -282,10 +326,15 @@ class ComplianceService:
             expires_at=expires_at,
             created_at=datetime.now(),
         )
+
+        # Store consent for tracking
+        # FIX: Use .model_dump() instead of .dict() for Pydantic v2 compatibility
         self._psd2_consents[consent_id] = response.model_dump()
+
         logger.info(
             f"Created PSD2 consent {consent_id} for user {request.user_id}, expires {expires_at}"
         )
+
         return response
 
     def revoke_psd2_consent(self, consent_id: str) -> bool:
@@ -299,6 +348,7 @@ class ComplianceService:
             True if consent was found and revoked, False otherwise
         """
         if consent_id in self._psd2_consents:
+            # In production, this would update the status in the database
             consent_data = self._psd2_consents[consent_id]
             consent_data["status"] = "REVOKED"
             logger.info(f"Revoked PSD2 consent {consent_id}")
@@ -318,15 +368,26 @@ class ComplianceService:
         """
         if consent_id not in self._psd2_consents:
             return False
+
         consent_data = self._psd2_consents[consent_id]
         consent = PSD2AuthResponse(**consent_data)
+
+        # Check status
         if consent.status != "ACTIVE":
             return False
+
+        # Check expiry
         if consent.expires_at < datetime.now():
+            # In production, this would update the status to EXPIRED
             return False
+
+        # Check scope
         if scope not in consent.scope:
             return False
+
         return True
+
+    # AML/CFT compliance methods
 
     def screen_entity(self, request: AMLScreeningRequest) -> AMLScreeningResponse:
         """
@@ -341,9 +402,13 @@ class ComplianceService:
         screening_id = (
             f"aml-{request.entity_id}-{datetime.now().strftime('%Y%m%d%H%M%S')}"
         )
+
+        # Mock screening logic
         risk_score = self._calculate_aml_risk(request)
         risk_level = self._determine_aml_risk_level(risk_score)
         matches = self._mock_aml_matches(request, risk_level)
+
+        # Initialize response
         response = AMLScreeningResponse(
             screening_id=screening_id,
             entity_id=request.entity_id,
@@ -354,10 +419,15 @@ class ComplianceService:
             matches=matches,
             created_at=datetime.now(),
         )
+
+        # Store screening result
+        # FIX: Use .model_dump() instead of .dict() for Pydantic v2 compatibility
         self._aml_screenings[screening_id] = response.model_dump()
+
         logger.info(
             f"Completed AML screening {screening_id} for {request.entity_type} {request.entity_id} with risk {risk_level}"
         )
+
         return response
 
     def get_screening_result(self, screening_id: str) -> Optional[AMLScreeningResponse]:
@@ -379,19 +449,26 @@ class ComplianceService:
         """
         Mock calculation of AML risk score.
         """
-        risk = 0.1
+        risk = 0.1  # Base risk
+
+        # High-risk country check
         if request.country_code in ["IR", "NK", "SY"]:
             risk += 0.5
+
+        # PEP check (mock)
         if (
             self.config["aml"]["pep_check_enabled"]
             and "PEP" in request.entity_name.upper()
         ):
             risk += 0.3
+
+        # High-risk entity type
         if (
             request.entity_type == "organization"
             and "SHELL" in request.entity_name.upper()
         ):
             risk += 0.2
+
         return min(1.0, risk)
 
     def _determine_aml_risk_level(self, risk_score: float) -> str:
@@ -439,15 +516,20 @@ class ComplianceService:
         )
         rescreen_days = self.config["aml"]["rescreening_interval_days"]
         next_screening_date = datetime.now() + timedelta(days=rescreen_days)
+
+        # Mock scheduling
         logger.info(
             f"Scheduled rescreening {scheduled_id} for {entity_type} {entity_id} on {next_screening_date.isoformat()}"
         )
+
         return scheduled_id
 
 
+# Initialize compliance service
 compliance_service = ComplianceService()
 
 
+# GDPR endpoints
 @app.post("/gdpr/data-requests", response_model=GDPRDataResponse)
 async def create_gdpr_request(
     request: GDPRDataRequest, background_tasks: BackgroundTasks
@@ -456,6 +538,8 @@ async def create_gdpr_request(
     Create a new GDPR data request (export, delete, etc.)
     """
     try:
+        # NOTE: The original code included background_tasks but didn't use it.
+        # I will keep it for future async processing if needed, but the mock is synchronous.
         response = compliance_service.process_gdpr_request(request)
         return response
     except Exception as e:
@@ -480,6 +564,7 @@ async def get_gdpr_request(request_id: str):
     return response
 
 
+# PSD2 endpoints
 @app.post("/psd2/consents", response_model=PSD2AuthResponse)
 async def create_psd2_consent(request: PSD2AuthRequest):
     """
@@ -509,6 +594,7 @@ async def revoke_psd2_consent(consent_id: str):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"PSD2 consent {consent_id} not found",
         )
+    # FIX: Explicitly return None for 204 No Content
     return None
 
 
@@ -521,6 +607,7 @@ async def validate_psd2_consent(consent_id: str, scope: str):
     return {"valid": valid}
 
 
+# AML/CFT endpoints
 @app.post("/aml/screening", response_model=AMLScreeningResponse)
 async def screen_entity(request: AMLScreeningRequest):
     """
@@ -567,6 +654,7 @@ async def schedule_rescreening(entity_type: str, entity_id: str):
         )
 
 
+# Health check endpoint
 @app.get("/health", status_code=status.HTTP_200_OK)
 async def health_check():
     """
