@@ -1,12 +1,12 @@
-#!/bin/bash
+#!/bin/bash\nset -euo pipefail
 
 # FinFlow Project - Comprehensive Code Quality Script
 # Version 1.0 - Complete Linting and Formatting Solution
 
 # --- Configuration ---
-PROJECT_ROOT="$(pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 BACKEND_DIR="$PROJECT_ROOT/backend"
-FRONTEND_DIR="$PROJECT_ROOT/frontend"
+FRONTEND_DIR="$PROJECT_ROOT/web-frontend"
 CONFIG_DIR="$PROJECT_ROOT/config"
 NODE_VERSION="16"
 

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash\nset -euo pipefail
 # FinFlow Monitoring Automation
 # This script automates monitoring setup, dashboard configuration, and alert management
 # Version: 1.0.0
@@ -119,7 +119,7 @@ check_prerequisites() {
   fi
   
   # Check if Docker Compose is installed
-  if ! command -v docker-compose &> /dev/null; then
+  if ! command -v docker-compose &> /dev/null && ! command -v docker compose &> /dev/null; then\n    DOCKER_COMPOSE_CMD="docker-compose"\n  elif command -v docker compose &> /dev/null; then\n    DOCKER_COMPOSE_CMD="docker compose"\n  else
     print_error "Docker Compose is required but not installed."
     log_message "ERROR" "Docker Compose is required but not installed"
     exit 1

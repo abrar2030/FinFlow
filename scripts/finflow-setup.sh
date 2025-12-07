@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash\nset -euo pipefail
 # FinFlow Comprehensive Environment Setup Script
 # This script automates the complete setup process for the FinFlow platform
 # Version: 1.0.0
@@ -147,10 +147,10 @@ install_dependency() {
         return 1
       fi
       ;;
-    docker-compose)
+    docker-compose)\n      # Check for both legacy and modern docker compose
       if command -v apt-get &> /dev/null; then
         print_info "Installing Docker Compose via apt..."
-        sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+        # Modern Docker Compose is installed with Docker Desktop or via package manager\n    # Legacy installation is complex and often requires manual steps, so we'll simplify\n    print_warning "Manual installation of legacy docker-compose is complex. Please ensure 'docker compose' or 'docker-compose' is available."\n    return 1
         sudo chmod +x /usr/local/bin/docker-compose
       elif command -v brew &> /dev/null; then
         print_info "Installing Docker Compose via Homebrew..."
@@ -181,7 +181,7 @@ install_dependency() {
 check_command node || exit 1
 check_command npm || exit 1
 check_command docker || exit 1
-check_command docker-compose || exit 1
+check_command docker-compose || (\n    # Check for modern docker compose command if docker-compose is not found\n    if ! command -v docker compose &> /dev/null; then\n        print_error "Neither docker-compose nor 'docker compose' is installed."\n        log_message "ERROR" "Neither docker-compose nor 'docker compose' is installed."\n        exit 1\n    fi\n)
 
 # Check Node.js version
 NODE_VERSION=$(node -v | cut -d 'v' -f 2 | cut -d '.' -f 1)

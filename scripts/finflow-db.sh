@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash\nset -euo pipefail
 # FinFlow Database Management Automation
 # This script automates database migrations, seeding, backups, and maintenance
 # Version: 1.0.0
@@ -170,10 +170,10 @@ load_env_variables() {
   
   # Extract MongoDB connection details
   if [ -n "$MONGODB_URI" ]; then
-    # Parse MongoDB URI to extract host, port, and database name
-    MONGODB_HOST=$(echo "$MONGODB_URI" | sed -n 's|mongodb://\([^:]*\).*|\1|p')
-    MONGODB_PORT=$(echo "$MONGODB_URI" | sed -n 's|mongodb://[^:]*:\([^/]*\).*|\1|p')
-    MONGODB_DB=$(echo "$MONGODB_URI" | sed -n 's|mongodb://[^/]*/\([^?]*\).*|\1|p')
+    # Parse MongoDB URI to extract host, port, and database name\n    # Using a more robust and secure method with regex and parameter expansion\n    # Note: This is a basic parser and may not handle all complex URI formats (e.g., with auth or query params)
+    # Extract protocol and credentials (if any) - not used for host/port but good to know\n    local uri_no_protocol="${MONGODB_URI#*://}"\n    local uri_no_auth="${uri_no_protocol#*@}"\n    local host_port_db="${uri_no_auth%%/*}"\n    local db_name="${uri_no_auth#*/}"\n\n    # Extract host and port\n    MONGODB_HOST="${host_port_db%:*}"\n    MONGODB_PORT="${host_port_db##*:}"\n    MONGODB_DB="${db_name%%\?*}" # Remove query parameters
+    # Original sed lines removed for clarity and security
+    # Original sed lines removed for clarity and security
     
     if [ -z "$MONGODB_HOST" ]; then
       MONGODB_HOST="localhost"
