@@ -1,4 +1,7 @@
-#!/bin/bash\nset -euo pipefail
+#!/bin/bash
+
+set -euo pipefail
+
 # FinFlow Comprehensive Environment Setup Script
 # This script automates the complete setup process for the FinFlow platform
 # Version: 1.0.0

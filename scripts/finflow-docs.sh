@@ -1,4 +1,7 @@
-#!/bin/bash\nset -euo pipefail
+#!/bin/bash
+
+set -euo pipefail
+
 # FinFlow Documentation Generation Automation
 # This script automates the generation of API documentation, changelogs, and other docs
 # Version: 1.0.0

@@ -1,4 +1,7 @@
-#!/bin/bash\nset -euo pipefail
+#!/bin/bash
+
+set -euo pipefail
+
 # FinFlow Code Quality Automation
 # This script automates code quality checks, linting, and formatting
 # Version: 1.0.0

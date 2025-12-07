@@ -1,4 +1,7 @@
-#!/bin/bash\nset -euo pipefail
+#!/bin/bash
+
+set -euo pipefail
+
 # FinFlow Unified Test Runner
 # This script automates running all types of tests across services
 # Version: 1.0.0

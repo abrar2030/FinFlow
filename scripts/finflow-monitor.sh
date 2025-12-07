@@ -1,4 +1,7 @@
-#!/bin/bash\nset -euo pipefail
+#!/bin/bash
+
+set -euo pipefail
+
 # FinFlow Monitoring Automation
 # This script automates monitoring setup, dashboard configuration, and alert management
 # Version: 1.0.0

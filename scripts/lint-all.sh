@@ -1,4 +1,6 @@
-#!/bin/bash\nset -euo pipefail
+#!/bin/bash
+
+set -euo pipefail
 
 # FinFlow Project - Comprehensive Code Quality Script
 # Version 1.0 - Complete Linting and Formatting Solution

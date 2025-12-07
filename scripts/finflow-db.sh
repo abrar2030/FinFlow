@@ -1,4 +1,7 @@
-#!/bin/bash\nset -euo pipefail
+#!/bin/bash
+
+set -euo pipefail
+
 # FinFlow Database Management Automation
 # This script automates database migrations, seeding, backups, and maintenance
 # Version: 1.0.0

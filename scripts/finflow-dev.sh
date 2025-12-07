@@ -1,4 +1,7 @@
-#!/bin/bash\nset -euo pipefail
+#!/bin/bash
+
+set -euo pipefail
+
 # FinFlow Development Workflow Automation
 # This script automates cross-service development workflow and service coordination
 # Version: 1.0.0
