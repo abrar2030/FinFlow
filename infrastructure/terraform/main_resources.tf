@@ -7,7 +7,7 @@ module "vpc" {
   database_subnet_cidrs = var.database_subnet_cidrs
   availability_zones    = var.availability_zones
   environment           = var.environment
-  
+
   # Tags
   tags = merge(var.tags, {
     "kubernetes.io/cluster/${var.cluster_name}" = "shared"
@@ -15,26 +15,26 @@ module "vpc" {
 }
 
 module "iam" {
-  source  = "./modules/iam"
-  environment = var.environment
-  tags = var.tags
-  aws_region = var.aws_region
-  secrets_manager_prefix = var.secrets_manager_prefix
+  source                  = "./modules/iam"
+  environment             = var.environment
+  tags                    = var.tags
+  aws_region              = var.aws_region
+  secrets_manager_prefix  = var.secrets_manager_prefix
   cluster_oidc_issuer_url = module.eks.cluster_oidc_issuer_url
 }
 
 module "eks" {
   source = "./modules/eks"
 
-  cluster_name    = var.cluster_name
-  cluster_version = var.cluster_version
-  vpc_id          = module.vpc.vpc_id
-  private_subnet_ids = module.vpc.private_subnet_ids
-  node_groups     = var.node_groups
-  environment     = var.environment
-  eks_cluster_role_arn = module.iam.eks_cluster_role_arn
+  cluster_name            = var.cluster_name
+  cluster_version         = var.cluster_version
+  vpc_id                  = module.vpc.vpc_id
+  private_subnet_ids      = module.vpc.private_subnet_ids
+  node_groups             = var.node_groups
+  environment             = var.environment
+  eks_cluster_role_arn    = module.iam.eks_cluster_role_arn
   eks_node_group_role_arn = module.iam.eks_node_group_role_arn
-  
+
   # Tags
   tags = var.tags
 }
@@ -50,7 +50,7 @@ module "rds" {
   db_engine_version     = var.db_engine_version
   kms_key_id            = aws_kms_key.finflow_key.id
   rds_security_group_id = module.vpc.rds_security_group_id
-  
+
   # Database instances
   databases = {
     auth = {
@@ -70,7 +70,7 @@ module "rds" {
       port = 5432
     }
   }
-  
+
   # Tags
   tags = var.tags
 }
@@ -79,7 +79,7 @@ module "ecr" {
   source = "./modules/ecr"
 
   environment = var.environment
-  
+
   # Repository names
   repositories = [
     "frontend",
@@ -90,11 +90,11 @@ module "ecr" {
     "analytics-service",
     "credit-engine"
   ]
-  
+
   # Image scanning and lifecycle policies
-  enable_scan_on_push = true
+  enable_scan_on_push   = true
   image_retention_count = 10
-  
+
   # Tags
   tags = var.tags
 }
@@ -104,7 +104,7 @@ module "route53" {
 
   domain_name = var.domain_name
   environment = var.environment
-  
+
   # Record sets
   record_sets = {
     main = {
@@ -126,7 +126,7 @@ module "route53" {
       }
     }
   }
-  
+
   # Tags
   tags = var.tags
 }
@@ -135,50 +135,48 @@ module "bastion" {
   source = "./modules/bastion"
   count  = var.enable_bastion ? 1 : 0
 
-  vpc_id            = module.vpc.vpc_id
-  subnet_id         = module.vpc.public_subnets[0]
-  environment       = var.environment
-  ssh_key_name      = "finflow-${var.environment}"
-  allowed_cidr      = ["0.0.0.0/0"]  # Restrict to known IPs in production
-  bastion_security_group_id = module.vpc.bastion_security_group_id
-  
+  vpc_id       = module.vpc.vpc_id
+  subnet_id    = module.vpc.public_subnets[0]
+  environment  = var.environment
+  ssh_key_name = "finflow-${var.environment}"
+  allowed_cidr = ["0.0.0.0/0"] # Restrict to known IPs in production
+
   # Tags
   tags = var.tags
 }
 
 # CloudWatch Logging Module
 module "cloudwatch_logging" {
-  source  = "./modules/cloudwatch_logging"
-  environment = var.environment
+  source         = "./modules/cloudwatch_logging"
+  environment    = var.environment
   s3_bucket_name = "finflow-cloudtrail-logs-${var.environment}"
-  cloudwatch_logs_role_arn = module.iam.cloudwatch_logs_role_arn
-  tags = var.tags
+  tags           = var.tags
 }
 
 # Create namespaces in Kubernetes
 resource "kubernetes_namespace" "finflow" {
   metadata {
     name = "finflow-${var.environment}"
-    
+
     labels = {
       name        = "finflow-${var.environment}"
       environment = var.environment
     }
   }
-  
+
   depends_on = [module.eks]
 }
 
 resource "kubernetes_namespace" "monitoring" {
   metadata {
     name = "monitoring"
-    
+
     labels = {
       name        = "monitoring"
       environment = var.environment
     }
   }
-  
+
   depends_on = [module.eks]
 }
 
@@ -189,11 +187,11 @@ resource "helm_release" "prometheus" {
   chart      = "kube-prometheus-stack"
   namespace  = kubernetes_namespace.monitoring.metadata[0].name
   version    = "45.7.1"
-  
+
   values = [
     file("${path.module}/helm-values/prometheus-values.yaml")
   ]
-  
+
   depends_on = [kubernetes_namespace.monitoring]
 }
 

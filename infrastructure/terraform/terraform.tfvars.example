@@ -1,0 +1,64 @@
+# FinFlow Terraform Variables Example
+# Copy this file to terraform.tfvars and fill in your actual values
+# NEVER commit terraform.tfvars to version control
+
+# AWS Configuration
+aws_region  = "us-west-2"
+environment = "dev" # Options: dev, staging, prod
+
+# Network Configuration
+vpc_cidr                = "10.0.0.0/16"
+public_subnet_cidrs     = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+private_subnet_cidrs    = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
+database_subnet_cidrs   = ["10.0.201.0/24", "10.0.202.0/24", "10.0.203.0/24"]
+availability_zones      = ["us-west-2a", "us-west-2b", "us-west-2c"]
+
+# EKS Cluster Configuration
+cluster_name    = "finflow-cluster-dev"
+cluster_version = "1.28"
+
+# Node Groups Configuration
+node_groups = {
+  app_nodes = {
+    name           = "app-nodes"
+    instance_types = ["t3.medium"]
+    min_size       = 1
+    max_size       = 3
+    desired_size   = 2
+    disk_size      = 50
+    labels = {
+      role = "app"
+    }
+  }
+  # Add more node groups as needed
+}
+
+# Database Configuration
+db_instance_class     = "db.t3.small" # Use smaller instance for dev
+db_allocated_storage  = 20
+db_engine_version     = "14"
+
+# Domain Configuration
+domain_name = "finflow-dev.example.com" # Replace with your actual domain
+
+# Security Configuration
+enable_bastion          = true
+kms_key_alias           = "alias/finflow-kms-key-dev"
+secrets_manager_prefix  = "finflow/dev/"
+
+# Logging Configuration
+cloudtrail_s3_bucket_name = "finflow-cloudtrail-logs-dev-REPLACE_WITH_UNIQUE_SUFFIX"
+
+# Additional Tags
+tags = {
+  ManagedBy   = "Terraform"
+  Project     = "FinFlow"
+  Environment = "dev"
+  Owner       = "your-team@example.com"
+}
+
+# Notes:
+# - Replace all example values with your actual configuration
+# - Ensure S3 bucket names are globally unique
+# - Use appropriate instance sizes for your environment
+# - For production, use stronger instance types and higher redundancy

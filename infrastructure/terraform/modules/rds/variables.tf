@@ -33,7 +33,7 @@ variable "db_engine_version" {
 
 variable "databases" {
   description = "Map of database configurations"
-  type        = map(object({
+  type = map(object({
     name = string
     port = number
   }))

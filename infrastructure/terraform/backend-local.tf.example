@@ -1,0 +1,26 @@
+# Local Backend Configuration for Development
+# This file provides a local backend alternative to the S3 backend
+# 
+# Usage:
+# 1. Copy this file to backend-local.tf
+# 2. Comment out or remove the backend "s3" block in main.tf
+# 3. Run terraform init
+#
+# NOTE: Local backend should ONLY be used for:
+# - Initial development and testing
+# - Learning and experimentation
+# - Validation without AWS resources
+#
+# For team collaboration and production, use the S3 backend in main.tf
+
+terraform {
+  backend "local" {
+    path = "terraform.tfstate"
+  }
+}
+
+# To switch between backends:
+# 1. Remove the old .terraform directory: rm -rf .terraform
+# 2. Configure the desired backend
+# 3. Run: terraform init
+# 4. When prompted, you can migrate existing state or start fresh

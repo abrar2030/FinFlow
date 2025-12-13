@@ -1,0 +1,43 @@
+# Ansible Inventory Example for FinFlow
+# Copy this file to 'inventory' and update with your actual hosts
+#
+# Usage:
+#   ansible-playbook -i inventory site.yml
+#
+# For encrypted variables, use ansible-vault:
+#   ansible-vault create group_vars/all/vault.yml
+#   ansible-playbook -i inventory site.yml --ask-vault-pass
+
+[finflow_servers]
+# List your application servers here
+# app-server-1 ansible_host=10.0.1.10 ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/finflow-key.pem
+# app-server-2 ansible_host=10.0.1.11 ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/finflow-key.pem
+
+[db_servers]
+# List your database servers here (if self-managed, not RDS)
+# db-server-1 ansible_host=10.0.2.10 ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/finflow-key.pem
+
+[monitoring_servers]
+# List your monitoring servers here
+# monitoring-1 ansible_host=10.0.3.10 ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/finflow-key.pem
+
+[kubernetes_masters]
+# List your Kubernetes master nodes (if self-managed, not EKS)
+# k8s-master-1 ansible_host=10.0.4.10 ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/finflow-key.pem
+
+[kubernetes_workers]
+# List your Kubernetes worker nodes (if self-managed, not EKS)
+# k8s-worker-1 ansible_host=10.0.5.10 ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/finflow-key.pem
+# k8s-worker-2 ansible_host=10.0.5.11 ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/finflow-key.pem
+
+[all:vars]
+# Global variables for all hosts
+ansible_python_interpreter=/usr/bin/python3
+ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+
+# Example of using localhost for testing
+[local]
+localhost ansible_connection=local
+
+# NOTE: For AWS EKS and managed services, you primarily interact via kubectl and AWS CLI
+# rather than SSH'ing to nodes. This inventory is for self-managed infrastructure.

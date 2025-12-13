@@ -10,10 +10,10 @@ variable "environment" {
 
 variable "record_sets" {
   description = "Map of DNS record configurations"
-  type        = map(object({
-    name  = string
-    type  = string
-    ttl   = optional(number)
+  type = map(object({
+    name    = string
+    type    = string
+    ttl     = optional(number)
     records = optional(list(string))
     alias = optional(object({
       name                   = string

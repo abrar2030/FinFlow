@@ -13,12 +13,12 @@ locals {
 data "aws_ami" "amazon_linux" {
   most_recent = true
   owners      = ["amazon"]
-  
+
   filter {
     name   = "name"
     values = ["amzn2-ami-hvm-*-x86_64-gp2"]
   }
-  
+
   filter {
     name   = "virtualization-type"
     values = ["hvm"]
@@ -30,7 +30,7 @@ resource "aws_security_group" "bastion" {
   name        = "finflow-${var.environment}-bastion-sg"
   description = "Security group for FinFlow bastion host"
   vpc_id      = var.vpc_id
-  
+
   # SSH access
   ingress {
     from_port   = 22
@@ -39,7 +39,7 @@ resource "aws_security_group" "bastion" {
     cidr_blocks = var.allowed_cidr
     description = "SSH access"
   }
-  
+
   # Outbound internet access
   egress {
     from_port   = 0
@@ -48,14 +48,14 @@ resource "aws_security_group" "bastion" {
     cidr_blocks = ["0.0.0.0/0"]
     description = "Allow all outbound traffic"
   }
-  
+
   tags = local.common_tags
 }
 
 # IAM role for bastion host
 resource "aws_iam_role" "bastion" {
   name = "finflow-${var.environment}-bastion-role"
-  
+
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -68,7 +68,7 @@ resource "aws_iam_role" "bastion" {
       }
     ]
   })
-  
+
   tags = local.common_tags
 }
 
@@ -92,16 +92,16 @@ resource "aws_instance" "bastion" {
   subnet_id              = var.subnet_id
   vpc_security_group_ids = [aws_security_group.bastion.id]
   iam_instance_profile   = aws_iam_instance_profile.bastion.name
-  
+
   associate_public_ip_address = true
-  
+
   root_block_device {
     volume_type           = "gp2"
     volume_size           = 20
     delete_on_termination = true
     encrypted             = true
   }
-  
+
   user_data = <<-EOF
     #!/bin/bash
     yum update -y
@@ -135,9 +135,9 @@ resource "aws_instance" "bastion" {
     echo "PasswordAuthentication no" >> /etc/ssh/sshd_config
     systemctl restart sshd
   EOF
-  
+
   tags = local.common_tags
-  
+
   lifecycle {
     create_before_destroy = true
   }
@@ -146,7 +146,7 @@ resource "aws_instance" "bastion" {
 # Elastic IP for bastion host
 resource "aws_eip" "bastion" {
   domain = "vpc"
-  
+
   tags = local.common_tags
 }
 

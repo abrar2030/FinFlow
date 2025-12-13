@@ -57,7 +57,7 @@ variable "cluster_version" {
 variable "node_groups" {
   description = "Map of EKS node group configurations"
   type        = map(any)
-  default     = {
+  default = {
     app_nodes = {
       name           = "app-nodes"
       instance_types = ["t3.medium"]
