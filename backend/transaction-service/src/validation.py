@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from core.logging import get_logger
 
 logger = get_logger(__name__)
-from .models import (
+from models import (
     RiskLevel,
     TransactionRequest,
     TransactionType,
@@ -998,7 +998,7 @@ class BatchTransactionValidator:
 
 
 if __name__ == "__main__":
-    from .models import TransactionRequest, TransactionType
+    from models import TransactionRequest, TransactionType
 
     validator = TransactionValidator()
     low_risk_tx = TransactionRequest(
