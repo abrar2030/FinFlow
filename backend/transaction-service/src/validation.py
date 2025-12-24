@@ -15,7 +15,6 @@ from models import (
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
-logger = logging.getLogger("transaction-validation")
 
 
 class TransactionValidator:
@@ -24,7 +23,7 @@ class TransactionValidator:
     and risk assessments on financial transactions.
     """
 
-    def __init__(self, config: Optional[Dict[str, Any]] = None) -> Any:
+    def __init__(self, config: Optional[Dict[str, Any]] = None) -> None:
         """
         Initialize the transaction validator with optional configuration.
 
@@ -933,7 +932,7 @@ class BatchTransactionValidator:
     Validator for processing batches of transactions with optimized validation.
     """
 
-    def __init__(self, validator: TransactionValidator) -> Any:
+    def __init__(self, validator: TransactionValidator) -> None:
         """
         Initialize batch validator with a transaction validator.
 

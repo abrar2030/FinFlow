@@ -77,7 +77,7 @@ class ComplianceService:
     Comprehensive compliance service implementing GDPR, PSD2, and other financial regulations.
     """
 
-    def __init__(self, config: Optional[Dict[str, Any]] = None) -> Any:
+    def __init__(self, config: Optional[Dict[str, Any]] = None) -> None:
         """
         Initialize the compliance service with optional configuration.
 
@@ -568,7 +568,7 @@ async def schedule_rescreening(entity_type: str, entity_id: str):
 
 
 @app.get("/health", status_code=status.HTTP_200_OK)
-async def health_check():
+async def health_check() -> Dict[str, str]:
     """
     Health check endpoint for monitoring
     """

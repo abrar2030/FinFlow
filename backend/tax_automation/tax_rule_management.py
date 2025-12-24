@@ -1,9 +1,10 @@
 import json
 import logging
 import sqlite3
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from datetime import date, datetime
 from decimal import Decimal
+from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 

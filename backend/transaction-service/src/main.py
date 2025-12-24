@@ -616,7 +616,7 @@ async def query_transactions(
 
 
 @app.get("/health", status_code=http_status.HTTP_200_OK)
-async def health_check():
+async def health_check() -> Dict[str, str]:
     """
     Health check endpoint for monitoring
     """

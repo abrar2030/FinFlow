@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
 from decimal import Decimal
+from typing import Dict
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS
@@ -60,7 +61,7 @@ def init_tax_system():
 
 
 @app.route("/health", methods=["GET"])
-def health_check():
+def health_check() -> Dict[str, str]:
     """Health check endpoint"""
     status = "healthy" if tax_engine and rule_manager else "degraded"
     return jsonify(

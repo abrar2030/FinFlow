@@ -1,7 +1,3 @@
-import os
-from datetime import datetime
-from typing import Any
-
 """
 FinFlow AI Features Service
 
@@ -14,9 +10,12 @@ Advanced AI-powered financial features including:
 """
 
 import logging
+import os
 import sys
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator
+from datetime import datetime
+from typing import AsyncGenerator, Callable, Dict, Any
+
 import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -25,76 +24,85 @@ from fastapi.responses import JSONResponse
 
 
 class MockSettings:
+    """Application settings configuration"""
 
-    def __init__(self) -> Any:
-        self.environment = os.getenv("ENV", "development")
-        self.allowed_origins = ["*"]
-        self.port = int(os.getenv("PORT", "8000"))
-        self.log_level = os.getenv("LOG_LEVEL", "info")
-        self.workers = 1
+    def __init__(self) -> None:
+        self.environment: str = os.getenv("ENV", "development")
+        self.allowed_origins: list[str] = ["*"]
+        self.port: int = int(os.getenv("PORT", "8000"))
+        self.log_level: str = os.getenv("LOG_LEVEL", "info")
+        self.workers: int = 1
 
 
-def get_settings() -> Any:
+def get_settings() -> MockSettings:
+    """Get application settings"""
     return MockSettings()
 
 
-def setup_logging() -> Any:
+def setup_logging() -> None:
+    """Setup logging configuration"""
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )
 
 
-async def init_database():
-    pass
+async def init_database() -> None:
+    """Initialize database connection"""
 
 
-async def close_database():
-    pass
+async def close_database() -> None:
+    """Close database connection"""
 
 
-async def init_redis():
-    pass
+async def init_redis() -> None:
+    """Initialize Redis connection"""
 
 
-async def close_redis():
-    pass
+async def close_redis() -> None:
+    """Close Redis connection"""
 
 
 class MockService:
+    """Base service class"""
 
-    async def initialize(self):
-        pass
+    async def initialize(self) -> None:
+        """Initialize service"""
 
-    async def cleanup(self):
-        pass
+    async def cleanup(self) -> None:
+        """Cleanup service resources"""
 
 
 class ModelManager(MockService):
-    pass
+    """ML Model manager"""
 
 
 class PredictionService(MockService):
+    """Prediction service"""
 
-    def __init__(self, manager: Any) -> Any:
-        pass
+    def __init__(self, manager: ModelManager) -> None:
+        self.manager = manager
 
 
 class AdvisoryService(MockService):
+    """Financial advisory service"""
 
-    def __init__(self, manager: Any) -> Any:
-        pass
+    def __init__(self, manager: ModelManager) -> None:
+        self.manager = manager
 
 
 class CashFlowService(MockService):
+    """Cash flow prediction service"""
 
-    def __init__(self, manager: Any) -> Any:
-        pass
+    def __init__(self, manager: ModelManager) -> None:
+        self.manager = manager
 
 
 class HealthChecker:
+    """Health check service"""
 
-    async def check_health(self):
+    async def check_health(self) -> Dict[str, str]:
+        """Check service health"""
         return {
             "status": "healthy",
             "service": "ai-features-service",
@@ -104,18 +112,22 @@ class HealthChecker:
 
 
 class MockRouter:
+    """Mock API router"""
 
-    def __init__(self) -> Any:
-        self.prefix = "/api/v1"
-        self.tags = ["v1"]
+    def __init__(self) -> None:
+        self.prefix: str = "/api/v1"
+        self.tags: list[str] = ["v1"]
 
 
 api_router = MockRouter()
 
 
-def make_asgi_app() -> Any:
+def make_asgi_app() -> Callable[..., Any]:
+    """Create ASGI application for metrics"""
 
-    async def prometheus_app(scope, receive, send):
+    async def prometheus_app(
+        scope: Dict[str, Any], receive: Callable, send: Callable
+    ) -> None:
         assert scope["type"] == "http"
         response = JSONResponse({"status": "metrics_mock"})
         await response(scope, receive, send)
@@ -184,7 +196,7 @@ def create_app() -> FastAPI:
     app.mount("/metrics", metrics_app)
 
     @app.get("/health")
-    async def health_check():
+    async def health_check() -> JSONResponse:
         """Health check endpoint"""
         try:
             health_checker = getattr(app.state, "health_checker", None)
@@ -204,7 +216,7 @@ def create_app() -> FastAPI:
             raise HTTPException(status_code=503, detail="Service unhealthy")
 
     @app.get("/")
-    async def root():
+    async def root() -> Dict[str, str]:
         """Root endpoint"""
         return {
             "service": "FinFlow AI Features Service",
@@ -217,7 +229,7 @@ def create_app() -> FastAPI:
     return app
 
 
-def main() -> Any:
+def main() -> None:
     """Main entry point"""
     app = create_app()
     config = uvicorn.Config(

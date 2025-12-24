@@ -40,7 +40,7 @@ logger = logging.getLogger(__name__)
 class CashFlowService:
     """Advanced cash flow prediction and analysis service"""
 
-    def __init__(self, model_manager: Any) -> Any:
+    def __init__(self, model_manager: Any) -> None:
         self.model_manager = model_manager
         self.feature_engineer = FeatureEngineer()
         self.data_validator = DataValidator()
@@ -59,7 +59,7 @@ class CashFlowService:
         self.scalers = {"standard": StandardScaler(), "minmax": MinMaxScaler()}
         self.is_initialized = False
 
-    async def initialize(self):
+    async def initialize(self) -> None:
         """Initialize the cash flow service"""
         try:
             logger.info("Initializing Cash Flow Service...")

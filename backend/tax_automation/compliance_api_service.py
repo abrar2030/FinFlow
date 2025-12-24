@@ -31,7 +31,7 @@ def init_compliance_system():
 
 
 @compliance_app.route("/health", methods=["GET"])
-def health_check():
+def health_check() -> Dict[str, str]:
     """Health check endpoint"""
     return jsonify(
         {

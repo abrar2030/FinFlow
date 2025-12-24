@@ -2,7 +2,7 @@ import json
 import logging
 import os
 from datetime import datetime
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 # NOTE: joblib is not strictly needed since the model is mocked, but kept for completeness
 # import joblib
@@ -311,7 +311,7 @@ async def delete_user_data(current_user: dict = Depends(get_current_user)):
 
 # Health check endpoint
 @app.get("/health", status_code=status.HTTP_200_OK)
-async def health_check():
+async def health_check() -> Dict[str, str]:
     """
     Health check endpoint for monitoring
     """

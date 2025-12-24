@@ -13,7 +13,7 @@ Provides intelligent financial advice and recommendations:
 import asyncio
 import logging
 from datetime import datetime, timedelta
-from typing import Any, Dict, List
+from typing import Optional, Any, Dict, List
 
 
 async def get_database():
@@ -42,8 +42,11 @@ class MockRedis:
 class FinancialAdvisoryRequest:
 
     def __init__(
-        self, user_id: Any, investment_amount: Any = None, financial_goals: Any = None
-    ) -> Any:
+        self,
+        user_id: str,
+        investment_amount: Optional[float] = None,
+        financial_goals: Optional[List[Any]] = None,
+    ) -> None:
         self.user_id = user_id
         self.investment_amount = investment_amount
         self.financial_goals = financial_goals or []
@@ -51,16 +54,18 @@ class FinancialAdvisoryRequest:
 
 class FinancialAdvisoryResponse:
 
-    def __init__(self, **kwargs) -> Any:
+    def __init__(self, **kwargs) -> None:
         self.__dict__.update(kwargs)
 
-    def json(self) -> Any:
+    def json(self) -> str:
         return json.dumps(self.__dict__, default=str)
 
 
 class FinancialGoal:
 
-    def __init__(self, goal_type: Any, target_amount: Any, target_date: Any) -> Any:
+    def __init__(
+        self, goal_type: str, target_amount: float, target_date: datetime
+    ) -> None:
         self.goal_type = goal_type
         self.target_amount = target_amount
         self.target_date = target_date
@@ -68,40 +73,40 @@ class FinancialGoal:
 
 class InvestmentRecommendation:
 
-    def __init__(self, **kwargs) -> Any:
+    def __init__(self, **kwargs) -> None:
         self.__dict__.update(kwargs)
 
 
 class MarketInsight:
 
-    def __init__(self, **kwargs) -> Any:
+    def __init__(self, **kwargs) -> None:
         self.__dict__.update(kwargs)
 
 
 class PersonalizedAdvice:
 
-    def __init__(self, **kwargs) -> Any:
+    def __init__(self, **kwargs) -> None:
         self.__dict__.update(kwargs)
 
 
 class PortfolioAllocation:
 
-    def __init__(self, **kwargs) -> Any:
+    def __init__(self, **kwargs) -> None:
         self.__dict__.update(kwargs)
 
 
 class RiskAssessment:
 
-    def __init__(self, **kwargs) -> Any:
+    def __init__(self, **kwargs) -> None:
         self.__dict__.update(kwargs)
 
 
 class MockUtil:
 
-    async def initialize(self):
+    async def initialize(self) -> None:
         pass
 
-    async def cleanup(self):
+    async def cleanup(self) -> None:
         pass
 
 
@@ -127,7 +132,7 @@ logger = logging.getLogger(__name__)
 class AdvisoryService:
     """Automated financial advisory and recommendation service"""
 
-    def __init__(self, model_manager: ModelManager) -> Any:
+    def __init__(self, model_manager: ModelManager) -> None:
         self.model_manager = model_manager
         self.risk_calculator = RiskCalculator()
         self.portfolio_optimizer = PortfolioOptimizer()
@@ -162,7 +167,7 @@ class AdvisoryService:
         }
         self.is_initialized = False
 
-    async def initialize(self):
+    async def initialize(self) -> None:
         """Initialize the advisory service"""
         try:
             logger.info("Initializing Financial Advisory Service...")
@@ -930,7 +935,7 @@ class AdvisoryService:
                 "recommendation": "Maintain broad market exposure",
             }
 
-    async def cleanup(self):
+    async def cleanup(self) -> None:
         """Cleanup resources"""
         try:
             logger.info("Cleaning up Financial Advisory Service...")
@@ -942,9 +947,7 @@ class AdvisoryService:
 
 
 import json
-from core.logging import get_logger
 
-logger = get_logger(__name__)
 if __name__ == "__main__":
 
     async def run_example():
