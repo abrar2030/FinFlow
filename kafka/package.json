@@ -1,7 +1,7 @@
 {
-  "name": "@finflow/kafka-enhanced",
+  "name": "@finflow/kafka",
   "version": "1.0.0",
-  "description": "Enhanced Kafka implementation for financial services with robust security, compliance, and monitoring capabilities",
+  "description": "Kafka implementation for financial services with robust security, compliance, and monitoring capabilities",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -41,12 +41,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/finflow/kafka-enhanced.git"
+    "url": "https://github.com/finflow/kafka.git"
   },
   "bugs": {
-    "url": "https://github.com/finflow/kafka-enhanced/issues"
+    "url": "https://github.com/finflow/kafka/issues"
   },
-  "homepage": "https://github.com/finflow/kafka-enhanced#readme",
+  "homepage": "https://github.com/finflow/kafka#readme",
   "dependencies": {
     "kafkajs": "^2.2.4",
     "winston": "^3.11.0",

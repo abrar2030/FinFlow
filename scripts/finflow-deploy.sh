@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-# FinFlow Enhanced Deployment Script
+# FinFlow Deployment Script
 # This script automates the build and deployment process with environment-specific configuration
 # Version: 1.0.0
 

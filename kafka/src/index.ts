@@ -1,5 +1,5 @@
 /**
- * Enhanced Kafka Implementation for Financial Services
+ * Kafka Implementation for Financial Services
  *
  * This module provides a comprehensive, enterprise-grade Kafka implementation
  * specifically designed for financial services organizations with robust
@@ -88,7 +88,7 @@ export interface TopicConfig {
   };
 }
 
-export interface EnhancedKafkaOptions {
+export interface KafkaOptions {
   kafkaConfig: KafkaConfig;
   securityConfig?: {
     encryptionKey?: string;
@@ -109,20 +109,20 @@ export interface EnhancedKafkaOptions {
 }
 
 /**
- * Enhanced Kafka Client Factory
+ * Kafka Client Factory
  *
  * Creates configured instances of SecureProducer and SecureConsumer
  * with all security, compliance, and monitoring features enabled.
  */
-export class EnhancedKafkaClient {
+export class KafkaClient {
   private securityManager: SecurityManager;
   private complianceManager: ComplianceManager;
   private logger: Logger;
   private kafkaConfig: KafkaConfig;
 
-  constructor(options: EnhancedKafkaOptions) {
+  constructor(options: KafkaOptions) {
     this.kafkaConfig = options.kafkaConfig;
-    this.logger = new Logger('EnhancedKafkaClient');
+    this.logger = new Logger('KafkaClient');
 
     // Initialize security manager
     this.securityManager = new SecurityManager();
@@ -130,7 +130,7 @@ export class EnhancedKafkaClient {
     // Initialize compliance manager
     this.complianceManager = new ComplianceManager(this.securityManager);
 
-    this.logger.info('Enhanced Kafka client initialized', {
+    this.logger.info('Kafka client initialized', {
       clientId: options.kafkaConfig.clientId,
       brokers: options.kafkaConfig.brokers.length,
       securityEnabled: !!options.securityConfig,
@@ -229,4 +229,4 @@ export class EnhancedKafkaClient {
 /**
  * Default export for convenience
  */
-export default EnhancedKafkaClient;
+export default KafkaClient;

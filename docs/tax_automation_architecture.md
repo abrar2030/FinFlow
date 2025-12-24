@@ -120,9 +120,3 @@ Given the existing Finflow stack (Node.js, React, Python for backend services), 
 - **Access Control:** Role-based access control (RBAC) will be strictly enforced to ensure only authorized personnel can access sensitive tax and compliance information.
 - **Audit Trails:** Comprehensive audit trails will be maintained for all tax calculations, rule changes, and compliance checks, providing an immutable record for regulatory scrutiny.
 - **Regular Updates:** The system will be designed to facilitate regular updates to tax rules and compliance regulations, ensuring ongoing adherence.
-
-## Future Enhancements
-
-- **Machine Learning for Anomaly Detection:** Utilizing ML to identify unusual tax patterns or potential compliance breaches.
-- **Predictive Tax Planning:** Leveraging historical data and ML to provide insights for tax optimization.
-- **Blockchain for Immutable Records:** Exploring blockchain technology for creating tamper-proof records of tax transactions and compliance events.

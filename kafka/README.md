@@ -1,8 +1,8 @@
-# Enhanced Kafka Implementation for Financial Services
+# Kafka Implementation for Financial Services
 
 ## Overview
 
-This enhanced Kafka implementation provides a comprehensive, enterprise-grade solution specifically designed for financial services organizations. It incorporates robust security measures, regulatory compliance features, and operational excellence practices that meet the stringent requirements of the financial industry.
+This Kafka implementation provides a comprehensive, enterprise-grade solution specifically designed for financial services organizations. It incorporates robust security measures, regulatory compliance features, and operational excellence practices that meet the stringent requirements of the financial industry.
 
 The implementation addresses critical concerns including data encryption, audit logging, compliance validation, secure authentication, and comprehensive monitoring. It has been designed to support various financial regulations including GDPR, PCI DSS, SOX, HIPAA, and FISMA.
 
@@ -41,7 +41,7 @@ The implementation addresses critical concerns including data encryption, audit 
 
 ## Architecture
 
-The enhanced Kafka implementation follows a layered architecture approach:
+The Kafka implementation follows a layered architecture approach:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -51,7 +51,7 @@ The enhanced Kafka implementation follows a layered architecture approach:
 ├─────────────────────────────────────────────────────────────┤
 │  SecurityManager │ ComplianceManager │ MonitoringManager    │
 ├─────────────────────────────────────────────────────────────┤
-│              Enhanced Kafka Client (KafkaJS)                │
+│              Kafka Client (KafkaJS)                         │
 ├─────────────────────────────────────────────────────────────┤
 │                    Apache Kafka Cluster                     │
 └─────────────────────────────────────────────────────────────┘
@@ -81,7 +81,7 @@ Ensures regulatory compliance through:
 
 #### SecureProducer
 
-Enhanced message producer with:
+Message producer with:
 
 - Automatic encryption for sensitive topics
 - Compliance validation before sending
@@ -91,7 +91,7 @@ Enhanced message producer with:
 
 #### SecureConsumer
 
-Enhanced message consumer featuring:
+Message consumer featuring:
 
 - Automatic decryption of encrypted messages
 - Signature verification for data integrity
@@ -102,7 +102,7 @@ Enhanced message consumer featuring:
 ## Installation
 
 ```bash
-npm install @finflow/kafka-enhanced
+npm install @finflow/kafka
 ```
 
 ## Quick Start
@@ -110,12 +110,7 @@ npm install @finflow/kafka-enhanced
 ### Basic Setup
 
 ```typescript
-import {
-  SecurityManager,
-  ComplianceManager,
-  SecureProducer,
-  SecureConsumer,
-} from '@finflow/kafka-enhanced';
+import { SecurityManager, ComplianceManager, SecureProducer, SecureConsumer } from '@finflow/kafka';
 import { Kafka } from 'kafkajs';
 
 // Initialize security manager
@@ -551,7 +546,7 @@ spec:
     spec:
       containers:
         - name: kafka-service
-          image: finflow/kafka-enhanced:latest
+          image: finflow/kafka:latest
           env:
             - name: KAFKA_BROKERS
               valueFrom:
@@ -671,8 +666,8 @@ process.env.DEBUG = 'kafka:*,security:*,compliance:*';
 ### Development Setup
 
 ```bash
-git clone https://github.com/finflow/kafka-enhanced.git
-cd kafka-enhanced
+git clone https://github.com/finflow/kafka.git
+cd kafka
 npm install
 npm run build
 ```

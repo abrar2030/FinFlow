@@ -2,7 +2,7 @@ import { createLogger, format, transports, Logger as WinstonLogger } from 'winst
 import DailyRotateFile from 'winston-daily-rotate-file';
 
 /**
- * Enhanced Logger for financial services compliance
+ * Logger for financial services compliance
  * Provides structured logging with audit trail capabilities
  */
 export class Logger {
