@@ -1,9 +1,24 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ApiError, ApiResponse } from "../types";
+import Constants from "expo-constants";
 
 // Base API configuration
-const API_URL = "http://localhost:8080"; // Default to local development
+// For Android emulator, use 10.0.2.2 instead of localhost
+// For iOS simulator, localhost works fine
+const getApiUrl = () => {
+  // Try to get from environment or config
+  const envApiUrl = Constants.expoConfig?.extra?.apiUrl;
+
+  if (envApiUrl) {
+    return envApiUrl;
+  }
+
+  // Default fallback
+  return "http://localhost:8080";
+};
+
+const API_URL = getApiUrl();
 const API_TIMEOUT = 30000; // 30 seconds
 
 class ApiService {
@@ -41,8 +56,9 @@ class ApiService {
         };
 
         if (error.response?.data) {
-          apiError.message = error.response.data.message || apiError.message;
-          apiError.errors = error.response.data.errors;
+          apiError.message =
+            (error.response.data as any).message || apiError.message;
+          apiError.errors = (error.response.data as any).errors;
         }
 
         // Handle 401 Unauthorized errors (token expired)
@@ -101,6 +117,11 @@ class ApiService {
     Object.entries(headers).forEach(([key, value]) => {
       this.api.defaults.headers.common[key] = value;
     });
+  }
+
+  // Get current base URL
+  getBaseUrl(): string {
+    return this.api.defaults.baseURL || API_URL;
   }
 }
 

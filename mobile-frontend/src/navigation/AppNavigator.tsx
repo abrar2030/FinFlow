@@ -6,29 +6,29 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import { useSelector } from "react-redux";
 import { RootState } from "../store";
 
-// Import screens (to be created)
+// Import screens
 // Auth screens
-const LoginScreen = () => <></>;
-const RegisterScreen = () => <></>;
-const ForgotPasswordScreen = () => <></>;
+import LoginScreen from "../screens/auth/LoginScreen";
+import RegisterScreen from "../screens/auth/RegisterScreen";
+import ForgotPasswordScreen from "../screens/auth/ForgotPasswordScreen";
 
 // Main screens
-const DashboardScreen = () => <></>;
-const PaymentsScreen = () => <></>;
-const PaymentDetailsScreen = () => <></>;
-const CreatePaymentScreen = () => <></>;
-const AccountingScreen = () => <></>;
-const BalanceSheetScreen = () => <></>;
-const IncomeStatementScreen = () => <></>;
-const CashFlowScreen = () => <></>;
-const AnalyticsScreen = () => <></>;
-const CreditScreen = () => <></>;
-const CreditScoreScreen = () => <></>;
-const LoansScreen = () => <></>;
-const LoanDetailsScreen = () => <></>;
-const ApplyLoanScreen = () => <></>;
-const ProfileScreen = () => <></>;
-const SettingsScreen = () => <></>;
+import DashboardScreen from "../screens/dashboard/DashboardScreen";
+import PaymentsScreen from "../screens/payments/PaymentsScreen";
+import PaymentDetailsScreen from "../screens/payments/PaymentDetailsScreen";
+import CreatePaymentScreen from "../screens/payments/CreatePaymentScreen";
+import AccountingScreen from "../screens/accounting/AccountingScreen";
+import BalanceSheetScreen from "../screens/accounting/BalanceSheetScreen";
+import IncomeStatementScreen from "../screens/accounting/IncomeStatementScreen";
+import CashFlowScreen from "../screens/accounting/CashFlowScreen";
+import AnalyticsScreen from "../screens/analytics/AnalyticsScreen";
+import CreditScreen from "../screens/credit/CreditScreen";
+import CreditScoreScreen from "../screens/credit/CreditScoreScreen";
+import LoansScreen from "../screens/credit/LoansScreen";
+import LoanDetailsScreen from "../screens/credit/LoanDetailsScreen";
+import ApplyLoanScreen from "../screens/credit/ApplyLoanScreen";
+import ProfileScreen from "../screens/profile/ProfileScreen";
+import SettingsScreen from "../screens/settings/SettingsScreen";
 
 // Define navigation types
 export type AuthStackParamList = {
