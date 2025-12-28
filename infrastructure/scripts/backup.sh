@@ -31,7 +31,7 @@ check_kubectl() {
 }
 
 # Set backup directory
-BACKUP_DIR="/home/ubuntu/finflow-backups/$(date +%Y-%m-%d)"
+BACKUP_DIR="/finflow-backups/$(date +%Y-%m-%d)"
 S3_BUCKET="finflow-backups"
 REGION=$(aws configure get region)
 
@@ -118,8 +118,8 @@ aws s3 cp s3://finflow-terraform-state $BACKUP_DIR/terraform --recursive
 print_header "Backing up Ansible files"
 print_step "Copying Ansible inventory and variables"
 mkdir -p $BACKUP_DIR/ansible
-cp -r /home/ubuntu/finflow-infra/ansible/inventory $BACKUP_DIR/ansible/
-cp -r /home/ubuntu/finflow-infra/ansible/vars $BACKUP_DIR/ansible/
+cp -r /finflow-infra/ansible/inventory $BACKUP_DIR/ansible/
+cp -r /finflow-infra/ansible/vars $BACKUP_DIR/ansible/
 
 # Create a compressed archive of all backups
 print_header "Creating compressed archive"
@@ -155,9 +155,9 @@ fi
 # Cleanup old backups (keep last 7 days)
 print_header "Cleaning up old backups"
 print_step "Removing backups older than 7 days"
-find /home/ubuntu/finflow-backups -type d -name "????-??-??" -mtime +7 -exec rm -rf {} \;
+find /finflow-backups -type d -name "????-??-??" -mtime +7 -exec rm -rf {} \;
 
 print_header "Backup complete"
 echo -e "${GREEN}Backup completed successfully!${NC}"
-echo "Backup archive: /home/ubuntu/finflow-backups/finflow-backup-$(date +%Y-%m-%d).tar.gz"
+echo "Backup archive: /finflow-backups/finflow-backup-$(date +%Y-%m-%d).tar.gz"
 echo "S3 location: s3://$S3_BUCKET/finflow-backup-$(date +%Y-%m-%d).tar.gz"

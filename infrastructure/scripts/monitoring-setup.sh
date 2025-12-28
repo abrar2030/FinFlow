@@ -71,7 +71,7 @@ print_header "Installing Prometheus stack"
 print_step "Deploying Prometheus, Alertmanager, and Grafana"
 helm upgrade --install prometheus prometheus-community/kube-prometheus-stack \
   --namespace monitoring \
-  --values /home/ubuntu/finflow-infra/terraform/helm-values/prometheus-values.yaml \
+  --values /finflow-infra/terraform/helm-values/prometheus-values.yaml \
   --timeout 10m
 
 # Wait for Prometheus to be ready
@@ -85,7 +85,7 @@ print_header "Installing Elasticsearch"
 print_step "Deploying Elasticsearch cluster"
 helm upgrade --install elasticsearch elastic/elasticsearch \
   --namespace monitoring \
-  --values /home/ubuntu/finflow-infra/terraform/helm-values/elasticsearch-values.yaml \
+  --values /finflow-infra/terraform/helm-values/elasticsearch-values.yaml \
   --timeout 10m
 
 # Wait for Elasticsearch to be ready
@@ -97,7 +97,7 @@ print_header "Installing Fluentd"
 print_step "Deploying Fluentd for log collection"
 helm upgrade --install fluentd stable/fluentd-elasticsearch \
   --namespace monitoring \
-  --values /home/ubuntu/finflow-infra/terraform/helm-values/fluentd-values.yaml \
+  --values /finflow-infra/terraform/helm-values/fluentd-values.yaml \
   --timeout 5m
 
 # Wait for Fluentd to be ready
@@ -145,7 +145,7 @@ print_header "Configuring Grafana dashboards"
 print_step "Creating Grafana dashboards for FinFlow services"
 
 # Apply Grafana configuration
-kubectl apply -f /home/ubuntu/finflow-infra/kubernetes/monitoring/grafana-dashboards-configmap.yaml
+kubectl apply -f /finflow-infra/kubernetes/monitoring/grafana-dashboards-configmap.yaml
 
 # Set up alerts
 print_header "Configuring alerts"
