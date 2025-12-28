@@ -118,8 +118,8 @@ aws s3 cp s3://finflow-terraform-state $BACKUP_DIR/terraform --recursive
 print_header "Backing up Ansible files"
 print_step "Copying Ansible inventory and variables"
 mkdir -p $BACKUP_DIR/ansible
-cp -r /finflow-infra/ansible/inventory $BACKUP_DIR/ansible/
-cp -r /finflow-infra/ansible/vars $BACKUP_DIR/ansible/
+cp -r /FinFlow/infrastructure/ansible/inventory $BACKUP_DIR/ansible/
+cp -r /FinFlow/infrastructure/ansible/vars $BACKUP_DIR/ansible/
 
 # Create a compressed archive of all backups
 print_header "Creating compressed archive"

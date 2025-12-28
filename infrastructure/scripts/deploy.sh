@@ -43,7 +43,7 @@ kubectl create namespace finflow-prod --dry-run=client -o yaml | kubectl apply -
 # Apply database configurations
 print_header "Deploying databases"
 print_step "Deploying database StatefulSets and Services"
-kubectl apply -f /finflow-infra/kubernetes/databases/
+kubectl apply -f /FinFlow/infrastructure/kubernetes/databases/
 
 # Wait for databases to be ready
 print_step "Waiting for databases to be ready"
@@ -56,42 +56,42 @@ kubectl rollout status statefulset/kafka -n finflow-prod --timeout=300s
 # Deploy backend services
 print_header "Deploying backend services"
 print_step "Deploying Auth Service"
-kubectl apply -f /finflow-infra/kubernetes/auth-service/
+kubectl apply -f /FinFlow/infrastructure/kubernetes/auth-service/
 kubectl rollout status deployment/auth-service -n finflow-prod --timeout=300s
 
 print_step "Deploying Payments Service"
-kubectl apply -f /finflow-infra/kubernetes/payments-service/
+kubectl apply -f /FinFlow/infrastructure/kubernetes/payments-service/
 kubectl rollout status deployment/payments-service -n finflow-prod --timeout=300s
 
 print_step "Deploying Accounting Service"
-kubectl apply -f /finflow-infra/kubernetes/accounting-service/
+kubectl apply -f /FinFlow/infrastructure/kubernetes/accounting-service/
 kubectl rollout status deployment/accounting-service -n finflow-prod --timeout=300s
 
 print_step "Deploying Analytics Service"
-kubectl apply -f /finflow-infra/kubernetes/analytics-service/
+kubectl apply -f /FinFlow/infrastructure/kubernetes/analytics-service/
 kubectl rollout status deployment/analytics-service -n finflow-prod --timeout=300s
 
 print_step "Deploying Credit Engine"
-kubectl apply -f /finflow-infra/kubernetes/credit-engine/
+kubectl apply -f /FinFlow/infrastructure/kubernetes/credit-engine/
 kubectl rollout status deployment/credit-engine -n finflow-prod --timeout=300s
 
 # Deploy API Gateway
 print_header "Deploying API Gateway"
 print_step "Deploying API Gateway service"
-kubectl apply -f /finflow-infra/kubernetes/api-gateway/
+kubectl apply -f /FinFlow/infrastructure/kubernetes/api-gateway/
 kubectl rollout status deployment/api-gateway -n finflow-prod --timeout=300s
 
 # Deploy Frontend
 print_header "Deploying Frontend"
 print_step "Deploying Frontend application"
-kubectl apply -f /finflow-infra/kubernetes/frontend/
+kubectl apply -f /FinFlow/infrastructure/kubernetes/frontend/
 kubectl rollout status deployment/frontend -n finflow-prod --timeout=300s
 
 # Apply ingress configurations
 print_header "Configuring Ingress"
 print_step "Applying Ingress rules"
-kubectl apply -f /finflow-infra/kubernetes/frontend/ingress.yaml
-kubectl apply -f /finflow-infra/kubernetes/api-gateway/ingress.yaml
+kubectl apply -f /FinFlow/infrastructure/kubernetes/frontend/ingress.yaml
+kubectl apply -f /FinFlow/infrastructure/kubernetes/api-gateway/ingress.yaml
 
 # Verify deployments
 print_header "Verifying deployments"

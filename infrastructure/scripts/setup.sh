@@ -71,7 +71,7 @@ fi
 # Initialize Terraform
 print_header "Initializing Terraform"
 print_step "Running terraform init"
-cd /finflow-infra/terraform
+cd /FinFlow/infrastructure/terraform
 terraform init
 
 # Apply Terraform configuration
@@ -88,7 +88,7 @@ aws eks update-kubeconfig --region $REGION --name $CLUSTER_NAME
 # Run Ansible playbook
 print_header "Running Ansible playbooks"
 print_step "Running Ansible site.yml"
-cd /finflow-infra/ansible
+cd /FinFlow/infrastructure/ansible
 ansible-playbook -i inventory/prod site.yml
 
 # Deploy applications

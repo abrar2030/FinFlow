@@ -37,10 +37,10 @@ DIRS=(
 )
 
 for dir in "${DIRS[@]}"; do
-  if [ -d "/finflow-infra/$dir" ]; then
+  if [ -d "/FinFlow/infrastructure/$dir" ]; then
     print_status 0 "Directory $dir exists"
   else
-    print_status 1 "Directory $dir does not exist" "Create the directory: mkdir -p /finflow-infra/$dir"
+    print_status 1 "Directory $dir does not exist" "Create the directory: mkdir -p /FinFlow/infrastructure/$dir"
   fi
 done
 
@@ -57,10 +57,10 @@ DOCKER_DIRS=(
 )
 
 for dir in "${DOCKER_DIRS[@]}"; do
-  if [ -f "/finflow-infra/docker/$dir/Dockerfile" ]; then
+  if [ -f "/FinFlow/infrastructure/docker/$dir/Dockerfile" ]; then
     print_status 0 "Dockerfile for $dir exists"
   else
-    print_status 1 "Dockerfile for $dir does not exist" "Create the Dockerfile: touch /finflow-infra/docker/$dir/Dockerfile"
+    print_status 1 "Dockerfile for $dir does not exist" "Create the Dockerfile: touch /FinFlow/infrastructure/docker/$dir/Dockerfile"
   fi
 done
 
@@ -79,10 +79,10 @@ K8S_DIRS=(
 )
 
 for dir in "${K8S_DIRS[@]}"; do
-  if [ -d "/finflow-infra/kubernetes/$dir" ]; then
+  if [ -d "/FinFlow/infrastructure/kubernetes/$dir" ]; then
     print_status 0 "Kubernetes manifests for $dir exist"
   else
-    print_status 1 "Kubernetes manifests for $dir do not exist" "Create the directory: mkdir -p /finflow-infra/kubernetes/$dir"
+    print_status 1 "Kubernetes manifests for $dir do not exist" "Create the directory: mkdir -p /FinFlow/infrastructure/kubernetes/$dir"
   fi
 done
 
@@ -96,17 +96,17 @@ ANSIBLE_ROLES=(
   "deployment"
 )
 
-if [ -f "/finflow-infra/ansible/site.yml" ]; then
+if [ -f "/FinFlow/infrastructure/ansible/site.yml" ]; then
   print_status 0 "Ansible site.yml exists"
 else
-  print_status 1 "Ansible site.yml does not exist" "Create the file: touch /finflow-infra/ansible/site.yml"
+  print_status 1 "Ansible site.yml does not exist" "Create the file: touch /FinFlow/infrastructure/ansible/site.yml"
 fi
 
 for role in "${ANSIBLE_ROLES[@]}"; do
-  if [ -d "/finflow-infra/ansible/roles/$role" ]; then
+  if [ -d "/FinFlow/infrastructure/ansible/roles/$role" ]; then
     print_status 0 "Ansible role $role exists"
   else
-    print_status 1 "Ansible role $role does not exist" "Create the directory: mkdir -p /finflow-infra/ansible/roles/$role"
+    print_status 1 "Ansible role $role does not exist" "Create the directory: mkdir -p /FinFlow/infrastructure/ansible/roles/$role"
   fi
 done
 
@@ -121,23 +121,23 @@ TF_MODULES=(
   "bastion"
 )
 
-if [ -f "/finflow-infra/terraform/main.tf" ]; then
+if [ -f "/FinFlow/infrastructure/terraform/main.tf" ]; then
   print_status 0 "Terraform main.tf exists"
 else
-  print_status 1 "Terraform main.tf does not exist" "Create the file: touch /finflow-infra/terraform/main.tf"
+  print_status 1 "Terraform main.tf does not exist" "Create the file: touch /FinFlow/infrastructure/terraform/main.tf"
 fi
 
-if [ -f "/finflow-infra/terraform/variables.tf" ]; then
+if [ -f "/FinFlow/infrastructure/terraform/variables.tf" ]; then
   print_status 0 "Terraform variables.tf exists"
 else
-  print_status 1 "Terraform variables.tf does not exist" "Create the file: touch /finflow-infra/terraform/variables.tf"
+  print_status 1 "Terraform variables.tf does not exist" "Create the file: touch /FinFlow/infrastructure/terraform/variables.tf"
 fi
 
 for module in "${TF_MODULES[@]}"; do
-  if [ -d "/finflow-infra/terraform/modules/$module" ]; then
+  if [ -d "/FinFlow/infrastructure/terraform/modules/$module" ]; then
     print_status 0 "Terraform module $module exists"
   else
-    print_status 1 "Terraform module $module does not exist" "Create the directory: mkdir -p /finflow-infra/terraform/modules/$module"
+    print_status 1 "Terraform module $module does not exist" "Create the directory: mkdir -p /FinFlow/infrastructure/terraform/modules/$module"
   fi
 done
 
@@ -151,19 +151,19 @@ HELM_VALUES=(
 )
 
 for value in "${HELM_VALUES[@]}"; do
-  if [ -f "/finflow-infra/terraform/helm-values/$value" ]; then
+  if [ -f "/FinFlow/infrastructure/terraform/helm-values/$value" ]; then
     print_status 0 "Helm values file $value exists"
   else
-    print_status 1 "Helm values file $value does not exist" "Create the file: touch /finflow-infra/terraform/helm-values/$value"
+    print_status 1 "Helm values file $value does not exist" "Create the file: touch /FinFlow/infrastructure/terraform/helm-values/$value"
   fi
 done
 
 # Check documentation
 echo -e "\nChecking documentation..."
-if [ -f "/finflow-infra/documentation.md" ]; then
+if [ -f "/FinFlow/infrastructure/documentation.md" ]; then
   print_status 0 "Documentation file exists"
 else
-  print_status 1 "Documentation file does not exist" "Create the file: touch /finflow-infra/documentation.md"
+  print_status 1 "Documentation file does not exist" "Create the file: touch /FinFlow/infrastructure/documentation.md"
 fi
 
 # Check automation scripts
@@ -176,10 +176,10 @@ SCRIPTS=(
 )
 
 for script in "${SCRIPTS[@]}"; do
-  if [ -f "/finflow-infra/scripts/$script" ]; then
+  if [ -f "/FinFlow/infrastructure/scripts/$script" ]; then
     print_status 0 "Script $script exists"
   else
-    print_status 1 "Script $script does not exist" "Create the script: touch /finflow-infra/scripts/$script"
+    print_status 1 "Script $script does not exist" "Create the script: touch /FinFlow/infrastructure/scripts/$script"
   fi
 done
 
