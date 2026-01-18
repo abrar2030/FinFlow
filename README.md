@@ -192,11 +192,11 @@ Before setting up FinFlow, ensure you have the following installed:
 
 The recommended way to set up the development environment is by using the provided setup script and Docker Compose:
 
-| Step                     | Command                                                            | Description                                                     |
-| :----------------------- | :----------------------------------------------------------------- | :-------------------------------------------------------------- |
+| Step                     | Command                                                                   | Description                                                     |
+| :----------------------- | :------------------------------------------------------------------------ | :-------------------------------------------------------------- |
 | **1. Clone Repository**  | `git clone https://github.com/quantsingularity/FinFlow.git && cd FinFlow` | Download the source code and navigate to the project directory. |
-| **2. Run Setup Script**  | `./setup_env.sh`                                                   | Installs dependencies and configures the local environment.     |
-| **3. Start Application** | `docker-compose up`                                                | Starts all backend services, databases, and the API Gateway.    |
+| **2. Run Setup Script**  | `./setup_env.sh`                                                          | Installs dependencies and configures the local environment.     |
+| **3. Start Application** | `docker-compose up`                                                       | Starts all backend services, databases, and the API Gateway.    |
 
 **Access Points:**
 
