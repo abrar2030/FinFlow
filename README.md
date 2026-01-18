@@ -1,8 +1,8 @@
 # FinFlow - Financial Operations & Workflow Platform
 
-![CI/CD Status](https://img.shields.io/github/actions/workflow/status/abrar2030/Finflow/cicd.yml?branch=main&label=CI/CD&logo=github)
-[![Test Coverage](https://img.shields.io/badge/coverage-96%25-brightgreen)](https://github.com/abrar2030/FinFlow/tree/main/coverage)
-[![License](https://img.shields.io/github/license/abrar2030/FinFlow?style=flat-square)](LICENSE)
+![CI/CD Status](https://img.shields.io/github/actions/workflow/status/quantsingularity/Finflow/cicd.yml?branch=main&label=CI/CD&logo=github)
+[![Test Coverage](https://img.shields.io/badge/coverage-96%25-brightgreen)](https://github.com/quantsingularity/FinFlow/tree/main/coverage)
+[![License](https://img.shields.io/github/license/quantsingularity/FinFlow?style=flat-square)](LICENSE)
 
 <div align="center">
   <img src="docs/images/FinFlow_Dashboard.bmp" alt="FinFlow Dashboard" width="80%">
@@ -194,7 +194,7 @@ The recommended way to set up the development environment is by using the provid
 
 | Step                     | Command                                                            | Description                                                     |
 | :----------------------- | :----------------------------------------------------------------- | :-------------------------------------------------------------- |
-| **1. Clone Repository**  | `git clone https://github.com/abrar2030/FinFlow.git && cd FinFlow` | Download the source code and navigate to the project directory. |
+| **1. Clone Repository**  | `git clone https://github.com/quantsingularity/FinFlow.git && cd FinFlow` | Download the source code and navigate to the project directory. |
 | **2. Run Setup Script**  | `./setup_env.sh`                                                   | Installs dependencies and configures the local environment.     |
 | **3. Start Application** | `docker-compose up`                                                | Starts all backend services, databases, and the API Gateway.    |
 

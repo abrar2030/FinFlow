@@ -342,7 +342,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: abrar2030/finflow-${{ matrix.service }}
+          images: quantsingularity/finflow-${{ matrix.service }}
           tags: |
             type=ref,event=branch
             type=sha,format=short
@@ -356,8 +356,8 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=abrar2030/finflow-${{ matrix.service }}:buildcache
-          cache-to: type=registry,ref=abrar2030/finflow-${{ matrix.service }}:buildcache,mode=max
+          cache-from: type=registry,ref=quantsingularity/finflow-${{ matrix.service }}:buildcache
+          cache-to: type=registry,ref=quantsingularity/finflow-${{ matrix.service }}:buildcache,mode=max
 
   deploy-staging:
     name: Deploy to Staging
@@ -389,7 +389,7 @@ jobs:
           COMMIT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
 
           for service in auth-service payments-service accounting-service analytics-service credit-engine frontend; do
-            sed -i "s|abrar2030/finflow-$service:.*|abrar2030/finflow-$service:sha-$COMMIT_SHA|g" kubernetes/staging/$service.yaml
+            sed -i "s|quantsingularity/finflow-$service:.*|quantsingularity/finflow-$service:sha-$COMMIT_SHA|g" kubernetes/staging/$service.yaml
             kubectl apply -f kubernetes/staging/$service.yaml
           done
 
@@ -408,7 +408,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     environment:
       name: production
-      url: https://finflow.abrar2030.com
+      url: https://finflow.quantsingularity.com
 
     steps:
       - name: Checkout code
@@ -433,7 +433,7 @@ jobs:
           COMMIT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
 
           for service in auth-service payments-service accounting-service analytics-service credit-engine frontend; do
-            sed -i "s|abrar2030/finflow-$service:.*|abrar2030/finflow-$service:sha-$COMMIT_SHA|g" kubernetes/production/$service.yaml
+            sed -i "s|quantsingularity/finflow-$service:.*|quantsingularity/finflow-$service:sha-$COMMIT_SHA|g" kubernetes/production/$service.yaml
             kubectl apply -f kubernetes/production/$service.yaml
           done
 

@@ -551,7 +551,7 @@ If you can't find a solution here:
    ```
 
 2. **GitHub Issues**: Search existing issues or create a new one
-   - https://github.com/abrar2030/FinFlow/issues
+   - https://github.com/quantsingularity/FinFlow/issues
 
 3. **Documentation**: Review relevant sections
    - [Installation](INSTALLATION.md)

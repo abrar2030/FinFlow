@@ -12,7 +12,7 @@ Get started with FinFlow in 3 simple steps:
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/abrar2030/FinFlow.git && cd FinFlow
+git clone https://github.com/quantsingularity/FinFlow.git && cd FinFlow
 
 # 2. Run the setup script
 ./scripts/finflow-setup.sh
@@ -113,7 +113,7 @@ All FinFlow documentation follows these principles:
 
 ## Need Help?
 
-- **Issues**: [GitHub Issues](https://github.com/abrar2030/FinFlow/issues)
+- **Issues**: [GitHub Issues](https://github.com/quantsingularity/FinFlow/issues)
 - **Troubleshooting**: See [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
 - **Contributing**: See [CONTRIBUTING.md](CONTRIBUTING.md)
 

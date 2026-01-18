@@ -60,7 +60,7 @@ The fastest way to get FinFlow running locally with all services.
 #### Step 1: Clone Repository
 
 ```bash
-git clone https://github.com/abrar2030/FinFlow.git
+git clone https://github.com/quantsingularity/FinFlow.git
 cd FinFlow
 ```
 

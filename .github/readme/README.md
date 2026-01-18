@@ -209,7 +209,7 @@ The production environment is configured with the following components:
 1. **Kubernetes Cluster**: AWS EKS cluster named `FinFlow-production-cluster`
 2. **Namespace**: `FinFlow-production`
 3. **Services**: Deployed as separate Kubernetes deployments
-4. **URL**: https://FinFlow.abrar2030.com
+4. **URL**: https://FinFlow.quantsingularity.com
 
 ### Secrets Management
 

@@ -136,7 +136,7 @@ The recommended way to run the entire FinFlow backend locally is using Docker Co
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/abrar2030/FinFlow.git
+    git clone https://github.com/quantsingularity/FinFlow.git
     cd FinFlow/backend
     ```
 2.  **Configure Environment:**

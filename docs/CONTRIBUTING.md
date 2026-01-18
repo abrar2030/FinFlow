@@ -35,7 +35,7 @@ git clone https://github.com/YOUR_USERNAME/FinFlow.git
 cd FinFlow
 
 # Add upstream remote
-git remote add upstream https://github.com/abrar2030/FinFlow.git
+git remote add upstream https://github.com/quantsingularity/FinFlow.git
 
 # Verify remotes
 git remote -v
