@@ -47,6 +47,24 @@ FinFlow is a modern financial operations platform designed to help businesses st
 
 ---
 
+## Project Structure
+
+The project is organized into several main components:
+
+```
+FinFlow/
+├── backend/                # Core backend logic, services, and shared utilities
+├── docs/                   # Project documentation
+├── infrastructure/         # DevOps, deployment, and infra-related code
+├── mobile-frontend/        # Mobile application
+├── web-frontend/           # Web dashboard
+├── scripts/                # Automation, setup, and utility scripts
+├── LICENSE                 # License information
+├── README.md               # Project overview and instructions
+├── eslint.config.js        # ESLint configuration
+└── package.json            # Node.js project metadata and dependencies
+```
+
 ## ✨ Key Features
 
 FinFlow's functionality is organized into five core service domains and a dedicated mobile experience.
