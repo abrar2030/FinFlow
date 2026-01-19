@@ -10,24 +10,10 @@
 
 > **Note**: This project is under active development. Features and functionalities are continuously being enhanced to improve financial operations capabilities and user experience.
 
-## 📋 Executive Summary
-
-FinFlow is a comprehensive financial operations platform that streamlines payment processing, accounting, analytics, and credit management through a unified **microservices architecture**. The platform provides secure authentication, real-time transaction processing, and advanced financial analytics to help businesses manage their financial workflows efficiently.
-
-| Highlight               | Description                                                                   |
-| :---------------------- | :---------------------------------------------------------------------------- |
-| **Payment Integration** | Multi-processor payment gateway integration (Stripe, PayPal, Square).         |
-| **Core Accounting**     | Robust double-entry accounting system with comprehensive financial reporting. |
-| **Analytics**           | Interactive dashboards providing real-time financial metrics and KPIs.        |
-| **Security**            | Secure authentication with multi-factor and role-based access control (RBAC). |
-| **Architecture**        | Highly scalable and resilient microservices design.                           |
-| **User Experience**     | Modern cross-platform mobile frontend with comprehensive feature coverage.    |
-
----
-
 ### 📑 Table of Contents
 
 - [Overview](#overview)
+- [Project Structure](#project-structure)
 - [Key Features](#key-features)
 - [Architecture](#architecture)
 - [Technology Stack](#technology-stack)
