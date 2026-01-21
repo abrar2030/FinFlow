@@ -10,6 +10,8 @@ from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
+#
+
 
 class ComplianceCheckType(Enum):
     """Types of compliance checks"""
@@ -101,6 +103,8 @@ class TransactionMonitoring:
 
 class ComplianceDatabase:
     """Database interface for compliance data"""
+
+    #
 
     def __init__(self, db_path: str = "compliance.db"):
         self.db_path = db_path
@@ -256,7 +260,6 @@ class ComplianceDatabase:
             conn.commit()
             conn.close()
             return True
-
         except Exception as e:
             logger.error(f"Error saving entity profile {profile.entity_id}: {e}")
             return False
@@ -292,7 +295,6 @@ class ComplianceDatabase:
             conn.commit()
             conn.close()
             return True
-
         except Exception as e:
             logger.error(f"Error saving compliance check {check.check_id}: {e}")
             return False
@@ -330,7 +332,6 @@ class ComplianceDatabase:
                     updated_at=datetime.fromisoformat(row[14]),
                 )
             return None
-
         except Exception as e:
             logger.error(f"Error getting entity profile {entity_id}: {e}")
             return None
@@ -338,6 +339,8 @@ class ComplianceDatabase:
 
 class KYCService:
     """Know Your Customer (KYC) service"""
+
+    #
 
     def __init__(self, db: ComplianceDatabase):
         self.db = db
@@ -397,9 +400,7 @@ class KYCService:
                     "missing_documents": missing_docs,
                     "risk_factors": profile.risk_factors,
                 },
-                expires_at=datetime.now().replace(
-                    year=datetime.now().year + 1
-                ),  # Expires in 1 year
+                expires_at=datetime.now().replace(year=datetime.now().year + 1),
             )
 
             self.db.save_compliance_check(check)
@@ -426,12 +427,7 @@ class KYCService:
         risk_score += len(missing_docs) * 20
 
         # High-risk countries (simplified list)
-        high_risk_countries = [
-            "AF",
-            "IR",
-            "KP",
-            "SY",
-        ]  # Afghanistan, Iran, North Korea, Syria
+        high_risk_countries = ["AF", "IR", "KP", "SY"]
         if profile.country_of_residence in high_risk_countries:
             risk_score += 30
 
@@ -451,6 +447,8 @@ class KYCService:
 
 class AMLService:
     """Anti-Money Laundering (AML) service"""
+
+    #
 
     def __init__(self, db: ComplianceDatabase):
         self.db = db
@@ -479,12 +477,8 @@ class AMLService:
                 risk_score=0.0,
             )
 
-            # Apply monitoring rules
             self._apply_monitoring_rules(monitoring)
-
-            # Save monitoring record
             self._save_transaction_monitoring(monitoring)
-
             return monitoring
 
         except Exception as e:
@@ -520,8 +514,6 @@ class AMLService:
             monitoring.flags.append("round_amounts")
             monitoring.monitoring_rules_triggered.append("round_amounts")
             monitoring.risk_score += 15
-
-        # Additional rules can be added here
 
     def _save_transaction_monitoring(self, monitoring: TransactionMonitoring):
         """Save transaction monitoring record"""
@@ -594,19 +586,14 @@ class FATCAService:
             # Check for US person indicators
             us_indicators_found = []
 
-            # Check nationality
             if profile.nationality == "US":
                 us_indicators_found.append("us_citizenship")
 
-            # Check country of residence
             if profile.country_of_residence == "US":
                 us_indicators_found.append("us_residence")
 
-            # Check address
             if profile.address.get("country") == "US":
                 us_indicators_found.append("us_address")
-
-            # Additional checks can be added based on available data
 
             is_us_person = len(us_indicators_found) > 0
 
@@ -616,7 +603,7 @@ class FATCAService:
                 check_type=ComplianceCheckType.FATCA,
                 status=(
                     ComplianceStatus.PASSED if is_us_person else ComplianceStatus.PASSED
-                ),  # Usually Passed if non-US, Requires Review/Passed if US
+                ),
                 risk_level=RiskLevel.MEDIUM if is_us_person else RiskLevel.LOW,
                 details={
                     "is_us_person": is_us_person,
@@ -643,7 +630,8 @@ class FATCAService:
 class DataResidencyService:
     """Data residency compliance service"""
 
-    def __init__(self):
+    def __init__(self, db: ComplianceDatabase):
+        self.db = db
         self.data_residency_rules = {
             "EU": {
                 "countries": [
@@ -697,9 +685,6 @@ class DataResidencyService:
         check_id = f"data_residency_{entity_id}_{int(datetime.now().timestamp())}"
 
         try:
-            # This would typically integrate with the entity's profile
-            # For now, we'll use a simplified check
-
             compliance_issues = []
             requirements = []
 
@@ -707,8 +692,7 @@ class DataResidencyService:
             for region, rules in self.data_residency_rules.items():
                 if data_location in rules["countries"]:
                     requirements.extend(rules["requirements"])
-                    # Placeholder check: If an EU entity used a US data center, this would flag
-                    # profile = self.db.get_entity_profile(entity_id) # Needs DB injected for full check
+                    # Deep logic to check cross-border transfers would go here
                     break
 
             status = (
@@ -734,9 +718,7 @@ class DataResidencyService:
                 },
             )
 
-            # NOTE: Saving this check requires injecting the DB into this service,
-            # which is omitted for simplicity here but required for a real system.
-            # self.db.save_compliance_check(check)
+            self.db.save_compliance_check(check)
             return check
 
         except Exception as e:
@@ -761,8 +743,7 @@ class InternationalComplianceManager:
         self.kyc_service = KYCService(self.db)
         self.aml_service = AMLService(self.db)
         self.fatca_service = FATCAService(self.db)
-        # DataResidencyService needs DB dependency for persistence/profile access
-        self.data_residency_service = DataResidencyService()
+        self.data_residency_service = DataResidencyService(self.db)
 
     def create_entity_profile(self, profile_data: Dict[str, Any]) -> EntityProfile:
         """Create a new entity profile"""
@@ -806,7 +787,6 @@ class InternationalComplianceManager:
         results["fatca"] = self.fatca_service.check_us_person_status(entity_id)
 
         # Data Residency Check (assuming US data center as system default)
-        # Note: DataResidencyService is stateless, results are not saved here.
         results["data_residency"] = (
             self.data_residency_service.check_data_residency_compliance(entity_id, "US")
         )
@@ -884,7 +864,7 @@ if __name__ == "__main__":
     # Example usage
     compliance_manager = InternationalComplianceManager()
 
-    # Create sample entity profile
+    # 1. Create sample entity profile
     profile_data = {
         "entity_id": "test_entity_001",
         "entity_type": "individual",
@@ -895,54 +875,54 @@ if __name__ == "__main__":
         "address": {
             "street": "123 Main St",
             "city": "New York",
-            "state": "NY",
-            "zip": "10001",
             "country": "US",
+            "postal_code": "10001",
         },
         "identification_documents": [
-            {"type": "government_id", "number": "DL123456789", "issuer": "NY DMV"},
-            {"type": "proof_of_address", "document": "utility_bill"},
+            {"type": "government_id", "number": "123456789", "expiry": "2030-01-01"},
+            {"type": "proof_of_address", "type": "utility_bill", "date": "2023-01-01"},
         ],
-        "source_of_funds": "employment",
-        "expected_transaction_volume": 50000,
-        "risk_factors": ["high_volume_expected"],  # Will raise KYC risk
+        "business_activities": ["consulting"],
+        "expected_transaction_volume": 50000.00,
+        "risk_factors": [],
     }
 
+    print("--- Creating Entity Profile ---")
     profile = compliance_manager.create_entity_profile(profile_data)
-    print(f"\n--- Entity Profile Created ---")
-    print(f"Created profile for: {profile.full_name}")
+    print(f"Profile created for: {profile.full_name} ({profile.entity_id})")
 
-    # Perform compliance checks
-    print(f"\n--- Performing Comprehensive Compliance Check ---")
-    results = compliance_manager.perform_comprehensive_compliance_check(
+    # 2. Perform Compliance Checks
+    print("\n--- Performing Compliance Checks ---")
+    checks = compliance_manager.perform_comprehensive_compliance_check(
         "test_entity_001"
     )
-    for check_type, result in results.items():
+    for check_type, result in checks.items():
         print(
-            f"{check_type.upper():<18}: {result.status.value:<10} (Risk: {result.risk_level.value})"
+            f"Check: {check_type.upper()} | Status: {result.status.value} | Risk: {result.risk_level.value}"
         )
+        if check_type == "fatca":
+            print(f"  > FATCA Details: {result.details}")
 
-    # Simulate a transaction and run AML check
-    print(f"\n--- Monitoring AML Transaction ---")
+    # 3. Simulate Transaction (AML Monitoring)
+    print("\n--- Simulating Transaction (AML) ---")
     transaction_data = {
-        "transaction_id": "TX_999",
+        "transaction_id": "tx_001",
         "entity_id": "test_entity_001",
-        "amount": 15000.00,  # Large cash transaction flag
+        "amount": 15000.00,  # Over 10k threshold
         "currency": "USD",
         "transaction_type": "wire_transfer",
-        "counterparty_id": "suspicious_co",
         "origin_country": "US",
-        "destination_country": "AF",  # High risk country flag
+        "destination_country": "US",
+        "counterparty_id": "corp_999",
     }
-    monitoring_result = compliance_manager.aml_service.monitor_transaction(
-        transaction_data
-    )
-    print(
-        f"Transaction ID {monitoring_result.transaction_id} Risk Score: {monitoring_result.risk_score}"
-    )
-    print(f"Flags Triggered: {monitoring_result.flags}")
 
-    # Get overall compliance status
-    print(f"\n--- Overall Compliance Status ---")
-    status = compliance_manager.get_compliance_status("test_entity_001")
-    print(json.dumps(status, indent=4))
+    aml_result = compliance_manager.aml_service.monitor_transaction(transaction_data)
+    print(f"Transaction ID: {aml_result.transaction_id}")
+    print(f"Risk Score: {aml_result.risk_score}")
+    print(f"Flags: {aml_result.flags}")
+    print(f"Rules Triggered: {aml_result.monitoring_rules_triggered}")
+
+    # 4. Get Final Consolidated Status
+    print("\n--- Final Consolidated Entity Status ---")
+    status_report = compliance_manager.get_compliance_status("test_entity_001")
+    print(json.dumps(status_report, indent=2))

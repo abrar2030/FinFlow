@@ -8,8 +8,13 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+# Configure Logging
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger(__name__)
 
-# Define placeholder classes/enums for execution environment
+
 class TaxType(Enum):
     VAT = "vat"
     SALES_TAX = "sales_tax"
@@ -39,7 +44,7 @@ class TaxRule:
     description: str = ""
 
     def is_active(self, check_date: date = None) -> bool:
-        """Check if the tax rule is active on a given date"""
+        """Check if the tax rule is active on a given date."""
         if check_date is None:
             check_date = date.today()
 
@@ -52,18 +57,15 @@ class TaxRule:
         return True
 
 
-logger = logging.getLogger(__name__)
-
-
 class TaxRuleDatabase:
-    """Database interface for tax rules"""
+    """Database interface for tax rules."""
 
     def __init__(self, db_path: str = "tax_rules.db"):
         self.db_path = db_path
         self.init_database()
 
     def init_database(self):
-        """Initialize the database schema"""
+        """Initialize the database schema."""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
 
@@ -84,7 +86,7 @@ class TaxRuleDatabase:
                 updated_at TEXT NOT NULL,
                 is_active BOOLEAN DEFAULT 1
             )
-            """
+        """
         )
 
         # Create tax_rule_history table for audit trail
@@ -99,7 +101,7 @@ class TaxRuleDatabase:
                 changed_by TEXT,
                 changed_at TEXT NOT NULL
             )
-            """
+        """
         )
 
         # Create indexes
@@ -115,7 +117,7 @@ class TaxRuleDatabase:
         conn.close()
 
     def save_tax_rule(self, tax_rule: TaxRule, changed_by: str = "system") -> bool:
-        """Save or update a tax rule"""
+        """Save or update a tax rule."""
         try:
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
@@ -133,11 +135,10 @@ class TaxRuleDatabase:
 
             if existing_rule:
                 # Update existing rule
-                old_data = dict(
-                    zip([col[0] for col in cursor.description], existing_rule)
-                )
+                col_names = [col[0] for col in cursor.description]
+                old_data = dict(zip(col_names, existing_rule))
 
-                # Clean up old_data for history logging (remove the datetime/internal fields)
+                # Clean up old_data for history logging
                 old_data_for_log = {
                     k: old_data[k]
                     for k in old_data
@@ -152,7 +153,7 @@ class TaxRuleDatabase:
                         expiration_date = ?, rate = ?, calculation_method = ?,
                         conditions = ?, description = ?, updated_at = ?
                     WHERE rule_id = ?
-                    """,
+                """,
                     (
                         tax_rule.jurisdiction,
                         tax_rule.tax_type.value,
@@ -177,7 +178,7 @@ class TaxRuleDatabase:
                     INSERT INTO tax_rule_history
                     (rule_id, action, old_data, new_data, changed_by, changed_at)
                     VALUES (?, ?, ?, ?, ?, ?)
-                    """,
+                """,
                     (
                         tax_rule.rule_id,
                         "UPDATE",
@@ -196,7 +197,7 @@ class TaxRuleDatabase:
                     (rule_id, jurisdiction, tax_type, effective_date, expiration_date,
                      rate, calculation_method, conditions, description, created_at, updated_at)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    """,
+                """,
                     (
                         tax_rule.rule_id,
                         tax_rule.jurisdiction,
@@ -222,7 +223,7 @@ class TaxRuleDatabase:
                     INSERT INTO tax_rule_history
                     (rule_id, action, old_data, new_data, changed_by, changed_at)
                     VALUES (?, ?, ?, ?, ?, ?)
-                    """,
+                """,
                     (
                         tax_rule.rule_id,
                         "CREATE",
@@ -242,7 +243,7 @@ class TaxRuleDatabase:
             return False
 
     def get_tax_rule(self, rule_id: str) -> Optional[TaxRule]:
-        """Get a tax rule by ID"""
+        """Get a tax rule by ID."""
         try:
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
@@ -263,7 +264,7 @@ class TaxRuleDatabase:
             return None
 
     def get_tax_rules_by_jurisdiction(self, jurisdiction: str) -> List[TaxRule]:
-        """Get all active tax rules for a jurisdiction"""
+        """Get all active tax rules for a jurisdiction."""
         try:
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
@@ -273,7 +274,7 @@ class TaxRuleDatabase:
                 SELECT * FROM tax_rules
                 WHERE jurisdiction = ? AND is_active = 1
                 ORDER BY effective_date DESC
-                """,
+            """,
                 (jurisdiction,),
             )
 
@@ -289,7 +290,7 @@ class TaxRuleDatabase:
             return []
 
     def get_active_tax_rules(self, as_of_date: date = None) -> List[TaxRule]:
-        """Get all active tax rules as of a specific date"""
+        """Get all active tax rules as of a specific date."""
         if as_of_date is None:
             as_of_date = date.today()
 
@@ -297,8 +298,6 @@ class TaxRuleDatabase:
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
 
-            # The date check should handle rules that start *before or on* the date
-            # and expire *after* the date (or never expire).
             as_of_date_str = as_of_date.isoformat()
 
             cursor.execute(
@@ -308,7 +307,7 @@ class TaxRuleDatabase:
                 AND effective_date <= ?
                 AND (expiration_date IS NULL OR expiration_date > ?)
                 ORDER BY jurisdiction, tax_type, effective_date DESC
-                """,
+            """,
                 (as_of_date_str, as_of_date_str),
             )
 
@@ -322,7 +321,7 @@ class TaxRuleDatabase:
             return []
 
     def deactivate_tax_rule(self, rule_id: str, changed_by: str = "system") -> bool:
-        """Deactivate a tax rule"""
+        """Deactivate a tax rule."""
         try:
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
@@ -341,12 +340,12 @@ class TaxRuleDatabase:
                 INSERT INTO tax_rule_history
                 (rule_id, action, old_data, new_data, changed_by, changed_at)
                 VALUES (?, ?, ?, ?, ?, ?)
-                """,
+            """,
                 (
                     rule_id,
                     "DEACTIVATE",
-                    None,  # No new data, just status change
-                    None,  # No old data needed, ID is enough
+                    None,
+                    None,
                     changed_by,
                     current_time,
                 ),
@@ -361,11 +360,8 @@ class TaxRuleDatabase:
             return False
 
     def _row_to_tax_rule(self, row) -> TaxRule:
-        """Convert database row to TaxRule object"""
-        # Column index mapping based on table schema:
-        # 0: rule_id, 1: jurisdiction, 2: tax_type, 3: effective_date,
-        # 4: expiration_date, 5: rate, 6: calculation_method, 7: conditions,
-        # 8: description, 9: created_at, 10: updated_at, 11: is_active
+        """Convert database row to TaxRule object."""
+        # Mapping: 0:id, 1:jur, 2:type, 3:eff, 4:exp, 5:rate, 6:method, 7:cond, 8:desc
         return TaxRule(
             rule_id=row[0],
             jurisdiction=row[1],
@@ -380,7 +376,7 @@ class TaxRuleDatabase:
 
 
 class TaxRuleManager:
-    """High-level interface for managing tax rules"""
+    """High-level interface for managing tax rules."""
 
     def __init__(self, db_path: str = "tax_rules.db"):
         self.db = TaxRuleDatabase(db_path)
@@ -391,7 +387,7 @@ class TaxRuleManager:
     def create_tax_rule(
         self, rule_data: Dict[str, Any], changed_by: str = "system"
     ) -> Optional[TaxRule]:
-        """Create a new tax rule from dictionary data"""
+        """Create a new tax rule from dictionary data."""
         try:
             # Ensure Decimal is used for rate to maintain precision
             rate = rule_data.get("rate")
@@ -426,7 +422,7 @@ class TaxRuleManager:
     def update_tax_rule(
         self, rule_id: str, updates: Dict[str, Any], changed_by: str = "system"
     ) -> bool:
-        """Update an existing tax rule"""
+        """Update an existing tax rule."""
         try:
             existing_rule = self.get_tax_rule(rule_id)
             if not existing_rule:
@@ -455,7 +451,6 @@ class TaxRuleManager:
             if rule_dict.get("rate") is not None:
                 rule_dict["rate"] = Decimal(str(rule_dict["rate"]))
 
-            # Create the updated TaxRule object
             updated_rule = TaxRule(
                 rule_id=rule_dict["rule_id"],
                 jurisdiction=rule_dict["jurisdiction"],
@@ -478,7 +473,7 @@ class TaxRuleManager:
             return False
 
     def get_tax_rule(self, rule_id: str) -> Optional[TaxRule]:
-        """Get a tax rule with caching"""
+        """Get a tax rule with caching."""
         if self._is_cache_valid() and rule_id in self.cache:
             return self.cache[rule_id]
 
@@ -491,8 +486,7 @@ class TaxRuleManager:
     def get_applicable_rules(
         self, jurisdiction: str, tax_type: TaxType = None, as_of_date: date = None
     ) -> List[TaxRule]:
-        """Get applicable tax rules for specific criteria"""
-
+        """Get applicable tax rules for specific criteria."""
         # Start with jurisdiction-based retrieval (which also checks is_active=1)
         rules = self.db.get_tax_rules_by_jurisdiction(jurisdiction)
 
@@ -500,7 +494,7 @@ class TaxRuleManager:
         if tax_type:
             rules = [rule for rule in rules if rule.tax_type == tax_type]
 
-        # Filter by date if provided (using the TaxRule method for detailed check)
+        # Filter by date if provided
         if as_of_date:
             rules = [rule for rule in rules if rule.is_active(as_of_date)]
 
@@ -509,7 +503,7 @@ class TaxRuleManager:
     def import_tax_rules_from_json(
         self, json_file_path: str, changed_by: str = "import"
     ) -> int:
-        """Import tax rules from JSON file"""
+        """Import tax rules from JSON file."""
         try:
             with open(json_file_path, "r") as f:
                 rules_data = json.load(f)
@@ -530,7 +524,7 @@ class TaxRuleManager:
     def export_tax_rules_to_json(
         self, json_file_path: str, jurisdiction: str = None
     ) -> bool:
-        """Export tax rules to JSON file"""
+        """Export tax rules to JSON file."""
         try:
             if jurisdiction:
                 rules = self.db.get_tax_rules_by_jurisdiction(jurisdiction)
@@ -563,11 +557,11 @@ class TaxRuleManager:
             return False
 
     def _is_cache_valid(self) -> bool:
-        """Check if cache is still valid"""
+        """Check if cache is still valid."""
         return (datetime.now() - self.cache_timestamp).seconds < self.cache_ttl_seconds
 
     def _invalidate_cache(self):
-        """Invalidate the cache"""
+        """Invalidate the cache."""
         self.cache.clear()
         self.cache_timestamp = datetime.now()
 
@@ -601,7 +595,7 @@ SAMPLE_TAX_RULES = [
         "jurisdiction": "NY",
         "tax_type": "sales_tax",
         "effective_date": "2024-01-01",
-        "expiration_date": "2025-12-31",  # Will be active today
+        "expiration_date": "2025-12-31",
         "rate": 8.25,
         "calculation_method": "percentage",
         "conditions": {"transaction_types": ["purchase", "service"]},
@@ -612,7 +606,7 @@ SAMPLE_TAX_RULES = [
         "jurisdiction": "CA",
         "tax_type": "sales_tax",
         "effective_date": "2023-01-01",
-        "expiration_date": "2023-12-31",  # Expired
+        "expiration_date": "2023-12-31",
         "rate": 7.25,
         "calculation_method": "percentage",
         "conditions": {"transaction_types": ["purchase"]},
@@ -638,7 +632,7 @@ SAMPLE_TAX_RULES = [
 if __name__ == "__main__":
     DB_FILE = "tax_rules_management.db"
 
-    # Clean up previous database file
+    # Clean up previous database file for a fresh test run
     if Path(DB_FILE).exists():
         Path(DB_FILE).unlink()
 

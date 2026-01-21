@@ -45,7 +45,9 @@ class TransactionDatabase:
         # Create session factory for transactional use (default commit/rollback)
         self.Session = sessionmaker(bind=self.engine)
 
-        # Create session factory for read-only use (autocommit)
+        # Create session factory for read-only use
+        # Note: autocommit=True is deprecated in modern SQLAlchemy 1.4+.
+        # For legacy support we keep it, but for modern usage, remove it and use begin() blocks.
         self.ReadSession = sessionmaker(
             bind=self.engine, autocommit=True, autoflush=True
         )
@@ -101,7 +103,7 @@ class TransactionDatabase:
     @contextmanager
     def read_session_scope(self):
         """
-        Context manager for read-only sessions (autocommit=True, no rollback needed).
+        Context manager for read-only sessions.
 
         Yields:
             SQLAlchemy session
@@ -130,8 +132,6 @@ class TransactionDatabase:
 
         try:
             with self.session_scope() as session:
-                # In production, this would use an ORM model
-                # For demonstration, using raw SQL for performance
                 query = text(
                     """
                     INSERT INTO transactions (
@@ -145,7 +145,7 @@ class TransactionDatabase:
                         :reference, :description, NOW(), NOW(),
                         :risk_score, :risk_level, :metadata
                     )
-                    """
+                """
                 )
 
                 session.execute(query, transaction_data)
@@ -178,12 +178,11 @@ class TransactionDatabase:
 
         try:
             with self.read_session_scope() as session:
-                # Using indexed query for performance
                 query = text(
                     """
                     SELECT * FROM transactions
                     WHERE transaction_id = :transaction_id
-                    """
+                """
                 )
 
                 result = session.execute(
@@ -198,12 +197,14 @@ class TransactionDatabase:
                     logger.warning(f"Slow query in get_transaction: {query_time:.2f}s")
 
                 if result:
-                    # Convert row to dict
-                    transaction = dict(result)
+                    # Convert row to dict - utilizing SQLAlchemy mapping
+                    transaction = (
+                        result._mapping if hasattr(result, "_mapping") else dict(result)
+                    )
                     logger.info(
                         f"Transaction {transaction_id} retrieved in {query_time:.2f}s"
                     )
-                    return transaction
+                    return dict(transaction)
 
                 logger.info(
                     f"Transaction {transaction_id} not found, query time: {query_time:.2f}s"
@@ -237,13 +238,15 @@ class TransactionDatabase:
         query_sql = """
             UPDATE transactions
             SET status = :status, updated_at = NOW()
-            """
+        """
         params = {"transaction_id": transaction_id, "status": status}
 
         # Optimized for modern databases (e.g., PostgreSQL) to merge JSONB
         if metadata:
             query_sql += ", metadata = metadata || :metadata_obj"
-            params["metadata_obj"] = metadata
+            params["metadata_obj"] = (
+                metadata  # SQLAlchemy handles JSON serialization automatically with JSONB types
+            )
 
         query_sql += " WHERE transaction_id = :transaction_id"
 
@@ -286,81 +289,76 @@ class TransactionDatabase:
             Tuple of (transactions list, total count)
         """
         start_time = time.time()
-
-        # Limit to configured batch size
         limit = min(limit, self.config["query"]["batch_size"])
 
         try:
             with self.read_session_scope() as session:
-                # Build dynamic query based on filters
                 where_clauses = []
                 params = {"limit": limit, "offset": offset}
 
-                if "account_id" in filters and filters["account_id"]:
+                if filters.get("account_id"):
                     where_clauses.append(
                         "(source_account_id = :account_id OR destination_account_id = :account_id)"
                     )
                     params["account_id"] = filters["account_id"]
 
-                if "transaction_type" in filters and filters["transaction_type"]:
+                if filters.get("transaction_type"):
                     where_clauses.append("transaction_type = :transaction_type")
                     params["transaction_type"] = filters["transaction_type"]
 
-                if "status" in filters and filters["status"]:
+                if filters.get("status"):
                     where_clauses.append("status = :status")
                     params["status"] = filters["status"]
 
-                if "min_amount" in filters and filters["min_amount"] is not None:
+                if filters.get("min_amount") is not None:
                     where_clauses.append("amount >= :min_amount")
                     params["min_amount"] = filters["min_amount"]
 
-                if "max_amount" in filters and filters["max_amount"] is not None:
+                if filters.get("max_amount") is not None:
                     where_clauses.append("amount <= :max_amount")
                     params["max_amount"] = filters["max_amount"]
 
-                if "currency" in filters and filters["currency"]:
+                if filters.get("currency"):
                     where_clauses.append("currency = :currency")
                     params["currency"] = filters["currency"]
 
-                if "start_date" in filters and filters["start_date"]:
+                if filters.get("start_date"):
                     where_clauses.append("created_at >= :start_date")
                     params["start_date"] = filters["start_date"]
 
-                if "end_date" in filters and filters["end_date"]:
+                if filters.get("end_date"):
                     where_clauses.append("created_at <= :end_date")
                     params["end_date"] = filters["end_date"]
 
-                if "reference" in filters and filters["reference"]:
-                    # Use LIKE for partial matching on reference
+                if filters.get("reference"):
                     where_clauses.append("reference LIKE :reference")
                     params["reference"] = f"%{filters['reference']}%"
 
-                # Construct WHERE clause
                 where_sql = " AND ".join(where_clauses) if where_clauses else "1=1"
 
-                # Execute count query first (optimized for COUNT)
+                # Execute count query first
                 count_query = text(
                     f"SELECT COUNT(*) FROM transactions WHERE {where_sql}"
                 )
-                # Note: We pass only the filter parameters, not limit/offset
-                total_count = session.execute(
-                    count_query,
-                    {k: v for k, v in params.items() if k not in ["limit", "offset"]},
-                ).scalar()
+                count_params = {
+                    k: v for k, v in params.items() if k not in ["limit", "offset"]
+                }
+                total_count = session.execute(count_query, count_params).scalar()
 
-                # Execute main query with pagination
+                # Execute main query
                 query = text(
                     f"""
                     SELECT * FROM transactions
                     WHERE {where_sql}
                     ORDER BY created_at DESC
                     LIMIT :limit OFFSET :offset
-                    """
+                """
                 )
                 results = session.execute(query, params).fetchall()
-
-                # Convert rows to dicts
-                transactions = [dict(row) for row in results]
+                transactions = [
+                    dict(row._mapping if hasattr(row, "_mapping") else row)
+                    for row in results
+                ]
 
                 query_time = time.time() - start_time
                 if (
@@ -393,12 +391,10 @@ class TransactionDatabase:
             Tuple of (batch_id, number of transactions created)
         """
         start_time = time.time()
-        # Generate a unique batch ID for tracking
         batch_id = str(int(time.time() * 1000000))
 
         try:
             with self.session_scope() as session:
-                # Optimized batch insert using executemany
                 query = text(
                     """
                     INSERT INTO transactions (
@@ -412,20 +408,18 @@ class TransactionDatabase:
                         :reference, :description, NOW(), NOW(),
                         :risk_score, :risk_level, :metadata
                     )
-                    """
+                """
                 )
 
-                # Prepare parameters list: add batch_id and default values where missing
                 prepared_transactions = []
                 for tx in transactions:
                     tx_copy = tx.copy()
                     tx_copy["batch_id"] = batch_id
                     tx_copy.setdefault("status", "PENDING")
-                    tx_copy.setdefault("created_at", "NOW()")
-                    tx_copy.setdefault("updated_at", "NOW()")
+                    # Note: We don't need to default created_at/updated_at here
+                    # as the SQL query uses NOW()
                     prepared_transactions.append(tx_copy)
 
-                # Execute the batch insert
                 result = session.execute(query, prepared_transactions)
                 rows_inserted = result.rowcount
 
@@ -455,20 +449,11 @@ class TransactionDatabase:
     ) -> Dict[str, Any]:
         """
         Get transaction statistics with optimized aggregation queries.
-
-        Args:
-            account_id: Optional account ID filter
-            start_date: Optional start date filter
-            end_date: Optional end date filter
-
-        Returns:
-            Dictionary with transaction statistics
         """
         start_time = time.time()
 
         try:
             with self.read_session_scope() as session:
-                # Build dynamic query based on filters
                 where_clauses = []
                 params = {}
 
@@ -486,22 +471,18 @@ class TransactionDatabase:
                     where_clauses.append("created_at <= :end_date")
                     params["end_date"] = end_date
 
-                # Construct WHERE clause
                 where_sql = " AND ".join(where_clauses) if where_clauses else "1=1"
-
-                # Execute optimized statistics queries
 
                 # Total count and amount
                 count_query = text(
                     f"""
                     SELECT COUNT(*) as total_count,
-                            SUM(amount) as total_amount,
-                            AVG(amount) as average_amount
+                           SUM(amount) as total_amount,
+                           AVG(amount) as average_amount
                     FROM transactions
                     WHERE {where_sql}
-                    """
+                """
                 )
-
                 count_result = session.execute(count_query, params).fetchone()
 
                 # Count by status
@@ -511,9 +492,8 @@ class TransactionDatabase:
                     FROM transactions
                     WHERE {where_sql}
                     GROUP BY status
-                    """
+                """
                 )
-
                 status_results = session.execute(status_query, params).fetchall()
 
                 # Count by type
@@ -523,12 +503,10 @@ class TransactionDatabase:
                     FROM transactions
                     WHERE {where_sql}
                     GROUP BY transaction_type
-                    """
+                """
                 )
-
                 type_results = session.execute(type_query, params).fetchall()
 
-                # Compile statistics
                 stats = {
                     "total_count": count_result.total_count if count_result else 0,
                     "total_amount": (
@@ -550,14 +528,6 @@ class TransactionDatabase:
                 }
 
                 query_time = time.time() - start_time
-                if (
-                    self.config["debug"]["log_slow_queries"]
-                    and query_time > self.config["debug"]["slow_query_threshold"]
-                ):
-                    logger.warning(
-                        f"Slow query in get_transaction_statistics: {query_time:.2f}s"
-                    )
-
                 logger.info(f"Transaction statistics generated in {query_time:.2f}s")
                 return stats
 
@@ -566,12 +536,7 @@ class TransactionDatabase:
             raise
 
     def get_database_health(self) -> Dict[str, Any]:
-        """
-        Get database health metrics.
-
-        Returns:
-            Dictionary with health metrics
-        """
+        """Get database health metrics."""
         start_time = time.time()
 
         try:
@@ -579,7 +544,6 @@ class TransactionDatabase:
                 # Check connection
                 session.execute(text("SELECT 1")).fetchone()
 
-                # Get connection pool stats
                 pool_status = {
                     "size": self.engine.pool.size(),
                     "checkedin": self.engine.pool.checkedin(),
@@ -587,16 +551,13 @@ class TransactionDatabase:
                     "overflow": self.engine.pool.overflow(),
                 }
 
-                # Get basic table stats
-                # Note: This executes two separate subqueries efficiently
                 table_stats_query = text(
                     """
                     SELECT
                         (SELECT COUNT(*) FROM transactions) as transaction_count,
                         (SELECT MAX(created_at) FROM transactions) as latest_transaction
-                    """
+                """
                 )
-
                 table_stats = session.execute(table_stats_query).fetchone()
 
                 health = {
@@ -616,20 +577,12 @@ class TransactionDatabase:
                         }
                     },
                 }
-
                 return health
 
-        except SQLAlchemyError as e:
-            logger.error(f"Database health check failed: {e}")
-            return {
-                "status": "unhealthy",
-                "error": str(e),
-                "response_time": time.time() - start_time,
-            }
         except Exception as e:
             logger.error(f"Database health check error: {e}")
             return {
-                "status": "error",
+                "status": "unhealthy",
                 "error": str(e),
                 "response_time": time.time() - start_time,
             }
@@ -637,73 +590,84 @@ class TransactionDatabase:
     def initialize_schema(self) -> None:
         """
         Initialize database schema with optimized indexes.
-        In production, this would use migrations.
+        Separates Table creation and Index creation to support PostgreSQL correctly.
         """
+
         try:
             with self.session_scope() as session:
-                # Create transactions table with optimized schema (using PostgreSQL syntax for JSONB)
+                # 1. Create Transactions Table
                 session.execute(
                     text(
                         """
-                        CREATE TABLE IF NOT EXISTS transactions (
-                            id SERIAL PRIMARY KEY,
-                            transaction_id VARCHAR(36) NOT NULL UNIQUE,
-                            batch_id VARCHAR(36),
-                            source_account_id VARCHAR(36) NOT NULL,
-                            destination_account_id VARCHAR(36),
-                            amount DECIMAL(19, 4) NOT NULL,
-                            currency VARCHAR(3) NOT NULL,
-                            transaction_type VARCHAR(20) NOT NULL,
-                            status VARCHAR(20) NOT NULL,
-                            reference VARCHAR(255),
-                            description TEXT,
-                            created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-                            updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
-                            completed_at TIMESTAMP,
-                            risk_score DECIMAL(5, 4),
-                            risk_level VARCHAR(20),
-                            metadata JSONB,
-
-                            -- Optimized indexes for common queries
-                            INDEX idx_transaction_id (transaction_id),
-                            INDEX idx_batch_id (batch_id),
-                            INDEX idx_source_account (source_account_id),
-                            INDEX idx_destination_account (destination_account_id),
-                            INDEX idx_status (status),
-                            INDEX idx_type (transaction_type),
-                            INDEX idx_created_at (created_at),
-                            INDEX idx_reference (reference),
-
-                            -- Compound indexes for common query patterns
-                            INDEX idx_account_date (source_account_id, created_at),
-                            INDEX idx_status_date (status, created_at),
-                            INDEX idx_type_date (transaction_type, created_at)
-                        )
-                        """
+                    CREATE TABLE IF NOT EXISTS transactions (
+                        id SERIAL PRIMARY KEY,
+                        transaction_id VARCHAR(36) NOT NULL UNIQUE,
+                        batch_id VARCHAR(36),
+                        source_account_id VARCHAR(36) NOT NULL,
+                        destination_account_id VARCHAR(36),
+                        amount DECIMAL(19, 4) NOT NULL,
+                        currency VARCHAR(3) NOT NULL,
+                        transaction_type VARCHAR(20) NOT NULL,
+                        status VARCHAR(20) NOT NULL,
+                        reference VARCHAR(255),
+                        description TEXT,
+                        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+                        updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+                        completed_at TIMESTAMP,
+                        risk_score DECIMAL(5, 4),
+                        risk_level VARCHAR(20),
+                        metadata JSONB
+                    );
+                """
                     )
                 )
 
-                # Create validation_results table
+                # 2. Create Indexes for Transactions (PostgreSQL Syntax)
+                # Note: We use individual CREATE INDEX IF NOT EXISTS statements
+                indexes = [
+                    "CREATE INDEX IF NOT EXISTS idx_batch_id ON transactions (batch_id)",
+                    "CREATE INDEX IF NOT EXISTS idx_source_account ON transactions (source_account_id)",
+                    "CREATE INDEX IF NOT EXISTS idx_destination_account ON transactions (destination_account_id)",
+                    "CREATE INDEX IF NOT EXISTS idx_status ON transactions (status)",
+                    "CREATE INDEX IF NOT EXISTS idx_type ON transactions (transaction_type)",
+                    "CREATE INDEX IF NOT EXISTS idx_created_at ON transactions (created_at)",
+                    "CREATE INDEX IF NOT EXISTS idx_reference ON transactions (reference)",
+                    # Compound indexes
+                    "CREATE INDEX IF NOT EXISTS idx_account_date ON transactions (source_account_id, created_at)",
+                    "CREATE INDEX IF NOT EXISTS idx_status_date ON transactions (status, created_at)",
+                    "CREATE INDEX IF NOT EXISTS idx_type_date ON transactions (transaction_type, created_at)",
+                ]
+
+                for idx_sql in indexes:
+                    session.execute(text(idx_sql))
+
+                # 3. Create Validation Results Table
                 session.execute(
                     text(
                         """
-                        CREATE TABLE IF NOT EXISTS validation_results (
-                            id SERIAL PRIMARY KEY,
-                            transaction_id VARCHAR(36) NOT NULL UNIQUE,
-                            is_valid BOOLEAN NOT NULL,
-                            risk_score DECIMAL(5, 4) NOT NULL,
-                            risk_level VARCHAR(20) NOT NULL,
-                            validation_checks JSONB,
-                            errors JSONB,
-                            warnings JSONB,
-                            created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-
-                            INDEX idx_validation_transaction (transaction_id),
-                            INDEX idx_validation_risk (risk_level, risk_score)
-                        )
-                        """
+                    CREATE TABLE IF NOT EXISTS validation_results (
+                        id SERIAL PRIMARY KEY,
+                        transaction_id VARCHAR(36) NOT NULL UNIQUE,
+                        is_valid BOOLEAN NOT NULL,
+                        risk_score DECIMAL(5, 4) NOT NULL,
+                        risk_level VARCHAR(20) NOT NULL,
+                        validation_checks JSONB,
+                        errors JSONB,
+                        warnings JSONB,
+                        created_at TIMESTAMP NOT NULL DEFAULT NOW()
+                    );
+                """
                     )
                 )
+
+                # 4. Create Indexes for Validation Results
+                validation_indexes = [
+                    "CREATE INDEX IF NOT EXISTS idx_validation_transaction ON validation_results (transaction_id)",
+                    "CREATE INDEX IF NOT EXISTS idx_validation_risk ON validation_results (risk_level, risk_score)",
+                ]
+
+                for idx_sql in validation_indexes:
+                    session.execute(text(idx_sql))
 
                 logger.info("Database schema initialized")
 
