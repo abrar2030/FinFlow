@@ -1,13 +1,14 @@
 import unittest
 from datetime import datetime
 from unittest.mock import patch
+
 from fastapi.testclient import TestClient
 from main import (
-    app,
-    compliance_service,
+    AMLScreeningResponse,
     GDPRDataResponse,
     PSD2AuthResponse,
-    AMLScreeningResponse,
+    app,
+    compliance_service,
 )
 
 

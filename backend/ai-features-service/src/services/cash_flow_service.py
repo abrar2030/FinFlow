@@ -12,6 +12,7 @@ Provides advanced cash flow modeling and forecasting capabilities:
 import logging
 from datetime import datetime, timedelta
 from typing import Any, Dict, List
+
 import numpy as np
 import pandas as pd
 from config.database import get_database

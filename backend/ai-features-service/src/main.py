@@ -14,7 +14,7 @@ import os
 import sys
 from contextlib import asynccontextmanager
 from datetime import datetime
-from typing import AsyncGenerator, Callable, Dict, Any
+from typing import Any, AsyncGenerator, Callable, Dict
 
 import uvicorn
 from fastapi import FastAPI, HTTPException

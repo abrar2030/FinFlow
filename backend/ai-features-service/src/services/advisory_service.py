@@ -13,7 +13,7 @@ Provides intelligent financial advice and recommendations:
 import asyncio
 import logging
 from datetime import datetime, timedelta
-from typing import Optional, Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 
 async def get_database():
