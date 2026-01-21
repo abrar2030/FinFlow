@@ -81,7 +81,7 @@ jobs:
           rm -rf "$TMP_COPY"
 
           echo "=== Running black (check mode) ==="
-          black "${{ env.BACKEND_DIR }}" --check
+          black "$TMP_COPY" --check
 
       # -------------------------------
       # Node + npm caching
@@ -93,7 +93,7 @@ jobs:
           cache: "npm"
 
       - name: Install Node dependencies (root)
-        working-directory: .
+        working-directory: ./
         run: |
           npm ci
 
@@ -104,7 +104,7 @@ jobs:
       # 1) Web frontend (existing)
       - name: Run Prettier Checks (web-frontend)
         if: ${{ env.WEB_FRONTEND_DIR != '' }}
-        working-directory: .
+        working-directory: ./
         run: |
           echo "=== Running Prettier (web-frontend) ==="
           npx --no-install prettier --check "${{ env.WEB_FRONTEND_DIR }}/**/*.{js,jsx,ts,tsx,json,html,css,md}" --ignore-path .prettierignore || {
@@ -115,7 +115,7 @@ jobs:
       # 2) Mobile frontend (existing)
       - name: Run Prettier Checks (mobile-frontend)
         if: ${{ env.MOBILE_FRONTEND_DIR != '' }}
-        working-directory: .
+        working-directory: ./
         run: |
           echo "=== Running Prettier (mobile-frontend) ==="
           npx --no-install prettier --check "${{ env.MOBILE_FRONTEND_DIR }}/**/*.{js,jsx,ts,tsx,json,html,css,md}" --ignore-path .prettierignore || {
@@ -125,7 +125,7 @@ jobs:
 
       # 3) Repository-wide Markdown check (ALL .md files)
       - name: Run Prettier Checks (all .md files in repo)
-        working-directory: .
+        working-directory: ./
         run: |
           echo "=== Running Prettier (all .md files) ==="
           npx --no-install prettier --check "**/*.md" --ignore-path .prettierignore || {
@@ -135,7 +135,7 @@ jobs:
 
       # 4) Infrastructure YAML/YML files only (uses env.INFRASTRUCTURE_DIR)
       - name: Run Prettier Checks (infrastructure YAML)
-        working-directory: .
+        working-directory: ./
         run: |
           if [ -n "${{ env.INFRASTRUCTURE_DIR }}" ] && [ -d "${{ env.INFRASTRUCTURE_DIR }}" ]; then
             echo "=== Running Prettier (infrastructure YAML/YML files) in ${INFRASTRUCTURE_DIR} ==="
