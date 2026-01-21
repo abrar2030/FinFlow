@@ -65,7 +65,7 @@ class EntityProfile:
     """Enhanced entity profile for compliance"""
 
     entity_id: str
-    entity_type: str  # individual, corporation, trust, etc.
+    entity_type: str
     full_name: str
     date_of_birth: Optional[date] = None
     nationality: Optional[str] = None

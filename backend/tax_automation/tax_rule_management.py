@@ -8,10 +8,6 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-# Assuming tax_calculation_engine is available and contains TaxRule, TaxType, CalculationMethod
-# Since the original snippet imports them, we'll assume they are defined elsewhere.
-# from tax_calculation_engine import CalculationMethod, TaxRule, TaxType
-
 
 # Define placeholder classes/enums for execution environment
 class TaxType(Enum):
